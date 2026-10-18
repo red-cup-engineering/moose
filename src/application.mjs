@@ -1,0 +1,110 @@
+import { createLivingWebServer } from "@red-cup-engineering/living-web-server";
+import { createActivityPubMultiSiteServerEngine } from "@red-cup-engineering/activitypub-server";
+import { serveManagedActivityPubSites } from "@red-cup-engineering/activitypub-server/managed-sites";
+
+const NAME = /^[a-z][a-z0-9._-]*$/u;
+const MAX_VISIBLE = 64;
+
+function named(value, label) {
+  if (typeof value !== "string" || !value.trim()) throw new TypeError(`${label} must be nonempty text`);
+  return value;
+}
+function publicItems(readout) {
+  if (!readout || !Array.isArray(readout.items) ||
+      readout.items.length > MAX_VISIBLE || typeof readout.hasMore !== "boolean") {
+    throw new TypeError("MOOSE timeline reader must return at most 64 admitted public activities and hasMore");
+  }
+  const seen = new Set();
+  return readout.items.map((item, index) => {
+    if (!item || item.visibility !== "public" || typeof item.id !== "string" ||
+        typeof item.summary !== "string" || item.summary.length > 4096 ||
+        typeof item.author !== "string" || !item.author.trim()) {
+      throw new TypeError("MOOSE cannot present unadmitted or unbounded activity as public");
+    }
+    let url;
+    try { url = new URL(item.id); } catch { throw new TypeError("MOOSE activity requires its original absolute IRI"); }
+    if (!["https:", "http:"].includes(url.protocol) || url.username || url.password ||
+        seen.has(url.href)) throw new TypeError("MOOSE activity needs one distinct safe source identity");
+    seen.add(url.href);
+    return Object.freeze({
+      id: `event-${index + 1}`,
+      title: item.author,
+      content: item.summary,
+    });
+  });
+}
+
+/**
+ * MOOSE — MUD, Object Oriented, Socially Extended.
+ *
+ * One actual social application composed from Living Web Server's live TUFTE
+ * views and the house's native ActivityPub actor/follower/inbox/outbox engine.
+ * World objects, moderation decisions, memberships, keys and journal entries
+ * remain in their source-owned providers; this application never duplicates
+ * their authority or custody.
+ */
+export function createMooseSite({
+  origin, provider, readPublicTimeline, readPublicActor,
+  authorizePublicRead, pages = [], kv, queue, release, custodyRoot,
+} = {}) {
+  const address = new URL(origin);
+  if (address.origin !== origin || address.pathname !== "/" ||
+      provider?.origin !== origin || typeof provider.fetch !== "function" ||
+      !provider.actorTypes?.includes("Group")) {
+    throw new TypeError("MOOSE needs the exact admitted origin and native Group-capable ActivityPub provider");
+  }
+  if (typeof readPublicTimeline !== "function" || typeof readPublicActor !== "function") {
+    throw new TypeError("MOOSE requires the original current public timeline and actor readers");
+  }
+  if (typeof authorizePublicRead !== "function") throw new TypeError("MOOSE requires public-read authority");
+  const website = createLivingWebServer({
+    origin, authorizePublicRead,
+    home: async () => {
+      const activities = await readPublicTimeline({ maxItems: MAX_VISIBLE });
+      return {
+        title: "MOOSE — Semioverse",
+        tiles: [
+          { id: "introduction", title: "Federated social world", content: "Public activities from source-owned actors" },
+          ...publicItems(activities),
+          ...(activities.hasMore ? [{
+            id: "older-activities", title: "More history",
+            content: "This is a bounded reading; the original ActivityPub outboxes hold further activities.",
+          }] : []),
+        ],
+      };
+    },
+    pages: [{
+      match: /^\/people\/[a-z][a-z0-9._-]*$/u,
+      name: "actor-profile",
+      read: async context => {
+        const identifier = new URL(context.request.url).pathname.slice("/people/".length);
+        if (!NAME.test(identifier)) return null;
+        const actor = await readPublicActor({ identifier });
+        if (actor === null || actor === undefined) return null;
+        if (actor.identifier !== identifier) throw new TypeError("MOOSE source actor identity changed during projection");
+        const label = named(actor.name, "public actor name");
+        const summary = named(actor.summary, "public actor summary");
+        return {
+          title: label,
+          tiles: [
+            { id: "public-profile", title: label, content: summary },
+            { id: "activitypub-face", title: "ActivityPub", content: new URL(`/actors/${identifier}`, origin).href },
+          ],
+        };
+      },
+    }, ...pages],
+  });
+  return Object.freeze({
+    origin, provider, website,
+    ...(kv === undefined ? {} : { kv }),
+    ...(queue === undefined ? {} : { queue }),
+    ...(release === undefined ? {} : { release }),
+    ...(custodyRoot === undefined ? {} : { custodyRoot }),
+  });
+}
+
+/** The original ActivityPub multisite host resolves each WebFinger/actor/outbox. */
+export const createMooseEngine = ({ sites }) => createActivityPubMultiSiteServerEngine({ sites });
+
+/** The original managed host owns worker lifecycle and source custody release. */
+export const serveMooseSites = options => serveManagedActivityPubSites(options);
