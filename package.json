@@ -2,7 +2,6 @@
   "name": "@red-cup-engineering/moose",
   "version": "0.1.0-dev.0",
   "type": "module",
-  "private": true,
   "description": "MOOSE—MUD, Object Oriented, Socially Extended: reusable social/federation application over Living Web Server and ActivityPub++.",
   "exports": {
     ".": "./src/application.mjs",
