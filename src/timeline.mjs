@@ -5,7 +5,7 @@ const actorPattern = /^[a-z0-9][a-z0-9._-]*$/u;
 const identity = value => typeof value === "string" ? value : value?.id;
 
 /** Read the original source-owned public outbox; protocol interpretation is upstream. */
-export async function readPublicTimeline({ origin, provider, identifiers, limit = 40 } = {}) {
+export async function readPublicTimelineAtSource({ origin, provider, identifiers, limit = 40 } = {}) {
   const base = new URL(origin);
   if (base.href !== base.origin + "/" ||
       (base.protocol !== "https:" &&
@@ -73,3 +73,44 @@ export async function readPublicTimeline({ origin, provider, identifiers, limit 
       : a.published ? -1 : b.published ? 1 : 0)
     .slice(0, limit));
 }
+
+
+/**
+ * The single MOOSE projection of a source-owned ActivityPub provider.
+ *
+ * The same readers serve a standalone MOOSE node and a FeltOS-hosted social
+ * application. No second actor registry, cached feed, private inbox reader,
+ * or downstream assumption about credentials is created here.
+ */
+export function createMoosePublicReaders({ origin, provider } = {}) {
+  if (typeof origin !== "string" || provider?.origin !== origin ||
+      !Array.isArray(provider.identifiers) || typeof provider.resolveActor !== "function" ||
+      typeof provider.fetch !== "function") {
+    throw new TypeError("MOOSE requires the installed original actor and public outbox readers");
+  }
+  const readPublicActor = async ({ identifier } = {}) => {
+    if (typeof identifier !== "string" || !provider.identifiers.includes(identifier)) return null;
+    const actor = await provider.resolveActor(identifier);
+    return actor == null ? null : Object.freeze({
+      identifier, name: actor.actorName, summary: actor.summary,
+    });
+  };
+  const readPublicTimeline = async ({ maxItems = 64 } = {}) => {
+    if (!Number.isSafeInteger(maxItems) || maxItems < 1 || maxItems > 64) {
+      throw new TypeError("MOOSE source read must be bounded to 1..64 public posts");
+    }
+    const posts = await readPublicTimelineAtSource({
+      origin, provider, identifiers: provider.identifiers, limit: maxItems,
+    });
+    return Object.freeze({
+      items: Object.freeze(posts.map(post => Object.freeze({
+        id: post.id, author: post.identifier, visibility: "public",
+        summary: `${post.type}: ${post.content.slice(0, 4070)}`,
+      }))),
+      hasMore: false,
+    });
+  };
+  return Object.freeze({ readPublicActor, readPublicTimeline });
+}
+
+export const readPublicTimeline = readPublicTimelineAtSource;
