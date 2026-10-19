@@ -53,7 +53,14 @@ export async function commissionLocalMooseSite({
       custodyRoot: runtime.stateDirectory,
       readPublicTimeline, readPublicActor, authorizePublicRead,
     });
-    return Object.freeze({ site, bearerTokenPath: local.bearerTokenPath });
+    return Object.freeze({
+      site,
+      // An independently provisioned multi-actor MOOSE node has separate
+      // persisted bearer credentials. Expose their existing *paths*, never
+      // invent a site-wide token or reveal credential contents.
+      ...(local.bearerTokenPath === undefined ? {} : { bearerTokenPath: local.bearerTokenPath }),
+      ...(local.actorBearerTokenPaths === undefined ? {} : { actorBearerTokenPaths: local.actorBearerTokenPaths }),
+    });
   } catch (error) {
     try { await local?.close(); } finally { runtime.close?.(); }
     throw error;
