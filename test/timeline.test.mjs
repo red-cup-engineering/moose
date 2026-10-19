@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { PUBLIC, readPublicTimeline } from "../src/timeline.mjs";
+import { PUBLIC, readPublicTimeline, createMoosePublicReaders } from "../src/timeline.mjs";
 
 const origin = "https://moose.example";
 const actors = ["alice", "bob"];
@@ -161,4 +161,38 @@ test("a retired original actor cannot deny every remaining actor's public timeli
   const posts = await readPublicTimeline({ origin, provider, identifiers: actors });
   assert.deepEqual(posts.map(row => row.identifier), ["alice"]);
   assert.equal(calls.length, 2);
+});
+
+
+test("one source-owned MOOSE reader serves both independent node and FeltOS consumer", async () => {
+  const initial = note("alice", "one", "2026-10-19T05:00:00Z");
+  const state = { alice: [initial], bob: [] };
+  const { provider } = source(state);
+  provider.identifiers = [...actors];
+  provider.resolveActor = async identifier =>
+    identifier === "alice" ? { identifier, actorName: "Alice", summary: "A live actor" } : null;
+  const readers = createMoosePublicReaders({ origin, provider });
+  assert.deepEqual(await readers.readPublicActor({ identifier: "alice" }), {
+    identifier: "alice", name: "Alice", summary: "A live actor",
+  });
+  assert.equal(await readers.readPublicActor({ identifier: "bob" }), null);
+  let current = await readers.readPublicTimeline({ maxItems: 64 });
+  assert.equal(current.items.length, 1);
+  assert.equal(current.items[0].visibility, "public");
+  assert.match(current.items[0].summary, /Note: Body of one/);
+  state.alice.unshift({
+    ...note("alice", "one", "2026-10-19T06:00:00Z"),
+    type: "Update",
+    object: { ...initial.object, content: "Current version", updated: "2026-10-19T06:00:00Z" },
+  });
+  current = await readers.readPublicTimeline({ maxItems: 64 });
+  assert.equal(current.items.length, 1, "Update replaces rather than doubles its object");
+  assert.match(current.items[0].summary, /Current version/);
+  state.alice.unshift({
+    type: "Delete", actor: actorId("alice"), to: [PUBLIC],
+    object: { type: "Tombstone", id: initial.object.id },
+  });
+  current = await readers.readPublicTimeline({ maxItems: 64 });
+  assert.deepEqual(current.items, [], "deletion removes the current public object");
+  assert.equal(current.hasMore, false);
 });
