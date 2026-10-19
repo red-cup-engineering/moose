@@ -70,3 +70,40 @@ test("the live source may deny a page without revealing its existence", async ()
   assert.equal(res.status, 404);
   assert.equal(reads, 0);
 });
+
+
+test("FeltOS mounts the actual independent MOOSE application on exact native social routes", async () => {
+  let current = "a public observation";
+  const native = fixture(async () => ({ items: [{
+    id: ORIGIN + "/actors/garden/notes/one", author: "garden",
+    visibility: "public", summary: current,
+  }], hasMore: false }));
+  const site = createMooseSite({
+    origin: ORIGIN, provider: native.provider, basePath: "/social",
+    readPublicTimeline: async () => ({ items: [{
+      id: ORIGIN + "/actors/garden/notes/one", author: "garden",
+      visibility: "public", summary: current,
+    }], hasMore: false }),
+    readPublicActor: async ({ identifier }) => identifier === "garden"
+      ? { identifier, name: "Gardeners", summary: "Current community" } : null,
+    authorizePublicRead: async ({ resource }) =>
+      resource === "home" || resource === "actor-profile",
+  });
+  assert.deepEqual(site.resources.map(route => route.match), [
+    "/social", "/social/people/garden",
+  ]);
+  assert.ok(site.resources.every(route => route.public === true));
+  const get = path => site.website.fetch(new Request(ORIGIN + path, {
+    headers: { accept: "text/html" },
+  }));
+  assert.equal((await get("/")).status, 404,
+    "the social site cannot seize the native world's homepage");
+  const first = await get("/social");
+  assert.equal(first.status, 200);
+  assert.match(await first.text(), /a public observation/);
+  current = "new source observation";
+  assert.match(await (await get("/social")).text(), /new source observation/);
+  assert.match(await (await get("/social/people/garden")).text(), /Gardeners/);
+  assert.equal((await get("/social/people/unknown")).status, 404);
+  assert.equal((await site.website.fetch(new Request("https://foreign.example/social"))).status, 421);
+});
