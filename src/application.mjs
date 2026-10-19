@@ -46,6 +46,7 @@ function publicItems(readout) {
 export function createMooseSite({
   origin, provider, readPublicTimeline, readPublicActor,
   authorizePublicRead, pages = [], kv, queue, release, custodyRoot,
+  basePath = "/",
 } = {}) {
   const address = new URL(origin);
   if (address.origin !== origin || address.pathname !== "/" ||
@@ -57,27 +58,38 @@ export function createMooseSite({
     throw new TypeError("MOOSE requires the original current public timeline and actor readers");
   }
   if (typeof authorizePublicRead !== "function") throw new TypeError("MOOSE requires public-read authority");
+  if (basePath !== "/" && !/^\/[a-z][a-z0-9-]*$/u.test(basePath)) {
+    throw new TypeError("MOOSE site must select its exact source-owned social prefix");
+  }
+  if (!Array.isArray(provider.identifiers) || provider.identifiers.some(id => !NAME.test(id))) {
+    throw new TypeError("MOOSE site needs admitted original actor identifiers");
+  }
+  const profilePrefix = basePath === "/" ? "/people/" : basePath + "/people/";
+  const profileMatch = new RegExp("^" + profilePrefix.replaceAll("/", "\\/") + "[a-z][a-z0-9._-]*$", "u");
+  const readHome = async () => {
+    const activities = await readPublicTimeline({ maxItems: MAX_VISIBLE });
+    return {
+      title: "MOOSE — Semioverse",
+      tiles: [
+        { id: "introduction", title: "Federated social world", content: "Public activities from source-owned actors" },
+        ...publicItems(activities),
+        ...(activities.hasMore ? [{
+          id: "older-activities", title: "More history",
+          content: "This is a bounded reading; the original ActivityPub outboxes hold further activities.",
+        }] : []),
+      ],
+    };
+  };
   const website = createLivingWebServer({
     origin, authorizePublicRead,
-    home: async () => {
-      const activities = await readPublicTimeline({ maxItems: MAX_VISIBLE });
-      return {
-        title: "MOOSE — Semioverse",
-        tiles: [
-          { id: "introduction", title: "Federated social world", content: "Public activities from source-owned actors" },
-          ...publicItems(activities),
-          ...(activities.hasMore ? [{
-            id: "older-activities", title: "More history",
-            content: "This is a bounded reading; the original ActivityPub outboxes hold further activities.",
-          }] : []),
-        ],
-      };
-    },
-    pages: [{
-      match: /^\/people\/[a-z][a-z0-9._-]*$/u,
+    ...(basePath === "/" ? { home: readHome } : {}),
+    pages: [
+      ...(basePath === "/" ? [] : [{ match: basePath, name: "home", read: readHome }]),
+      {
+      match: profileMatch,
       name: "actor-profile",
       read: async context => {
-        const identifier = new URL(context.request.url).pathname.slice("/people/".length);
+        const identifier = new URL(context.request.url).pathname.slice(profilePrefix.length);
         if (!NAME.test(identifier)) return null;
         const actor = await readPublicActor({ identifier });
         if (actor === null || actor === undefined) return null;
@@ -94,8 +106,21 @@ export function createMooseSite({
       },
     }, ...pages],
   });
+  // When another native host (FeltOS) consumes this same website, its
+  // admission layer accepts only exact public routes. No path wildcard and
+  // no second listener are installed in the world driver.
+  const paths = [
+    { id: "moose.home", match: basePath },
+    ...provider.identifiers.map(identifier => ({
+      id: "moose.actor." + identifier, match: profilePrefix + identifier,
+    })),
+  ];
+  const resources = Object.freeze(paths.map(route => Object.freeze({
+    ...route, public: true,
+    handler: context => website.fetch(context.request),
+  })));
   return Object.freeze({
-    origin, provider, website,
+    origin, provider, website, resources,
     ...(kv === undefined ? {} : { kv }),
     ...(queue === undefined ? {} : { queue }),
     ...(release === undefined ? {} : { release }),
