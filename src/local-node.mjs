@@ -2,6 +2,7 @@ import { createFlatfileActivityPubRuntime } from "@red-cup-engineering/activityp
 import { createActivityPubJournalCustody } from "@red-cup-engineering/activitypub-services-section/journal-custody";
 import { createLocalActivityPubProvider } from "@red-cup-engineering/activitypub-services-section/local-server";
 import { createMooseSite } from "./application.mjs";
+import { readPublicTimeline as readCurrentPublicPosts } from "./timeline.mjs";
 
 /**
  * Commission one real source-owned local MOOSE node. Keys, Fedify protocol KV,
@@ -52,40 +53,21 @@ export async function commissionLocalMooseSite({
       if (!Number.isSafeInteger(maxItems) || maxItems < 1 || maxItems > 64) {
         throw new TypeError("MOOSE source read must be bounded to 1..64 activities");
       }
-      const rows = [];
-      let hasMore = false;
-      for (const identifier of local.provider.identifiers) {
-        const outbox = new URL(`/actors/${encodeURIComponent(identifier)}/outbox?page=true`, origin);
-        // Invoke the original PUBLIC Fedify representation, not the private
-        // immutable custody directly: its projection strips blind recipients.
-        const response = await local.provider.fetch(new Request(outbox, {
-          headers: { accept: "application/activity+json" },
-        }));
-        if (response.status !== 200) throw new TypeError("MOOSE original public outbox is unavailable");
-        const page = await response.json();
-        const activities = page.orderedItems ?? page.items;
-        if (!Array.isArray(activities)) throw new TypeError("MOOSE expected the original public activity page");
-        hasMore ||= Boolean(page.next);
-        for (const activity of activities) {
-          if (activity === null || typeof activity !== "object" || typeof activity.id !== "string") {
-            throw new TypeError("MOOSE cannot read an activity without its original identity");
-          }
-          const object = activity.object;
-          const summary = typeof object?.content === "string" ? object.content :
-            typeof object === "string" ? object :
-            typeof object?.id === "string" ? object.id : activity.type;
-          rows.push({
-            id: activity.id, author: identifier,
-            // A live public ActivityStreams EVENT, not a claim that an old
-            // Create has survived later Delete/Update or moderation policy.
-            summary: `${activity.type}: ${summary.slice(0, 4070)}`,
-            visibility: "public",
-          });
-        }
-      }
+      // ONE read of the original Fedify public outbox and upstream effective
+      // Note/Article projection. The old local-node activity summarizer
+      // duplicated it and visibly resurrected edited/deleted text.
+      const posts = await readCurrentPublicPosts({
+        origin, provider: local.provider,
+        identifiers: local.provider.identifiers, limit: maxItems,
+      });
       return Object.freeze({
-        items: Object.freeze(rows.slice(0, maxItems)),
-        hasMore: hasMore || rows.length > maxItems,
+        items: Object.freeze(posts.map(post => Object.freeze({
+          id: post.id, author: post.identifier, visibility: "public",
+          summary: `${post.type}: ${post.content.slice(0, 4070)}`,
+        }))),
+        // We have bounded source reading, but no proof there is another
+        // *currently visible* page after filtering Update/Delete.
+        hasMore: false,
       });
     };
     const site = createMooseSite({
