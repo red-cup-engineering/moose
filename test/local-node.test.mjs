@@ -29,7 +29,9 @@ test("real native Group actor and persistent authored public post cross MOOSE's 
   const initial = await get("/", "text/html");
   assert.equal(initial.status, 200);
   assert.match(await initial.text(), /Federated social world/);
-  const token = (await readFile(first.bearerTokenPath, "utf8")).trim();
+  assert.deepEqual(first.actorBearerTokenPaths.map(row => row.identifier), ["garden"]);
+  const tokenPath = first.actorBearerTokenPaths[0].bearerTokenPath;
+  const token = (await readFile(tokenPath, "utf8")).trim();
   const activity = {
     "@context": "https://www.w3.org/ns/activitystreams",
     id: origin + "/activities/one", type: "Create",
@@ -71,6 +73,8 @@ test("real native Group actor and persistent authored public post cross MOOSE's 
   await first.site.release();
   const restarted = await commissionLocalMooseSite(options);
   t.after(() => restarted.site.release());
+  assert.deepEqual(restarted.actorBearerTokenPaths, first.actorBearerTokenPaths,
+    "actor-owned token custody survives restart without becoming a shared site credential");
   assert.deepEqual(await readFile(join(directory, "garden-keys.json")), oldKey);
   const after = createMooseEngine({ sites: [restarted.site] });
   const durable = await after.fetch(new Request(origin + "/", { headers: { accept: "text/html" } }));
