@@ -133,3 +133,5 @@ export const createMooseEngine = ({ sites }) => createActivityPubMultiSiteServer
 
 /** The original managed host owns worker lifecycle and source custody release. */
 export const serveMooseSites = options => serveManagedActivityPubSites(options);
+
+export { createMoosePublicReaders } from "./timeline.mjs";
