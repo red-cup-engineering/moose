@@ -35,7 +35,10 @@ export async function commissionLocalMooseSite({
       // Fedify calls the customer only AFTER signed arrival verification.
       // Follow/Undo use the original provider's signed social machinery.
       onActivity: onActivity ?? (async arrival => {
-        if (arrival.jsonLd?.type === "Follow" || arrival.jsonLd?.type === "Undo") return;
+        // Fedify has already checked sender proofs and retained the arrival.
+        // Accept/Reject are social responses to our outbound Follow, not
+        // enterprise decisions, invitations to spend, or capability grants.
+        if (["Follow", "Undo", "Accept", "Reject"].includes(arrival.jsonLd?.type)) return;
         throw new TypeError("MOOSE has no commissioned workflow for this inbound activity");
       }),
     });
