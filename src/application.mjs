@@ -9,7 +9,7 @@ function named(value, label) {
   if (typeof value !== "string" || !value.trim()) throw new TypeError(`${label} must be nonempty text`);
   return value;
 }
-function publicItems(readout) {
+function publicItems(readout, provider) {
   if (!readout || !Array.isArray(readout.items) ||
       readout.items.length > MAX_VISIBLE || typeof readout.hasMore !== "boolean") {
     throw new TypeError("MOOSE timeline reader must return at most 64 admitted public activities and hasMore");
@@ -26,10 +26,20 @@ function publicItems(readout) {
     if (!["https:", "http:"].includes(url.protocol) || url.username || url.password ||
         seen.has(url.href)) throw new TypeError("MOOSE activity needs one distinct safe source identity");
     seen.add(url.href);
+    // Link only what the original Fedify provider truly serves. In
+    // particular an arbitrary Create.object IRI must not be presented
+    // as a working permalink merely because it was visible in an outbox.
+    const segments = url.pathname.split("/").filter(Boolean);
+    const served = provider.routeCapabilities?.publicObjects === true &&
+      url.origin === provider.origin && segments.length === 4 &&
+      segments[0] === "actors" && segments[1] === item.author &&
+      (segments[2] === "notes" || segments[2] === "articles") &&
+      segments[3] !== "" && url.search === "" && url.hash === "";
     return Object.freeze({
       id: `event-${index + 1}`,
       title: item.author,
       content: item.summary,
+      ...(served ? { links: [{ href: item.id, label: "Federated post" }] } : {}),
     });
   });
 }
@@ -72,7 +82,7 @@ export function createMooseSite({
       title: "MOOSE — Semioverse",
       tiles: [
         { id: "introduction", title: "Federated social world", content: "Public activities from source-owned actors" },
-        ...publicItems(activities),
+        ...publicItems(activities, provider),
         ...(activities.hasMore ? [{
           id: "older-activities", title: "More history",
           content: "This is a bounded reading; the original ActivityPub outboxes hold further activities.",
