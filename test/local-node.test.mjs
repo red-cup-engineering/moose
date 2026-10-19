@@ -35,16 +35,31 @@ test("real native Group actor and persistent authored public post cross MOOSE's 
     id: origin + "/activities/one", type: "Create",
     actor: origin + "/actors/garden",
     to: "https://www.w3.org/ns/activitystreams#Public",
-    object: { id: origin + "/notes/one", type: "Note", content: "Public first post", attributedTo: origin + "/actors/garden" },
+    object: { id: origin + "/actors/garden/notes/one", type: "Note", content: "Public first post", attributedTo: origin + "/actors/garden" },
   };
   const published = await engine.fetch(new Request(origin + "/actors/garden/outbox", {
     method: "POST", headers: { "content-type": "application/activity+json", authorization: "Bearer " + token },
     body: JSON.stringify(activity),
   }));
   assert.equal(published.status, 201, "the original provider retains the published Activity");
+  const nativeNote = await get("/actors/garden/notes/one", "application/activity+json");
+  assert.equal(nativeNote.status, 200, "the original Fedify provider serves its Note object URI");
+  assert.equal((await nativeNote.json()).content, "Public first post");
   const living = await get("/", "text/html");
   assert.equal(living.status, 200);
   assert.match(await living.text(), /Public first post/, "same custody, not a second feed database");
+  const revision = { ...activity, id: origin + "/activities/two", type: "Update",
+    object: { ...activity.object, content: "Revised public post" } };
+  const edited = await engine.fetch(new Request(origin + "/actors/garden/outbox", {
+    method: "POST", headers: { "content-type": "application/activity+json", authorization: "Bearer " + token },
+    body: JSON.stringify(revision),
+  }));
+  assert.equal(edited.status, 201);
+  const current = await get("/actors/garden/notes/one", "application/activity+json");
+  assert.equal(current.status, 200);
+  assert.equal((await current.json()).content, "Revised public post");
+  const human = await get("/", "text/html");
+  assert.match(await human.text(), /Revised public post/, "MOOSE projects the latest object, not both versions");
   assert.equal((await get("/actors/stranger", "application/activity+json")).status, 404);
   assert.equal((await engine.fetch(new Request(origin + "/actors/garden/inbox", {
     method: "POST", headers: { "content-type": "application/activity+json" },
@@ -57,7 +72,22 @@ test("real native Group actor and persistent authored public post cross MOOSE's 
   assert.deepEqual(await readFile(join(directory, "garden-keys.json")), oldKey);
   const after = createMooseEngine({ sites: [restarted.site] });
   const durable = await after.fetch(new Request(origin + "/", { headers: { accept: "text/html" } }));
-  assert.match(await durable.text(), /Public first post/, "restart reads original durable actor outbox");
+  assert.match(await durable.text(), /Revised public post/, "restart reads original latest object");
+  const removed = await after.fetch(new Request(origin + "/actors/garden/outbox", {
+    method: "POST", headers: { "content-type": "application/activity+json", authorization: "Bearer " + token },
+    body: JSON.stringify({ ...activity, id: origin + "/activities/three", type: "Delete",
+      object: { id: activity.object.id, type: "Tombstone" } }),
+  }));
+  assert.equal(removed.status, 201);
+  const deleted = await after.fetch(new Request(activity.object.id, {
+    headers: { accept: "application/activity+json" },
+  }));
+  assert.notEqual(deleted.status, 200, "a deletion is not a readable stale Note");
+  const livingAfterDelete = await after.fetch(new Request(origin + "/", {
+    headers: { accept: "text/html" },
+  }));
+  assert.doesNotMatch(await livingAfterDelete.text(), /Revised public post|Public first post/,
+    "the same source removes deleted content from MOOSE's human timeline");
 });
 
 test("MOOSE commissions neither an unsigned actor nor a no-op inbox", async t => {
