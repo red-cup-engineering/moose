@@ -47,7 +47,9 @@ test("real native Group actor and persistent authored public post cross MOOSE's 
   assert.equal((await nativeNote.json()).content, "Public first post");
   const living = await get("/", "text/html");
   assert.equal(living.status, 200);
-  assert.match(await living.text(), /Public first post/, "same custody, not a second feed database");
+  const publicHtml = await living.text();
+  assert.match(publicHtml, /Public first post/, "same custody, not a second feed database");
+  assert.match(publicHtml, /actors\/garden\/notes\/one/, "a real Fedify Note URL is linked from MOOSE");
   const revision = { ...activity, id: origin + "/activities/two", type: "Update",
     object: { ...activity.object, content: "Revised public post" } };
   const edited = await engine.fetch(new Request(origin + "/actors/garden/outbox", {
