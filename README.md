@@ -62,3 +62,21 @@ the declared source imports into an installable application closure is still a
 required release step. MOOSE must ultimately meet then beat each appropriate
 Fediverse incumbent in independently exercised social, moderation, identity,
 migration, and operating workflows; these source tests establish no parity.
+
+## Required managed hosting supplier
+
+The receipt recovery requested by the Leader must retain FeltOS's existing,
+conditional MOOSE application. MOOSE MUST consume the original ActivityPub
+Server's exported `managed-sites` operation for worker lifecycle and source
+custody; it must not copy that operation or create another host. The former
+`0.1.3` dependency does not export that port. The exact published
+`0.1.4-dev.89` carrier does, and its executable and data files match accepted
+ActivityPub Server source `26acb5ebcb97f9aac3f4f2f214d86c98244e08ce` byte for byte.
+The development MOOSE carrier therefore selects that exact development
+supplier, while retaining its existing ActivityPub `0.9.6-dev.0` dependency.
+
+As the Leader directed, "Our production workflow should not require a pnpm
+workspace or lockfile for every repository. It should MAYBE require a
+package.json". This independent provider has a package manifest and native
+tests; publication must qualify its actual artifacts and dependencies without
+adding a provider workspace or lockfile.
