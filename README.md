@@ -43,6 +43,38 @@ It does not install MOOSE into MetroPlat as an enterprise application.
 The actor's signed machine face remains `/actors/:identifier`, served by the
 original provider. Other applications may independently contribute TUFTE pages.
 
+## Section-specific public MOOSE homes (source-owned integration)
+
+`createMooseSite` now accepts the ORIGINAL site's public `site.json`
+description as `publicSite`, plus optional `tufteTheme`. A live MOOSE
+`/social` and each `/@identifier/` Actor home show the owning section's
+actual name, description and public navigation, instead of one generic
+MOOSE directory. TUFTE continues to own the HTML and its semantics. This
+adds **working human navigation**, not an unverified service action.
+
+The source site must identify exactly this MOOSE origin and declare bounded,
+HTTPS-only public links. MOOSE refuses duplicate URLs, malformed names,
+cross-origin imposture and `/_private` paths, does not consult private source
+on an unapproved public GET, and does not treat an authored link as verified
+availability. MOOSE neither creates Brands nor writes back to `site.json`.
+
+```js
+const moose = createMooseSite({
+  origin, provider, readPublicTimeline, readPublicActor,
+  readPublicActorTimeline, authorizePublicRead,
+  basePath: "/social", pages: sourceAuthorizedPages,
+  publicSite: acceptedPublication.website.publicationContext.site,
+  tufteTheme: acceptedPublication.website.publicationContext.site.tufteTheme,
+});
+```
+
+The original Causeway Public Web admission adapter selects the accepted
+site description, publication artifacts and editorial authority. This
+interface does **not** replace the original TUFTE site nor claim that a
+public Worker is now a fully hosted MOOSE. The installed LWS/TUFTE
+dependency, browser/assistive-technology behavior, exact origin routing
+and real Actor+site readback remain separate acceptance conditions.
+
 ## Native use
 
 `createMoosePublicReaders({origin, provider})` projects the current actor
