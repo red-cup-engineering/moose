@@ -42,6 +42,9 @@ test("MOOSE exposes live TUFTE pages and native ActivityPub without another HTTP
   const actor = await get("/actors/garden", "application/activity+json");
   assert.equal((await actor.json()).type, "Group", "native provider remains actor authority");
   assert.match(await (await get("/people/garden")).text(), /Gardeners/);
+  assert.match(await (await get("/@garden/")).text(), /Gardeners/);
+  assert.match(await (await get("/@garden")).text(), /Gardeners/);
+  assert.equal((await get("/@unknown/")).status, 404);
   assert.equal((await get("/actors/unknown", "application/activity+json")).status, 404);
   assert.equal((await get("/people/unknown")).status, 404);
   assert.equal((await get("/not-in-moose")).status, 404);
@@ -90,7 +93,7 @@ test("FeltOS mounts the actual independent MOOSE application on exact native soc
       resource === "home" || resource === "actor-profile",
   });
   assert.deepEqual(site.resources.map(route => route.match), [
-    "/social", "/social/people/garden",
+    "/social", "/social/people/garden", "/social/@garden", "/social/@garden/",
   ]);
   assert.ok(site.resources.every(route => route.public === true));
   const get = path => site.website.fetch(new Request(ORIGIN + path, {
@@ -104,6 +107,7 @@ test("FeltOS mounts the actual independent MOOSE application on exact native soc
   current = "new source observation";
   assert.match(await (await get("/social")).text(), /new source observation/);
   assert.match(await (await get("/social/people/garden")).text(), /Gardeners/);
+  assert.match(await (await get("/social/@garden/")).text(), /Gardeners/);
   assert.equal((await get("/social/people/unknown")).status, 404);
   assert.equal((await site.website.fetch(new Request("https://foreign.example/social"))).status, 421);
 });
