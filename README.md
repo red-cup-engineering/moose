@@ -28,6 +28,14 @@ both readouts. Its native peer at `/actors/:identifier/notes/:noteId` or
 original Fedify object dispatchers when the installed protocol supplier has
 public-object custody. That same URI is linked from the human timeline.
 
+The public human Actor homepage is now projected at `/@identifier/` (also
+`/@identifier`). It reads the same original Actor as `/people/:identifier`,
+plus a bounded public-activity reading filtered to that exact source identifier.
+The source ActivityPub Actor remains `/actors/:identifier`; the homepage is
+**not** an alternate signing identity, a new account or a separate database.
+A public feed preview is not complete history and is not permission to expose
+private or followers-only content. The old address remains available.
+
 `/people/:identifier` is the standalone human actor view. With `basePath:
 "/social"`, FeltOS consumes the same MOOSE site at `/social` and
 `/social/people/:identifier` through the driver's **native-origin routes**.
@@ -87,3 +95,33 @@ workspace or lockfile for every repository. It should MAYBE require a
 package.json". This independent provider has a package manifest and native
 tests; publication must qualify its actual artifacts and dependencies without
 adding a provider workspace or lockfile.
+
+
+## Five-settlement receiving target (Leader direction 2026-10-23)
+
+`561.group`, `science.561.group`, `engineering.561.group`,
+`operations.561.group`, and `services.561.group` are intended to be five
+independently configured MOOSE instances, not five pages in a single synthetic
+application. Each should host admitted local Actors and refer to external
+Actors through source-qualified federation. The user also requests
+`https://cold-red-gate.561.group/@hai-wen` as the continuing Hai Wen Actor's
+public home; this separate host requires its own installed routing and
+identity/provider configuration. **No site is declared deployed here.**
+
+Acceptance requires: real HTTPS and routing per host; original signed
+ActivityPub/WebFinger source custody; public `/@handle/` resolving live
+Actor profiles and public activity; source-authorized blog/Article and page
+consumers; account syndication/remote participation that do not falsely
+impersonate, clone or migrate Actors; safe moderation and access controls;
+cross-instance interoperability exercised with real peers; independently
+received browser and federation behavior. Distinguish an Actor's enduring
+identity from instance-local account bindings, territorial permissions, and
+public projections. Preserve original SignCraft identity and provenance
+owners. Do not infer publishing rights from an accessible route.
+
+This branch only implements the source-backed human homepage address and
+bounded actor timeline projection in the reusable MOOSE application.
+It does not implement remote account syndication, publish the package,
+install five host sites, or independently receive a real homepage. Keep
+the draft separate from MOOSE PRs #3–#5 until owner reconciliation and
+native full-dependency tests.
