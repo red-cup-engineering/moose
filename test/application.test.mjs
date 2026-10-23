@@ -43,6 +43,9 @@ test("MOOSE exposes live TUFTE pages and native ActivityPub without another HTTP
   assert.equal((await actor.json()).type, "Group", "native provider remains actor authority");
   assert.match(await (await get("/people/garden")).text(), /Gardeners/);
   assert.match(await (await get("/@garden/")).text(), /Gardeners/);
+  assert.match(await (await get("/@garden/")).text(), /ActivityPub/);
+  assert.doesNotMatch(await (await get("/@garden/")).text(), /First public action/,
+    "an unrelated author must not appear on this actor's homepage");
   assert.match(await (await get("/@garden")).text(), /Gardeners/);
   assert.equal((await get("/@unknown/")).status, 404);
   assert.equal((await get("/actors/unknown", "application/activity+json")).status, 404);
@@ -108,6 +111,8 @@ test("FeltOS mounts the actual independent MOOSE application on exact native soc
   assert.match(await (await get("/social")).text(), /new source observation/);
   assert.match(await (await get("/social/people/garden")).text(), /Gardeners/);
   assert.match(await (await get("/social/@garden/")).text(), /Gardeners/);
+  assert.match(await (await get("/social/@garden/")).text(), /new source observation/,
+    "a current, source-owned public post appears on the actor home");
   assert.equal((await get("/social/people/unknown")).status, 404);
   assert.equal((await site.website.fetch(new Request("https://foreign.example/social"))).status, 421);
 });
