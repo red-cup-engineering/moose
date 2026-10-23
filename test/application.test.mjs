@@ -102,7 +102,8 @@ test("FeltOS mounts the actual independent MOOSE application on exact native soc
       resource === "home" || resource === "actor-profile",
   });
   assert.deepEqual(site.resources.map(route => route.match), [
-    "/social", "/social/people/garden", "/social/@garden", "/social/@garden/",
+    "/social", "/social/people/garden", "/@garden", "/@garden/",
+    "/social/@garden", "/social/@garden/",
   ]);
   assert.ok(site.resources.every(route => route.public === true));
   const get = path => site.website.fetch(new Request(ORIGIN + path, {
@@ -117,6 +118,9 @@ test("FeltOS mounts the actual independent MOOSE application on exact native soc
   assert.match(await (await get("/social")).text(), /new source observation/);
   assert.match(await (await get("/social/people/garden")).text(), /Gardeners/);
   assert.match(await (await get("/social/@garden/")).text(), /Gardeners/);
+  assert.match(await (await get("/@garden/")).text(), /Gardeners/,
+    "the canonical Actor home is at the host root, not hidden under /social");
+  assert.match(await (await get("/@garden/")).text(), /new source observation/);
   assert.match(await (await get("/social/@garden/")).text(), /new source observation/,
     "a current, source-owned public post appears on the actor home");
   assert.equal((await get("/social/people/unknown")).status, 404);
