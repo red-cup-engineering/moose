@@ -21,8 +21,10 @@ export function createMooseCairnPage({
       match.includes("//") || match.split("/").some(part => part === "." || part === "..") ||
       match === "/actors" || match.startsWith("/actors/") ||
       match.startsWith("/.well-known/") ||
-      match === "/social" || match === "/social/people" ||
-      match.startsWith("/social/people/")) {
+      match === "/social" ||
+      ["/people", "/inbox", "/outbox",
+       "/social/people", "/social/actors", "/social/inbox", "/social/outbox"]
+        .some(prefix => match === prefix || match.startsWith(prefix + "/"))) {
     throw new TypeError("MOOSE CAIRN page requires one exact non-protocol route");
   }
   if (cairn?.kind !== "cairn.fars/v1" || typeof cairn.readSigncraft !== "function") {
