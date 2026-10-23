@@ -95,6 +95,30 @@ export function createMoosePublicReaders({ origin, provider } = {}) {
       identifier, name: actor.actorName, summary: actor.summary,
     });
   };
+  // A public profile's own posts must come from that Actor's original
+  // outbox, never by filtering a globally truncated /social feed.
+  const readPublicActorTimeline = async ({ identifier, maxItems = 64 } = {}) => {
+    if (typeof identifier !== "string" || !provider.identifiers.includes(identifier)) return null;
+    if (!Number.isSafeInteger(maxItems) || maxItems < 1 || maxItems > 64) {
+      throw new TypeError("MOOSE actor source read must be bounded to 1..64 public posts");
+    }
+    if (await readPublicActor({ identifier }) === null) return null;
+    const posts = await readPublicTimelineAtSource({
+      origin, provider, identifiers: [identifier], limit: maxItems + 1,
+    });
+    const visible = posts.slice(0, maxItems);
+    return Object.freeze({
+      items: Object.freeze(visible.map(post => Object.freeze({
+        id: post.id, author: post.identifier, visibility: "public",
+        summary: `${post.type}: ${post.content.slice(0, 4070)}`,
+      }))),
+      hasMore: posts.length > maxItems,
+      // hasMore=false means no confirmed further post in the sampled page,
+      // NOT verified archive exhaustion. ActivityPub outboxes may paginate.
+      coverage: "bounded-source-outbox",
+      sourceOutbox: new URL("/actors/" + identifier + "/outbox", origin).href,
+    });
+  };
   const readPublicTimeline = async ({ maxItems = 64 } = {}) => {
     if (!Number.isSafeInteger(maxItems) || maxItems < 1 || maxItems > 64) {
       throw new TypeError("MOOSE source read must be bounded to 1..64 public posts");
@@ -110,7 +134,7 @@ export function createMoosePublicReaders({ origin, provider } = {}) {
       hasMore: false,
     });
   };
-  return Object.freeze({ readPublicActor, readPublicTimeline });
+  return Object.freeze({ readPublicActor, readPublicTimeline, readPublicActorTimeline });
 }
 
 export const readPublicTimeline = readPublicTimelineAtSource;
