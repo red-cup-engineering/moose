@@ -1,6 +1,7 @@
 import { createLivingWebServer } from "@red-cup-engineering/living-web-server/fetch";
 import { admitMoosePublicSite } from "./section-site.mjs";
 import { projectMooseResourceInventory } from "./resource-readout.mjs";
+import { exactPublicPageRoutes } from "./source-page-routes.mjs";
 
 const NAME = /^[a-z][a-z0-9._-]*$/u;
 const MAX_VISIBLE = 64;
@@ -224,6 +225,10 @@ export function createMooseSite({
         { id: "moose.actor-home-scoped-slash." + identifier, match: scopedActorHomePrefix + identifier + "/" },
       ]),
     ]),
+    // Reuse source-qualified exact TUFTE pages as original FeltOS routes:
+    // the / publisher home, accepted documents, feeds and search artifacts.
+    // This consumes the original MOOSE exact-public-route procedure (#5).
+    ...exactPublicPageRoutes(pages, { basePath }),
   ];
   const resources = Object.freeze(paths.map(route => Object.freeze({
     ...route, public: true,
