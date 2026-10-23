@@ -3,7 +3,7 @@ import test from "node:test";
 import { createMooseSite, createMooseEngine } from "../src/application.mjs";
 
 const ORIGIN = "https://social.example";
-function fixture(readPublicTimeline = async () => ({ items: [], hasMore: false }), authorize = async () => true) {
+function fixture(readPublicTimeline = async () => ({ items: [], hasMore: false }), authorize = async () => true, readPublicActorTimeline) {
   const provider = {
     origin: ORIGIN,
     identifier: "garden",
@@ -23,6 +23,7 @@ function fixture(readPublicTimeline = async () => ({ items: [], hasMore: false }
     readPublicActor: async ({ identifier }) => identifier === "garden"
       ? { identifier, name: "Gardeners", summary: "Current public community" } : null,
     authorizePublicRead: authorize,
+    ...(readPublicActorTimeline === undefined ? {} : { readPublicActorTimeline }),
   });
 }
 
@@ -92,6 +93,11 @@ test("FeltOS mounts the actual independent MOOSE application on exact native soc
     }], hasMore: false }),
     readPublicActor: async ({ identifier }) => identifier === "garden"
       ? { identifier, name: "Gardeners", summary: "Current community" } : null,
+    readPublicActorTimeline: async ({ identifier }) => ({
+      items: [{ id: ORIGIN + "/actors/" + identifier + "/notes/one",
+        author: identifier, visibility: "public", summary: current }],
+      hasMore: false, coverage: "bounded-source-outbox",
+    }),
     authorizePublicRead: async ({ resource }) =>
       resource === "home" || resource === "actor-profile",
   });
@@ -115,4 +121,42 @@ test("FeltOS mounts the actual independent MOOSE application on exact native soc
     "a current, source-owned public post appears on the actor home");
   assert.equal((await get("/social/people/unknown")).status, 404);
   assert.equal((await site.website.fetch(new Request("https://foreign.example/social"))).status, 421);
+});
+
+test("an Actor home reads the Actor-specific source, not a truncated global feed", async () => {
+  let globalReads = 0;
+  let scopedReads = 0;
+  const site = fixture(async () => {
+    globalReads++;
+    return { items: [{ id: ORIGIN + "/actors/other/notes/old",
+      author: "other", summary: "UNRELATED_GLOBAL", visibility: "public" }], hasMore: false };
+  }, async () => true, async ({ identifier, maxItems }) => {
+    scopedReads++;
+    assert.equal(identifier, "garden");
+    assert.equal(maxItems, 64);
+    return { items: [{ id: ORIGIN + "/actors/garden/notes/own",
+      author: "garden", visibility: "public", summary: "GARDEN_SPECIFIC" }],
+      hasMore: false, coverage: "bounded-source-outbox" };
+  });
+  const html = await (await site.website.fetch(new Request(ORIGIN + "/@garden/", {
+    headers: { accept: "text/html" },
+  }))).text();
+  assert.match(html, /GARDEN_SPECIFIC/);
+  assert.doesNotMatch(html, /UNRELATED_GLOBAL/);
+  assert.equal(globalReads, 0, "an Actor homepage must not consume the site-wide feed");
+  assert.equal(scopedReads, 1);
+  assert.match(html, /bounded/i, "do not claim the sampled outbox is complete");
+});
+
+test("Actor homepage refuses a source reader that leaks another Actor's post", async () => {
+  const site = fixture(undefined, undefined, async () => ({
+    items: [{ id: ORIGIN + "/actors/other/notes/one",
+      author: "other", summary: "PRIVATE_BOUNDARY", visibility: "public" }],
+    hasMore: false,
+  }));
+  const response = await site.website.fetch(new Request(ORIGIN + "/@garden/", {
+    headers: { accept: "text/html" },
+  }));
+  assert.notEqual(response.status, 200);
+  assert.doesNotMatch(await response.text(), /PRIVATE_BOUNDARY/);
 });
