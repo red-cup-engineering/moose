@@ -1,4 +1,4 @@
-import { createLivingWebServer } from "@red-cup-engineering/living-web-server";
+import { createLivingWebServer } from "@red-cup-engineering/living-web-server/fetch";
 import { createActivityPubMultiSiteServerEngine } from "@red-cup-engineering/activitypub-server";
 import { serveManagedActivityPubSites } from "@red-cup-engineering/activitypub-server/managed-sites";
 

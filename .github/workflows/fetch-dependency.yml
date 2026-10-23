@@ -1,0 +1,20 @@
+name: MOOSE Fetch-only dependency boundary
+on:
+  pull_request:
+    paths:
+      - src/application.mjs
+      - package.json
+      - test/fetch-dependency.test.mjs
+      - .github/workflows/fetch-dependency.yml
+permissions:
+  contents: read
+jobs:
+  source-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - run: node --check src/application.mjs && node --test test/fetch-dependency.test.mjs
