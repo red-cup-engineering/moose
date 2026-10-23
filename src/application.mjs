@@ -54,7 +54,7 @@ function publicItems(readout, provider) {
  * their authority or custody.
  */
 export function createMooseSite({
-  origin, provider, readPublicTimeline, readPublicActor,
+  origin, provider, readPublicTimeline, readPublicActor, readPublicActorTimeline,
   authorizePublicRead, pages = [], kv, queue, release, custodyRoot,
   basePath = "/",
 } = {}) {
@@ -68,6 +68,9 @@ export function createMooseSite({
     throw new TypeError("MOOSE requires the original current public timeline and actor readers");
   }
   if (typeof authorizePublicRead !== "function") throw new TypeError("MOOSE requires public-read authority");
+  if (readPublicActorTimeline !== undefined && typeof readPublicActorTimeline !== "function") {
+    throw new TypeError("MOOSE actor outbox reader must be a source-owned function");
+  }
   if (basePath !== "/" && !/^\/[a-z][a-z0-9-]*$/u.test(basePath)) {
     throw new TypeError("MOOSE site must select its exact source-owned social prefix");
   }
@@ -87,21 +90,32 @@ export function createMooseSite({
     if (actor.identifier !== identifier) throw new TypeError("MOOSE source actor identity changed during projection");
     const label = named(actor.name, "public actor name");
     const summary = named(actor.summary, "public actor summary");
-    // A home is a living public reading, not just a business-card alias.
-    // Filter only already qualified public objects by their native actor identifier.
-    const readout = await readPublicTimeline({ maxItems: MAX_VISIBLE });
-    const actorPosts = publicItems(readout, provider).filter((_, index) =>
-      readout.items[index].author === identifier);
+    // Never filter the site-wide recent feed. That operation silently hides
+    // quieter Actors whenever other Actors publish enough public activity.
+    const readout = readPublicActorTimeline === undefined ? null
+      : await readPublicActorTimeline({ identifier, maxItems: MAX_VISIBLE });
+    if (readout !== null && readout !== undefined &&
+        (!Array.isArray(readout.items) ||
+         readout.items.some(item => item.author !== identifier))) {
+      throw new TypeError("MOOSE source reader crossed Actor ownership boundaries");
+    }
+    const actorPosts = readout == null ? [] : publicItems(readout, provider);
     return {
       title: label,
       tiles: [
         { id: "public-profile", title: label, content: summary },
         { id: "activitypub-face", title: "ActivityPub", content: new URL(`/actors/${identifier}`, origin).href },
+        { id: "source-outbox", title: "Public activity source",
+          content: "The original ActivityPub outbox is the source of this Actor's public posts. This homepage is a bounded current reading.",
+          links: [{ href: new URL(`/actors/${identifier}/outbox`, origin).href, label: "Original public outbox" }] },
         ...actorPosts,
-        ...(readout.hasMore ? [{
+        ...(readout == null ? [{
+          id: "actor-feed-not-mounted", title: "Actor feed not installed",
+          content: "This site has not supplied a qualified per-Actor outbox reader; no posts are represented here.",
+        }] : readout.hasMore || readout.coverage === "bounded-source-outbox" ? [{
           id: "actor-history-note",
-          title: "Additional history",
-          content: "This is a bounded public reading, not a complete actor archive. Consult the source ActivityPub outbox for more.",
+          title: "More history may exist",
+          content: "This is a bounded first-page public reading, not proof of a complete archive. Continue through the original ActivityPub outbox.",
         }] : []),
       ],
     };
