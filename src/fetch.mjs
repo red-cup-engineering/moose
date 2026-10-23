@@ -162,7 +162,7 @@ export function createMooseSite({
         match: scopedActorHomeMatch, name: "actor-profile",
         read: context => {
           const identifier = new URL(context.request.url).pathname
-            .slice(scopedActorHomePrefix.length).replace(/\\/$/u, "");
+            .slice(scopedActorHomePrefix.length).replace(/\/$/u, "");
           return readProfile(identifier);
         },
       }]),
