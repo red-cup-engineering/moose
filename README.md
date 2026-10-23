@@ -87,3 +87,30 @@ workspace or lockfile for every repository. It should MAYBE require a
 package.json". This independent provider has a package manifest and native
 tests; publication must qualify its actual artifacts and dependencies without
 adding a provider workspace or lockfile.
+
+
+## Institutional TUFTE themes
+
+Each MOOSE site may accept a `tufteTheme` from its original, authorized
+site configuration. MOOSE forwards it as the existing Living Web Server
+`document.theme` to TUFTE's **one renderer**:
+
+```js
+createMooseSite({
+  origin: "https://community.example",
+  provider, readPublicTimeline, readPublicActor, authorizePublicRead,
+  tufteTheme: {
+    name: "civic-field-notes",
+    themeColor: "#185C66",
+    styles: "body[data-tufte-theme=civic-field-notes]{--tufte-accent:#185C66;}",
+  },
+});
+```
+
+The theme changes the human-reading shell, not the source timeline,
+publication rights, accessible semantic markup, ActivityPub actor identity,
+or JSON representation. Prefer source-qualified DTCG tokens and the original
+`web-theming-service` for design-token custody; the `tufteTheme` is
+a compiled presentation input, not the canonical culture or Brand record.
+A themed page must still pass actual WCAG 2.2, mobile/reflow, and keyboard
+tests. No inference from a themed page to published or deployed status.
