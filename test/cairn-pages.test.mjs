@@ -30,7 +30,7 @@ test("MOOSE delegates a TUFTE source page reading to original CAIRN FARS", async
 test("MOOSE refuses fake CAIRN readers, caller-supplied routes and invalid projections", async () => {
   const cairn = { kind: "cairn.fars/v1", readSigncraft: async () => ({}) };
   const ok = { cairn, principal: "host-selected", projectDocument: () => ({ title: "Known", tiles: [] }) };
-  for (const match of ["/actors/alice", "/social/people/alice", "/social", "/x//y", "/x/../y", "/"]) {
+  for (const match of ["/actors", "/actors/alice", "/social/people", "/social/people/alice", "/social", "/x//y", "/x/../y", "/"]) {
     assert.throws(() => createMooseCairnPage({ ...ok, match }), /exact non-protocol route/);
   }
   assert.throws(() => createMooseCairnPage({ ...ok, match: "/reading", cairn: { readSigncraft() {} } }), /original CAIRN/);
@@ -54,4 +54,28 @@ test("CAIRN denial is not replaced by a silent MOOSE local semantic fallback", a
   });
   await assert.rejects(page.read({}), /original source refused/);
   assert.equal(projected, false);
+});
+
+test("one enormous TUFTE tile refuses even when the tile count is small", async () => {
+  const page = createMooseCairnPage({
+    match: "/research", principal: "public", cairn: {
+      kind: "cairn.fars/v1", readSigncraft: async () => ({ source: "approved" }),
+    },
+    projectDocument: () => ({ title: "Oversized", tiles: [{ content: "🌱".repeat(40000) }] }),
+  });
+  await assert.rejects(page.read({}), /128 KiB source page budget/);
+});
+
+test("bounded UTF-8 page, invalid projection and circular output receive different outcomes", async () => {
+  const base = { match: "/research", principal: "public", cairn: {
+    kind: "cairn.fars/v1", readSigncraft: async () => ({}),
+  } };
+  const within = createMooseCairnPage({ ...base,
+    projectDocument: () => ({ title: "Research", tiles: [{ content: "🌱".repeat(32000) }] }),
+  });
+  assert.equal((await within.read({})).tiles.length, 1);
+  const circular = { title: "Cyclic", tiles: [] };
+  circular.me = circular;
+  const bad = createMooseCairnPage({ ...base, projectDocument: () => circular });
+  await assert.rejects(bad.read({}), /serializable and bounded/);
 });

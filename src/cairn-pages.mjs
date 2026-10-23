@@ -7,6 +7,7 @@
  * does not silently claim that pending receipt already exists.
  */
 const EXACT = /^\/[a-z0-9](?:[a-z0-9/_-]*[a-z0-9])?$/u;
+const MAX_PAGE_BYTES = 128 * 1024;
 
 /**
  * Bind one already-authorized SignCraft document reading through CAIRN to
@@ -18,8 +19,10 @@ export function createMooseCairnPage({
 } = {}) {
   if (typeof match !== "string" || !EXACT.test(match) ||
       match.includes("//") || match.split("/").some(part => part === "." || part === "..") ||
-      match.startsWith("/actors/") || match.startsWith("/.well-known/") ||
-      match === "/social" || match.startsWith("/social/people/")) {
+      match === "/actors" || match.startsWith("/actors/") ||
+      match.startsWith("/.well-known/") ||
+      match === "/social" || match === "/social/people" ||
+      match.startsWith("/social/people/")) {
     throw new TypeError("MOOSE CAIRN page requires one exact non-protocol route");
   }
   if (cairn?.kind !== "cairn.fars/v1" || typeof cairn.readSigncraft !== "function") {
@@ -45,6 +48,16 @@ export function createMooseCairnPage({
       if (!page || typeof page.title !== "string" || !page.title.trim() ||
           !Array.isArray(page.tiles) || page.tiles.length > 64) {
         throw new TypeError("MOOSE CAIRN projection must return one bounded TUFTE page");
+      }
+      // A count of tiles is not a byte budget: one tile can carry megabytes.
+      // Bound the adapter's JSON projection; the original renderer/host still
+      // owns its independent HTTP response-size and public-reading policy.
+      let serialized;
+      try { serialized = JSON.stringify(page); }
+      catch { throw new TypeError("MOOSE CAIRN projection must be serializable and bounded"); }
+      if (typeof serialized !== "string" ||
+          new TextEncoder().encode(serialized).byteLength > MAX_PAGE_BYTES) {
+        throw new RangeError("MOOSE CAIRN projection exceeds 128 KiB source page budget");
       }
       return page;
     },
