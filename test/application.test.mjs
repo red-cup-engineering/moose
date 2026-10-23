@@ -279,3 +279,53 @@ test("MOOSE projects the actual section resource inventory only after a separate
   assert.equal(calls, 1);
   assert.match(granted, /Source-declared access/u);
 });
+
+test("FeltOS can actually see one accepted TUFTE house homepage, article, feed and search route", async () => {
+  const provider = fixture().provider;
+  let reads = 0, permitted = false;
+  const pages = [
+    { name: "published-home", match: "/", read: () => {
+      reads++; return { title: "Original TUFTE Science", tiles: [] };
+    } },
+    { name: "admitted-article", match: "/research/study/", read: () => {
+      reads++; return { title: "Source-accepted research", tiles: [] };
+    } },
+    { name: "feed", match: "/feed.json", read: () => {
+      reads++; return new Response('{"items":[]}', {
+        headers: { "content-type": "application/feed+json" },
+      });
+    } },
+    { name: "search", match: "/search/", read: () => {
+      reads++; return { title: "Search", tiles: [] };
+    } },
+  ];
+  const site = createMooseSite({
+    origin: ORIGIN, provider, basePath: "/social", pages,
+    readPublicTimeline: async () => ({ items: [], hasMore: false }),
+    readPublicActor: async () => null,
+    authorizePublicRead: async ({ resource }) =>
+      resource === "home" || (permitted && resource !== "actor-profile"),
+  });
+  for (const path of ["/", "/research/study/", "/feed.json", "/search/"]) {
+    const route = site.resources.find(x => x.match === path);
+    assert.ok(route, "native MOOSE route must expose the original publication " + path);
+    assert.equal(route.id, "moose.page:" + path);
+    assert.equal((await route.handler({ request: new Request(ORIGIN + path) })).status, 404);
+  }
+  assert.equal(reads, 0, "private or not-yet-admitted source is not read");
+  permitted = true;
+  for (const path of ["/", "/research/study/", "/feed.json", "/search/"]) {
+    const route = site.resources.find(x => x.match === path);
+    assert.equal((await route.handler({ request: new Request(ORIGIN + path) })).status, 200);
+  }
+  assert.equal(reads, 4, "accepted page readers are original LWS paths, not a second CMS");
+  assert.equal(site.resources.filter(x => x.match === "/").length, 1);
+  assert.equal(site.resources.filter(x => x.match === "/@garden/").length, 1);
+  assert.throws(() => createMooseSite({
+    origin: ORIGIN, provider, basePath: "/social",
+    readPublicTimeline: async () => ({ items: [], hasMore: false }),
+    readPublicActor: async () => null,
+    authorizePublicRead: async () => true,
+    pages: [{ match: "/@garden/", read: () => ({ title: "Impostor" }) }],
+  }), /conflicts with an existing protocol/u);
+});
