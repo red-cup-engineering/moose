@@ -12,9 +12,12 @@ const RESERVED_PREFIXES = Object.freeze([
 ]);
 
 function exactPath(path) {
+  // TUFTE's original publication routes use `/` for the site home and
+  // `/article/` for canonical papers. Retain those exact names.
+  if (path === "/") return path;
   if (typeof path !== "string" || path.length < 2 || path.length > 512 ||
       !/^\/[a-z0-9][a-z0-9._/-]*$/u.test(path) ||
-      path.includes("//") || path.endsWith("/") ||
+      path.includes("//") ||
       path.split("/").some(part => part === "." || part === "..")) {
     throw new TypeError("MOOSE added native page needs one exact, safe path");
   }
@@ -36,8 +39,9 @@ export function exactPublicPageRoutes(pages, { basePath = "/" } = {}) {
     // Non-exact LWS routes have no finite source-qualified FeltOS path.
     if (page?.match instanceof RegExp) continue;
     const match = exactPath(page?.match);
-    const reserved = [...RESERVED_PREFIXES, ...(basePath === "/" ? [] : [basePath])]
-      .some(prefix => match === prefix || match.startsWith(prefix + "/"));
+    const reserved = (basePath === "/" && match === "/") ||
+      [...RESERVED_PREFIXES, ...(basePath === "/" ? [] : [basePath])]
+        .some(prefix => match === prefix || match.startsWith(prefix + "/"));
     if (reserved || occupied.has(match)) {
       throw new TypeError("MOOSE added native page conflicts with an existing protocol, social, or page route");
     }
