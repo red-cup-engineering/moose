@@ -1,4 +1,5 @@
 import { createLivingWebServer } from "@red-cup-engineering/living-web-server/fetch";
+import { admitMoosePublicSite } from "./section-site.mjs";
 
 const NAME = /^[a-z][a-z0-9._-]*$/u;
 const MAX_VISIBLE = 64;
@@ -54,7 +55,7 @@ function publicItems(readout, provider) {
 export function createMooseSite({
   origin, provider, readPublicTimeline, readPublicActor, readPublicActorTimeline,
   authorizePublicRead, pages = [], kv, queue, release, custodyRoot,
-  basePath = "/",
+  basePath = "/", publicSite, tufteTheme,
 } = {}) {
   const address = new URL(origin);
   if (address.origin !== origin || address.pathname !== "/" ||
@@ -75,6 +76,7 @@ export function createMooseSite({
   if (!Array.isArray(provider.identifiers) || provider.identifiers.some(id => !NAME.test(id))) {
     throw new TypeError("MOOSE site needs admitted original actor identifiers");
   }
+  const section = admitMoosePublicSite(publicSite, origin);
   const profilePrefix = basePath === "/" ? "/people/" : basePath + "/people/";
   const profileMatch = new RegExp("^" + profilePrefix.replaceAll("/", "\\/") + "[a-z][a-z0-9._-]*$", "u");
   // Human-friendly address aliases are projections of the same original Actor.
@@ -105,7 +107,11 @@ export function createMooseSite({
     const actorPosts = readout == null ? [] : publicItems(readout, provider);
     return {
       title: label,
+      ...(section ? { subtitle: section.description, navigation: section.menu } : {}),
       tiles: [
+        ...(section ? [{ id: "section-return", title: "Section public home",
+          content: "Return to the original public section website.",
+          links: [{ href: section.baseIri, label: section.name }] }] : []),
         { id: "public-profile", title: label, content: summary },
         { id: "activitypub-face", title: "ActivityPub", content: new URL(`/actors/${identifier}`, origin).href },
         { id: "source-outbox", title: "Public activity source",
@@ -126,8 +132,18 @@ export function createMooseSite({
   const readHome = async () => {
     const activities = await readPublicTimeline({ maxItems: MAX_VISIBLE });
     return {
-      title: "MOOSE — Semioverse",
+      title: section ? section.name + " · Social" : "MOOSE — Semioverse",
+      ...(section ? { subtitle: section.description, navigation: section.menu } : {}),
       tiles: [
+        ...(section ? [{
+          id: "section-entrance", title: "Public section",
+          content: section.description,
+          links: [{ href: section.baseIri, label: "Open " + section.name }],
+        }, {
+          id: "section-directory", title: "Source-owned public directory",
+          content: "These links come from the owning section's public site. Availability and authorization are determined by each destination.",
+          links: section.menu,
+        }] : []),
         { id: "introduction", title: "Federated social world", content: "Public activities from source-owned actors" },
         ...publicItems(activities, provider),
         ...(activities.hasMore ? [{
@@ -139,6 +155,8 @@ export function createMooseSite({
   };
   const website = createLivingWebServer({
     origin, authorizePublicRead,
+    // Same TUFTE renderer for source documents, social home and Actor pages.
+    ...(tufteTheme === undefined ? {} : { document: { theme: tufteTheme } }),
     ...(basePath === "/" ? { home: readHome } : {}),
     pages: [
       ...(basePath === "/" ? [] : [{ match: basePath, name: "home", read: readHome }]),
