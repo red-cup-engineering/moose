@@ -233,3 +233,49 @@ test("MOOSE refuses impersonated sections and unsafe public navigation before re
   ]) assert.throws(() => create(invalid), /MOOSE section/u);
   assert.equal(reads, 0);
 });
+
+test("MOOSE projects the actual section resource inventory only after a separate grant", async () => {
+  const provider = fixture().provider;
+  const original = {
+    baseIri: ORIGIN + "/", name: "Engineering", description: "Real tools",
+    menu: [{ href: "/resources.json", label: "Resource inventory" }],
+  };
+  let allowed = false, calls = 0;
+  const site = createMooseSite({
+    origin: ORIGIN, provider, basePath: "/social", publicSite: original,
+    authorizePublicRead: async ({ resource }) =>
+      resource !== "public-resource-inventory" || allowed,
+    readPublicTimeline: async () => ({ items: [], hasMore: false }),
+    readPublicActor: async () => null,
+    readPublicResources: async () => {
+      calls++;
+      return { type: "PublicResourceInventory", version: 1,
+        origin: ORIGIN + "/", organization: "Engineering",
+        resources: [
+          { id: "instrument", title: "Machine-readable instrument",
+            url: ORIGIN + "/resources.json", access: { mode: "public-read" },
+            humanAction: "Examine its source evidence.",
+            agentAccess: { method: "GET", mediaType: "application/json" } },
+          { id: "action", title: "Read-only MCP operation",
+            url: ORIGIN + "/mcp", access: { mode: "public-read-only-tools" },
+            humanAction: "Use an MCP client.",
+            agentAccess: { method: "POST", mediaType: "application/json" } },
+        ] };
+    },
+  });
+  const get = () => site.website.fetch(new Request(ORIGIN + "/social", {
+    headers: { accept: "text/html" },
+  }));
+  const denied = await (await get()).text();
+  assert.doesNotMatch(denied, /Machine-readable instrument/u);
+  assert.equal(calls, 0);
+  allowed = true;
+  const granted = await (await get()).text();
+  assert.match(granted, /Machine-readable instrument/u);
+  assert.match(granted, /href="https:\/\/social.example\/resources.json"/u);
+  assert.match(granted, /Read-only MCP operation/u);
+  assert.doesNotMatch(granted, /href="https:\/\/social.example\/mcp"/u,
+    "MOOSE never presents a POST-only machine API as a navigable GET link");
+  assert.equal(calls, 1);
+  assert.match(granted, /Source-declared access/u);
+});
