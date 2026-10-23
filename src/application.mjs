@@ -126,7 +126,7 @@ export function createMooseSite({
         match: actorHomeMatch,
         name: "actor-profile",
         read: context => {
-          const identifier = new URL(context.request.url).pathname.slice(actorHomePrefix.length).replace(/\\/$/u, "");
+          const identifier = new URL(context.request.url).pathname.slice(actorHomePrefix.length).replace(/\/$/u, "");
           return readProfile(identifier);
         },
       }, ...pages],
