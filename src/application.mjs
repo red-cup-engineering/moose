@@ -81,8 +81,13 @@ export function createMooseSite({
   const profileMatch = new RegExp("^" + profilePrefix.replaceAll("/", "\\/") + "[a-z][a-z0-9._-]*$", "u");
   // Human-friendly address aliases are projections of the same original Actor.
   // Never invent a second Actor, identity key, or permission at /@identifier/.
-  const actorHomePrefix = basePath === "/" ? "/@" : basePath + "/@";
+  // /@identifier/ is the portable public human address on EVERY MOOSE
+  // origin. /social only relocates the site-wide timeline, not each home.
+  const actorHomePrefix = "/@";
   const actorHomeMatch = new RegExp("^" + actorHomePrefix.replaceAll("/", "\\/") + "[a-z][a-z0-9._-]*\\/?$", "u");
+  const scopedActorHomePrefix = basePath === "/" ? null : basePath + "/@";
+  const scopedActorHomeMatch = scopedActorHomePrefix === null ? null :
+    new RegExp("^" + scopedActorHomePrefix.replaceAll("/", "\\/") + "[a-z][a-z0-9._-]*\\/?$", "u");
   const readProfile = async (identifier) => {
     if (!NAME.test(identifier) || !provider.identifiers.includes(identifier)) return null;
     const actor = await readPublicActor({ identifier });
@@ -154,7 +159,16 @@ export function createMooseSite({
           const identifier = new URL(context.request.url).pathname.slice(actorHomePrefix.length).replace(/\/$/u, "");
           return readProfile(identifier);
         },
-      }, ...pages],
+      },
+      ...(scopedActorHomeMatch === null ? [] : [{
+        match: scopedActorHomeMatch, name: "actor-profile",
+        read: context => {
+          const identifier = new URL(context.request.url).pathname
+            .slice(scopedActorHomePrefix.length).replace(/\\/$/u, "");
+          return readProfile(identifier);
+        },
+      }]),
+      ...pages],
   });
   // When another native host (FeltOS) consumes this same website, its
   // admission layer accepts only exact public routes. No path wildcard and
@@ -167,6 +181,10 @@ export function createMooseSite({
     ...provider.identifiers.flatMap(identifier => [
       { id: "moose.actor-home." + identifier, match: actorHomePrefix + identifier },
       { id: "moose.actor-home-slash." + identifier, match: actorHomePrefix + identifier + "/" },
+      ...(scopedActorHomePrefix === null ? [] : [
+        { id: "moose.actor-home-scoped." + identifier, match: scopedActorHomePrefix + identifier },
+        { id: "moose.actor-home-scoped-slash." + identifier, match: scopedActorHomePrefix + identifier + "/" },
+      ]),
     ]),
   ];
   const resources = Object.freeze(paths.map(route => Object.freeze({
