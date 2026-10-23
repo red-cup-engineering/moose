@@ -76,6 +76,25 @@ export function createMooseSite({
   }
   const profilePrefix = basePath === "/" ? "/people/" : basePath + "/people/";
   const profileMatch = new RegExp("^" + profilePrefix.replaceAll("/", "\\/") + "[a-z][a-z0-9._-]*$", "u");
+  // Human-friendly address aliases are projections of the same original Actor.
+  // Never invent a second Actor, identity key, or permission at /@identifier/.
+  const actorHomePrefix = basePath === "/" ? "/@" : basePath + "/@";
+  const actorHomeMatch = new RegExp("^" + actorHomePrefix.replaceAll("/", "\\/") + "[a-z][a-z0-9._-]*\\/?$", "u");
+  const readProfile = async (identifier) => {
+    if (!NAME.test(identifier) || !provider.identifiers.includes(identifier)) return null;
+    const actor = await readPublicActor({ identifier });
+    if (actor === null || actor === undefined) return null;
+    if (actor.identifier !== identifier) throw new TypeError("MOOSE source actor identity changed during projection");
+    const label = named(actor.name, "public actor name");
+    const summary = named(actor.summary, "public actor summary");
+    return {
+      title: label,
+      tiles: [
+        { id: "public-profile", title: label, content: summary },
+        { id: "activitypub-face", title: "ActivityPub", content: new URL(`/actors/${identifier}`, origin).href },
+      ],
+    };
+  };
   const readHome = async () => {
     const activities = await readPublicTimeline({ maxItems: MAX_VISIBLE });
     return {
@@ -100,21 +119,17 @@ export function createMooseSite({
       name: "actor-profile",
       read: async context => {
         const identifier = new URL(context.request.url).pathname.slice(profilePrefix.length);
-        if (!NAME.test(identifier)) return null;
-        const actor = await readPublicActor({ identifier });
-        if (actor === null || actor === undefined) return null;
-        if (actor.identifier !== identifier) throw new TypeError("MOOSE source actor identity changed during projection");
-        const label = named(actor.name, "public actor name");
-        const summary = named(actor.summary, "public actor summary");
-        return {
-          title: label,
-          tiles: [
-            { id: "public-profile", title: label, content: summary },
-            { id: "activitypub-face", title: "ActivityPub", content: new URL(`/actors/${identifier}`, origin).href },
-          ],
-        };
+        return readProfile(identifier);
       },
-    }, ...pages],
+    },
+      {
+        match: actorHomeMatch,
+        name: "actor-profile",
+        read: context => {
+          const identifier = new URL(context.request.url).pathname.slice(actorHomePrefix.length).replace(/\\/$/u, "");
+          return readProfile(identifier);
+        },
+      }, ...pages],
   });
   // When another native host (FeltOS) consumes this same website, its
   // admission layer accepts only exact public routes. No path wildcard and
@@ -124,6 +139,10 @@ export function createMooseSite({
     ...provider.identifiers.map(identifier => ({
       id: "moose.actor." + identifier, match: profilePrefix + identifier,
     })),
+    ...provider.identifiers.flatMap(identifier => [
+      { id: "moose.actor-home." + identifier, match: actorHomePrefix + identifier },
+      { id: "moose.actor-home-slash." + identifier, match: actorHomePrefix + identifier + "/" },
+    ]),
   ];
   const resources = Object.freeze(paths.map(route => Object.freeze({
     ...route, public: true,
