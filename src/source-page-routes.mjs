@@ -39,9 +39,14 @@ export function exactPublicPageRoutes(pages, { basePath = "/" } = {}) {
     // Non-exact LWS routes have no finite source-qualified FeltOS path.
     if (page?.match instanceof RegExp) continue;
     const match = exactPath(page?.match);
-    const reserved = (basePath === "/" && match === "/") ||
-      [...RESERVED_PREFIXES, ...(basePath === "/" ? [] : [basePath])]
-        .some(prefix => match === prefix || match.startsWith(prefix + "/"));
+    // Reserve both site and world homes, but permit distinct source-backed
+    // /social/research pages without giving them Actor or protocol routes.
+    const claimed = basePath === "/" ? RESERVED_PREFIXES : [
+      ...RESERVED_PREFIXES, basePath + "/people", basePath + "/actors",
+      basePath + "/inbox", basePath + "/outbox", basePath + "/.well-known",
+    ];
+    const reserved = match === "/" || match === basePath ||
+      claimed.some(prefix => match === prefix || match.startsWith(prefix + "/"));
     if (reserved || occupied.has(match)) {
       throw new TypeError("MOOSE added native page conflicts with an existing protocol, social, or page route");
     }
