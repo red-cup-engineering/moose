@@ -6,7 +6,8 @@
   "exports": {
     ".": "./src/application.mjs",
     "./local-node": "./src/local-node.mjs",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./cairn-pages": "./src/cairn-pages.mjs"
   },
   "bin": {
     "serve-moose": "./bin/serve.mjs"
