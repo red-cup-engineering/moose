@@ -30,7 +30,9 @@ test("MOOSE delegates a TUFTE source page reading to original CAIRN FARS", async
 test("MOOSE refuses fake CAIRN readers, caller-supplied routes and invalid projections", async () => {
   const cairn = { kind: "cairn.fars/v1", readSigncraft: async () => ({}) };
   const ok = { cairn, principal: "host-selected", projectDocument: () => ({ title: "Known", tiles: [] }) };
-  for (const match of ["/actors", "/actors/alice", "/social/people", "/social/people/alice", "/social", "/x//y", "/x/../y", "/"]) {
+  for (const match of ["/actors", "/actors/alice", "/people", "/people/alice", "/inbox", "/inbox/private",
+    "/outbox", "/outbox/actor", "/social/people", "/social/people/alice", "/social/actors",
+    "/social/actors/alice", "/social/inbox", "/social/outbox", "/social", "/x//y", "/x/../y", "/"]) {
     assert.throws(() => createMooseCairnPage({ ...ok, match }), /exact non-protocol route/);
   }
   assert.throws(() => createMooseCairnPage({ ...ok, match: "/reading", cairn: { readSigncraft() {} } }), /original CAIRN/);
