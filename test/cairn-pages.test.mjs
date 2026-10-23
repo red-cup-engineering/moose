@@ -81,3 +81,30 @@ test("bounded UTF-8 page, invalid projection and circular output receive differe
   const bad = createMooseCairnPage({ ...base, projectDocument: () => circular });
   await assert.rejects(bad.read({}), /serializable and bounded/);
 });
+
+
+test("MOOSE returns only the byte-qualified JSON snapshot, never mutable hidden TUFTE tiles", async () => {
+  const original = {
+    title: "Qualified",
+    tiles: [{ content: "unbounded".repeat(25000) }],
+    toJSON() { return { title: "Qualified", tiles: [{ content: "bounded" }] }; },
+  };
+  const base = {
+    match: "/social/research", principal: "public-reader",
+    cairn: { kind: "cairn.fars/v1", readSigncraft: async () => ({}) },
+  };
+  const result = await createMooseCairnPage({
+    ...base, projectDocument: () => original,
+  }).read({});
+  assert.deepEqual(result, { title: "Qualified", tiles: [{ content: "bounded" }] });
+  original.tiles[0].content = "later mutation";
+  assert.equal(result.tiles[0].content, "bounded", "the original projector cannot change a measured page after admission");
+
+  const disguised = createMooseCairnPage({
+    ...base, projectDocument: () => ({
+      title: "Surface", tiles: [],
+      toJSON: () => ({ title: "Surface", hidden: "tiles were removed" }),
+    }),
+  });
+  await assert.rejects(disguised.read({}), /serialized projection must retain/);
+});
