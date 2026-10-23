@@ -11,7 +11,7 @@ test("MOOSE Fetch entry owns live TUFTE pages without eager managed hosting impo
   assert.ok(live.includes("export function createMooseSite("));
   assert.ok(live.includes("createLivingWebServer({"));
   assert.ok(live.includes("readPublicActorTimeline"));
-  assert.doesNotMatch(live, /@red-cup-engineering\\/activitypub-server/u,
+  assert.equal(live.includes("@red-cup-engineering/activitypub-server"), false,
     "a site-only Worker must not eagerly import a Node-managed listener");
   assert.doesNotMatch(live, /from ["']node:/u);
   assert.ok(host.includes("serveManagedActivityPubSites"),
