@@ -17,7 +17,7 @@ test("a canonical research page is a finite native resource without becoming a n
   ]);
   assert.equal(Object.isFrozen(result), true);
   assert.ok(result.every(Object.isFrozen));
-  assert.deepEqual(pages[1], { match: "/research/jiangshi-web/", name: "science-jiangshi" },
+  assert.deepEqual(pages[0], { match: "/research/jiangshi-web/", name: "science-jiangshi" },
     "the original source page remains the owner; no rewrite or registration");
 });
 
