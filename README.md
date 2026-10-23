@@ -75,6 +75,25 @@ public Worker is now a fully hosted MOOSE. The installed LWS/TUFTE
 dependency, browser/assistive-technology behavior, exact origin routing
 and real Actor+site readback remain separate acceptance conditions.
 
+## Live, source-qualified service/resource inventory
+
+A section may separately supply `readPublicResources` to show its ORIGINAL
+typed `PublicResourceInventory` within the MOOSE `/social` page. The
+reader is called **only after** the existing `authorizePublicRead` grants
+the distinct `public-resource-inventory` resource on that request. MOOSE
+refuses a different site origin, organization name, unbounded entries,
+duplicate IDs, unsafe URLs and unsupported methods.
+
+Each resource records the owning item's declared access. Anonymous GET
+resources become normal links. Repository references say **authorization
+required**. A POST-only MCP endpoint appears with its original documented
+action but is **never rendered as a clickable GET action**. No invented
+service availability, fee, agent permission, success receipt or
+second catalog is created. This is a read-only interface that can consume
+the section's existing `resources.json` through its own authorized
+source reader (for example, the Public Web static `ASSETS` provider).
+The actual host must select and install that source reader separately.
+
 ## Native use
 
 `createMoosePublicReaders({origin, provider})` projects the current actor
