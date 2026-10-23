@@ -233,3 +233,99 @@ test("MOOSE refuses impersonated sections and unsafe public navigation before re
   ]) assert.throws(() => create(invalid), /MOOSE section/u);
   assert.equal(reads, 0);
 });
+
+test("MOOSE projects the actual section resource inventory only after a separate grant", async () => {
+  const provider = fixture().provider;
+  const original = {
+    baseIri: ORIGIN + "/", name: "Engineering", description: "Real tools",
+    menu: [{ href: "/resources.json", label: "Resource inventory" }],
+  };
+  let allowed = false, calls = 0;
+  const site = createMooseSite({
+    origin: ORIGIN, provider, basePath: "/social", publicSite: original,
+    authorizePublicRead: async ({ resource }) =>
+      resource !== "public-resource-inventory" || allowed,
+    readPublicTimeline: async () => ({ items: [], hasMore: false }),
+    readPublicActor: async () => null,
+    readPublicResources: async () => {
+      calls++;
+      return { type: "PublicResourceInventory", version: 1,
+        origin: ORIGIN + "/", organization: "Engineering",
+        resources: [
+          { id: "instrument", title: "Machine-readable instrument",
+            url: ORIGIN + "/resources.json", access: { mode: "public-read" },
+            humanAction: "Examine its source evidence.",
+            agentAccess: { method: "GET", mediaType: "application/json" } },
+          { id: "action", title: "Read-only MCP operation",
+            url: ORIGIN + "/mcp", access: { mode: "public-read-only-tools" },
+            humanAction: "Use an MCP client.",
+            agentAccess: { method: "POST", mediaType: "application/json" } },
+        ] };
+    },
+  });
+  const get = () => site.website.fetch(new Request(ORIGIN + "/social", {
+    headers: { accept: "text/html" },
+  }));
+  const denied = await (await get()).text();
+  assert.doesNotMatch(denied, /Machine-readable instrument/u);
+  assert.equal(calls, 0);
+  allowed = true;
+  const granted = await (await get()).text();
+  assert.match(granted, /Machine-readable instrument/u);
+  assert.match(granted, /href="https:\/\/social.example\/resources.json"/u);
+  assert.match(granted, /Read-only MCP operation/u);
+  assert.doesNotMatch(granted, /href="https:\/\/social.example\/mcp"/u,
+    "MOOSE never presents a POST-only machine API as a navigable GET link");
+  assert.equal(calls, 1);
+  assert.match(granted, /Source-declared access/u);
+});
+
+test("FeltOS can actually see one accepted TUFTE house homepage, article, feed and search route", async () => {
+  const provider = fixture().provider;
+  let reads = 0, permitted = false;
+  const pages = [
+    { name: "published-home", match: "/", read: () => {
+      reads++; return { title: "Original TUFTE Science", tiles: [] };
+    } },
+    { name: "admitted-article", match: "/research/study/", read: () => {
+      reads++; return { title: "Source-accepted research", tiles: [] };
+    } },
+    { name: "feed", match: "/feed.json", read: () => {
+      reads++; return new Response('{"items":[]}', {
+        headers: { "content-type": "application/feed+json" },
+      });
+    } },
+    { name: "search", match: "/search/", read: () => {
+      reads++; return { title: "Search", tiles: [] };
+    } },
+  ];
+  const site = createMooseSite({
+    origin: ORIGIN, provider, basePath: "/social", pages,
+    readPublicTimeline: async () => ({ items: [], hasMore: false }),
+    readPublicActor: async () => null,
+    authorizePublicRead: async ({ resource }) =>
+      resource === "home" || (permitted && resource !== "actor-profile"),
+  });
+  for (const path of ["/", "/research/study/", "/feed.json", "/search/"]) {
+    const route = site.resources.find(x => x.match === path);
+    assert.ok(route, "native MOOSE route must expose the original publication " + path);
+    assert.equal(route.id, "moose.page:" + path);
+    assert.equal((await route.handler({ request: new Request(ORIGIN + path) })).status, 404);
+  }
+  assert.equal(reads, 0, "private or not-yet-admitted source is not read");
+  permitted = true;
+  for (const path of ["/", "/research/study/", "/feed.json", "/search/"]) {
+    const route = site.resources.find(x => x.match === path);
+    assert.equal((await route.handler({ request: new Request(ORIGIN + path) })).status, 200);
+  }
+  assert.equal(reads, 4, "accepted page readers are original LWS paths, not a second CMS");
+  assert.equal(site.resources.filter(x => x.match === "/").length, 1);
+  assert.equal(site.resources.filter(x => x.match === "/@garden/").length, 1);
+  assert.throws(() => createMooseSite({
+    origin: ORIGIN, provider, basePath: "/social",
+    readPublicTimeline: async () => ({ items: [], hasMore: false }),
+    readPublicActor: async () => null,
+    authorizePublicRead: async () => true,
+    pages: [{ match: "/@garden/", read: () => ({ title: "Impostor" }) }],
+  }), /conflicts with an existing protocol/u);
+});

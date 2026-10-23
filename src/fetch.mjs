@@ -1,5 +1,7 @@
 import { createLivingWebServer } from "@red-cup-engineering/living-web-server/fetch";
 import { admitMoosePublicSite } from "./section-site.mjs";
+import { projectMooseResourceInventory } from "./resource-readout.mjs";
+import { exactPublicPageRoutes } from "./source-page-routes.mjs";
 
 const NAME = /^[a-z][a-z0-9._-]*$/u;
 const MAX_VISIBLE = 64;
@@ -55,7 +57,7 @@ function publicItems(readout, provider) {
 export function createMooseSite({
   origin, provider, readPublicTimeline, readPublicActor, readPublicActorTimeline,
   authorizePublicRead, pages = [], kv, queue, release, custodyRoot,
-  basePath = "/", publicSite, tufteTheme,
+  basePath = "/", publicSite, tufteTheme, readPublicResources,
 } = {}) {
   const address = new URL(origin);
   if (address.origin !== origin || address.pathname !== "/" ||
@@ -77,6 +79,10 @@ export function createMooseSite({
     throw new TypeError("MOOSE site needs admitted original actor identifiers");
   }
   const section = admitMoosePublicSite(publicSite, origin);
+  if (readPublicResources !== undefined &&
+      (typeof readPublicResources !== "function" || !section)) {
+    throw new TypeError("MOOSE resource inventory reader needs a source-owned public section");
+  }
   const profilePrefix = basePath === "/" ? "/people/" : basePath + "/people/";
   const profileMatch = new RegExp("^" + profilePrefix.replaceAll("/", "\\/") + "[a-z][a-z0-9._-]*$", "u");
   // Human-friendly address aliases are projections of the same original Actor.
@@ -129,8 +135,20 @@ export function createMooseSite({
       ],
     };
   };
-  const readHome = async () => {
+  const readHome = async context => {
     const activities = await readPublicTimeline({ maxItems: MAX_VISIBLE });
+    // Reading the public timeline does NOT grant resource-inventory access.
+    // Consult the original source authority separately, before the reader.
+    let resourceTiles = [];
+    if (readPublicResources !== undefined &&
+        await authorizePublicRead({ context, resource: "public-resource-inventory" }) === true) {
+      const observed = await readPublicResources({ context, origin, organization: section.name });
+      if (observed !== null && observed !== undefined) {
+        resourceTiles = projectMooseResourceInventory(observed, {
+          origin, organization: section.name,
+        });
+      }
+    }
     return {
       title: section ? section.name + " · Social" : "MOOSE — Semioverse",
       ...(section ? { subtitle: section.description, navigation: section.menu } : {}),
@@ -144,6 +162,11 @@ export function createMooseSite({
           content: "These links come from the owning section's public site. Availability and authorization are determined by each destination.",
           links: section.menu,
         }] : []),
+        ...(resourceTiles.length ? [{
+          id: "source-resource-inventory", title: "Public resource inventory",
+          content: "Source-declared interfaces and access terms. Links do not certify service uptime or authorize restricted actions.",
+          links: [{ href: new URL("/resources.json", origin).href, label: "Original machine-readable inventory" }],
+        }, ...resourceTiles] : []),
         { id: "introduction", title: "Federated social world", content: "Public activities from source-owned actors" },
         ...publicItems(activities, provider),
         ...(activities.hasMore ? [{
@@ -202,6 +225,10 @@ export function createMooseSite({
         { id: "moose.actor-home-scoped-slash." + identifier, match: scopedActorHomePrefix + identifier + "/" },
       ]),
     ]),
+    // Reuse source-qualified exact TUFTE pages as original FeltOS routes:
+    // the / publisher home, accepted documents, feeds and search artifacts.
+    // This consumes the original MOOSE exact-public-route procedure (#5).
+    ...exactPublicPageRoutes(pages, { basePath }),
   ];
   const resources = Object.freeze(paths.map(route => Object.freeze({
     ...route, public: true,
