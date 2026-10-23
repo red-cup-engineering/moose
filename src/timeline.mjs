@@ -124,14 +124,15 @@ export function createMoosePublicReaders({ origin, provider } = {}) {
       throw new TypeError("MOOSE source read must be bounded to 1..64 public posts");
     }
     const posts = await readPublicTimelineAtSource({
-      origin, provider, identifiers: provider.identifiers, limit: maxItems,
+      origin, provider, identifiers: provider.identifiers, limit: maxItems + 1,
     });
     return Object.freeze({
-      items: Object.freeze(posts.map(post => Object.freeze({
+      items: Object.freeze(posts.slice(0, maxItems).map(post => Object.freeze({
         id: post.id, author: post.identifier, visibility: "public",
         summary: `${post.type}: ${post.content.slice(0, 4070)}`,
       }))),
-      hasMore: false,
+      hasMore: posts.length > maxItems,
+      coverage: "bounded-source-outboxes",
     });
   };
   return Object.freeze({ readPublicActor, readPublicTimeline, readPublicActorTimeline });
