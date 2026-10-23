@@ -5,6 +5,7 @@
   "description": "MOOSE—MUD, Object Oriented, Socially Extended: reusable social/federation application over Living Web Server and ActivityPub++.",
   "exports": {
     ".": "./src/application.mjs",
+    "./fetch": "./src/fetch.mjs",
     "./local-node": "./src/local-node.mjs",
     "./package.json": "./package.json"
   },
