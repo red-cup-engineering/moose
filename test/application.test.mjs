@@ -164,3 +164,72 @@ test("Actor homepage refuses a source reader that leaks another Actor's post", a
   assert.notEqual(response.status, 200);
   assert.doesNotMatch(await response.text(), /PRIVATE_BOUNDARY/);
 });
+
+test("one original section site becomes a navigable living MOOSE social and Actor home", async () => {
+  const original = Object.freeze({
+    baseIri: ORIGIN + "/", name: "Lenticule Science",
+    description: "Public experiments, measurements and qualified research.",
+    menu: Object.freeze([
+      { href: "/research/", label: "Research" },
+      { href: "/resources.json", label: "Resource inventory" },
+      { href: "https://services.561.group/", label: "Public services" },
+    ]),
+  });
+  const provider = fixture().provider;
+  const instance = createMooseSite({
+    origin: ORIGIN, provider, basePath: "/social", publicSite: original,
+    tufteTheme: { name: "scientific-lab",
+      styles: "body[data-tufte-theme=scientific-lab]{--tufte-accent:#165D64;}" },
+    readPublicTimeline: async () => ({ items: [], hasMore: false }),
+    readPublicActor: async ({ identifier }) => ({
+      identifier, name: "Garden", summary: "Public research",
+    }),
+    readPublicActorTimeline: async () => ({ items: [], hasMore: false }),
+    authorizePublicRead: async () => true,
+  });
+  const get = async path => instance.website.fetch(new Request(ORIGIN + path, {
+    headers: { accept: "text/html" },
+  }));
+  const home = await (await get("/social")).text();
+  assert.match(home, /Lenticule Science/u);
+  assert.match(home, /scientific-lab/u);
+  assert.match(home, /Public experiments, measurements/u);
+  assert.match(home, /href="\/resources.json"/u);
+  assert.match(home, /href="\/research\/"/u);
+  assert.match(home, /https:\/\/services.561.group\//u);
+  const profile = await (await get("/@garden/")).text();
+  assert.match(profile, /Lenticule Science/u);
+  assert.match(profile, /href="https:\/\/social.example\/"/u);
+  assert.match(profile, /scientific-lab/u);
+  assert.equal(original.menu[0].href, "/research/", "MOOSE leaves the owning original untouched");
+  const json = await instance.website.fetch(new Request(ORIGIN + "/social", {
+    headers: { accept: "application/json" },
+  }));
+  assert.equal(json.status, 200);
+  const body = JSON.stringify(await json.json());
+  assert.match(body, /Lenticule Science/u);
+  assert.doesNotMatch(body, /--tufte-accent|scientific-lab/u);
+  assert.equal((await instance.website.fetch(new Request("https://elsewhere.test/social"))).status, 421);
+});
+
+test("MOOSE refuses impersonated sections and unsafe public navigation before reading source", () => {
+  const provider = fixture().provider;
+  let reads = 0;
+  const create = publicSite => createMooseSite({
+    origin: ORIGIN, provider, publicSite,
+    readPublicTimeline: async () => { reads++; return { items: [], hasMore: false }; },
+    readPublicActor: async () => null,
+    authorizePublicRead: async () => true,
+  });
+  const base = { baseIri: ORIGIN + "/", name: "Facility", description: "Test",
+    menu: [{ href: "/resources.json", label: "Resources" }] };
+  for (const invalid of [
+    { ...base, baseIri: "https://other.example/" },
+    { ...base, menu: [{ href: "javascript:alert(1)", label: "Bad" }] },
+    { ...base, menu: [{ href: "http://elsewhere.example", label: "Bad" }] },
+    { ...base, menu: [{ href: "/_private/keys", label: "Bad" }] },
+    { ...base, menu: [{ href: "/resources.json", label: "One" },
+      { href: "/resources.json", label: "Duplicate" }] },
+  ]) assert.throws(() => create(invalid), /MOOSE section/u);
+  assert.equal(reads, 0);
+});
