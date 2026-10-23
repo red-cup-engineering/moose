@@ -47,6 +47,14 @@ accepts already-authorized source and native provider capabilities.
 It returns exact, public read-only route declarations for an existing host
 alongside the Living Web Fetch application; those declarations do not create
 another HTTP listener, actor key store, social database or office authority.
+Source-authorized application `pages` with an **exact safe path** (for example
+`/research/jiangshi-web`) now project through those same route declarations
+when a FeltOS host mounts MOOSE; regular-expression/wildcard pages cannot be
+advertised as finite native exits, and ActivityPub/social reserved routes refuse
+conflicting page declarations. The site still needs the *original* LWS
+`authorizePublicRead` to approve a paper and its source reader on every
+request. This does not itself provide an article catalog, editorial admission,
+a canonical published URL, outbound syndication, or a public deployment.
 `createMooseEngine({sites})` constructs the original ActivityPub multi-site
 engine; `serveMooseSites({sites, trustProxy, hostname, port})` starts the
 managed original host with durable queue workers and source-custody shutdown.
