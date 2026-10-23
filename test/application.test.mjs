@@ -164,3 +164,57 @@ test("Actor homepage refuses a source reader that leaks another Actor's post", a
   assert.notEqual(response.status, 200);
   assert.doesNotMatch(await response.text(), /PRIVATE_BOUNDARY/);
 });
+
+test("same printable handle on two settlements never means one Actor", async () => {
+  const make = (origin, description) => {
+    const provider = {
+      origin, identifier: "garden", identifiers: ["garden"],
+      actorTypes: ["Group", "Person", "Service"],
+      routeCapabilities: { dynamicActors: true, publicObjects: true },
+      fetch: async request => new URL(request.url).pathname === "/actors/garden"
+        ? Response.json({ type: "Group", id: origin + "/actors/garden",
+          outbox: origin + "/actors/garden/outbox" })
+        : new Response(null, { status: 404 }),
+    };
+    return createMooseSite({ origin, provider, basePath: "/social",
+      readPublicTimeline: async () => ({ items: [], hasMore: false }),
+      readPublicActor: async ({ identifier }) => ({
+        identifier, name: description, summary: "Resident only at " + origin,
+      }),
+      readPublicActorTimeline: async ({ identifier }) => ({
+        items: [{ id: origin + "/actors/" + identifier + "/notes/one",
+          author: identifier, summary: description + " owns this observation",
+          visibility: "public" }],
+        hasMore: false, coverage: "bounded-source-outbox",
+      }),
+      authorizePublicRead: async () => true,
+    });
+  };
+  const first = "https://west.example", second = "https://east.example";
+  const engine = createMooseEngine({ sites: [
+    make(first, "WEST_GARDEN"), make(second, "EAST_GARDEN"),
+  ] });
+  const page = async origin => {
+    const response = await engine.fetch(new Request(origin + "/@garden/",
+      { headers: { accept: "text/html" } }));
+    assert.equal(response.status, 200);
+    return response.text();
+  };
+  const west = await page(first), east = await page(second);
+  assert.match(west, /WEST_GARDEN/);
+  assert.doesNotMatch(west, /EAST_GARDEN/);
+  assert.match(east, /EAST_GARDEN/);
+  assert.doesNotMatch(east, /WEST_GARDEN/);
+  assert.match(west, /west.example\/actors\/garden/);
+  assert.match(east, /east.example\/actors\/garden/);
+  for (const origin of [first, second]) {
+    const response = await engine.fetch(new Request(origin + "/actors/garden",
+      { headers: { accept: "application/activity+json" } }));
+    assert.equal(response.status, 200);
+    const actor = await response.json();
+    assert.equal(actor.id, origin + "/actors/garden",
+      "identical printable handles cannot rewrite the original Actor IRI");
+  }
+  assert.equal((await engine.fetch(new Request("https://third.example/@garden/"))).status, 421,
+    "an unknown settlement must not borrow an authorized Actor from either house");
+});
