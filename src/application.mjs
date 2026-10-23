@@ -87,11 +87,22 @@ export function createMooseSite({
     if (actor.identifier !== identifier) throw new TypeError("MOOSE source actor identity changed during projection");
     const label = named(actor.name, "public actor name");
     const summary = named(actor.summary, "public actor summary");
+    // A home is a living public reading, not just a business-card alias.
+    // Filter only already qualified public objects by their native actor identifier.
+    const readout = await readPublicTimeline({ maxItems: MAX_VISIBLE });
+    const actorPosts = publicItems(readout, provider).filter((_, index) =>
+      readout.items[index].author === identifier);
     return {
       title: label,
       tiles: [
         { id: "public-profile", title: label, content: summary },
         { id: "activitypub-face", title: "ActivityPub", content: new URL(`/actors/${identifier}`, origin).href },
+        ...actorPosts,
+        ...(readout.hasMore ? [{
+          id: "actor-history-note",
+          title: "Additional history",
+          content: "This is a bounded public reading, not a complete actor archive. Consult the source ActivityPub outbox for more.",
+        }] : []),
       ],
     };
   };
