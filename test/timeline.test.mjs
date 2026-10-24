@@ -196,3 +196,32 @@ test("one source-owned MOOSE reader serves both independent node and FeltOS cons
   assert.deepEqual(current.items, [], "deletion removes the current public object");
   assert.equal(current.hasMore, false);
 });
+
+test("Actor-scoped public outbox survives site-wide crowding and exposes bounded coverage", async () => {
+  const alice = Array.from({ length: 70 }, (_, i) => note("alice", "entry-" + i,
+    new Date(Date.UTC(2026, 9, 20, 0, i)).toISOString()));
+  const bob = note("bob", "quiet", "2026-10-19T00:00:00Z");
+  const { provider, calls } = source({ alice, bob: [bob] });
+  provider.identifiers = ["alice", "bob"];
+  provider.resolveActor = async identifier => ({
+    identifier, actorName: identifier, summary: "A living source Actor",
+  });
+  const readers = createMoosePublicReaders({ origin, provider });
+  const global = await readers.readPublicTimeline({ maxItems: 64 });
+  assert.equal(global.items.length, 64);
+  assert.equal(global.hasMore, true, "known truncation may never report an exhausted global feed");
+  assert.equal(global.items.some(item => item.author === "bob"), false,
+    "global truncation loses a quiet Actor's earlier source post");
+  const quiet = await readers.readPublicActorTimeline({ identifier: "bob", maxItems: 64 });
+  assert.equal(quiet.items.length, 1);
+  assert.equal(quiet.items[0].author, "bob");
+  assert.match(quiet.items[0].summary, /Body of quiet/);
+  assert.equal(quiet.sourceOutbox, origin + "/actors/bob/outbox");
+  assert.equal(quiet.coverage, "bounded-source-outbox");
+  const busy = await readers.readPublicActorTimeline({ identifier: "alice", maxItems: 64 });
+  assert.equal(busy.items.length, 64);
+  assert.equal(busy.hasMore, true, "confirmed additional original public posts");
+  assert.deepEqual(await readers.readPublicActorTimeline({ identifier: "unknown" }), null);
+  assert.ok(calls.filter(url => url.includes("/actors/bob/outbox")).length >= 2,
+    "the quiet Actor's own provider is read instead of redistributing another Actor's timeline");
+});
