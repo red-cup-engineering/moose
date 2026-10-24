@@ -107,3 +107,37 @@ test("FeltOS mounts the actual independent MOOSE application on exact native soc
   assert.equal((await get("/social/people/unknown")).status, 404);
   assert.equal((await site.website.fetch(new Request("https://foreign.example/social"))).status, 421);
 });
+
+test("a source-authorized Science article enters MOOSE and FeltOS as the SAME read-only LWS page", async () => {
+  const native = fixture();
+  let reads = 0, accepted = false;
+  const article = createMooseSite({
+    origin: ORIGIN, provider: native.provider, basePath: "/social",
+    readPublicTimeline: async () => ({ items: [], hasMore: false }),
+    readPublicActor: async () => null,
+    authorizePublicRead: async ({ resource }) => resource === "research-article" && accepted,
+    pages: [{
+      name: "research-article", match: "/research/jiangshi-web",
+      read: async () => {
+        reads++;
+        return { title: "The Jiangshi Web", tiles: [
+          { id: "canonical-research", title: "Research", content: "Source-accepted article" },
+        ] };
+      },
+    }],
+  });
+  const nativePage = article.resources.find(route => route.match === "/research/jiangshi-web");
+  assert.equal(nativePage?.id, "moose.page:/research/jiangshi-web");
+  assert.equal(nativePage?.public, true);
+  assert.equal(article.resources.filter(route => route.match === "/research/jiangshi-web").length, 1);
+  assert.equal((await nativePage.handler({ request: new Request(ORIGIN + "/research/jiangshi-web") })).status, 404,
+    "no positive original editorial/public-read decision, no article read");
+  assert.equal(reads, 0);
+  accepted = true;
+  const delivered = await nativePage.handler({ request: new Request(ORIGIN + "/research/jiangshi-web") });
+  assert.equal(delivered.status, 200);
+  assert.match(await delivered.text(), /Source-accepted article/u);
+  assert.equal(reads, 1);
+  assert.equal((await article.website.fetch(new Request(ORIGIN + "/research/other"))).status, 404,
+    "a source page does not create generic publication or a wildcard route");
+});

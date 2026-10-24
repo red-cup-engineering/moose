@@ -1,6 +1,7 @@
 import { createLivingWebServer } from "@red-cup-engineering/living-web-server/fetch";
 import { createActivityPubMultiSiteServerEngine } from "@red-cup-engineering/activitypub-server";
 import { serveManagedActivityPubSites } from "@red-cup-engineering/activitypub-server/managed-sites";
+import { exactPublicPageRoutes } from "./source-page-routes.mjs";
 
 const NAME = /^[a-z][a-z0-9._-]*$/u;
 const MAX_VISIBLE = 64;
@@ -124,6 +125,9 @@ export function createMooseSite({
     ...provider.identifiers.map(identifier => ({
       id: "moose.actor." + identifier, match: profilePrefix + identifier,
     })),
+    // The same LWS page already exists; expose its exact address to FeltOS.
+    // No wildcard gets native standing and no second page reader is created.
+    ...exactPublicPageRoutes(pages, { basePath }),
   ];
   const resources = Object.freeze(paths.map(route => Object.freeze({
     ...route, public: true,
