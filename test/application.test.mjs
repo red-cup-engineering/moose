@@ -3,7 +3,7 @@ import test from "node:test";
 import { createMooseSite, createMooseEngine } from "../src/application.mjs";
 
 const ORIGIN = "https://social.example";
-function fixture(readPublicTimeline = async () => ({ items: [], hasMore: false }), authorize = async () => true) {
+function fixture(readPublicTimeline = async () => ({ items: [], hasMore: false }), authorize = async () => true, tufteTheme) {
   const provider = {
     origin: ORIGIN,
     identifier: "garden",
@@ -23,6 +23,7 @@ function fixture(readPublicTimeline = async () => ({ items: [], hasMore: false }
     readPublicActor: async ({ identifier }) => identifier === "garden"
       ? { identifier, name: "Gardeners", summary: "Current public community" } : null,
     authorizePublicRead: authorize,
+    ...(tufteTheme === undefined ? {} : { tufteTheme }),
   });
 }
 
@@ -106,4 +107,35 @@ test("FeltOS mounts the actual independent MOOSE application on exact native soc
   assert.match(await (await get("/social/people/garden")).text(), /Gardeners/);
   assert.equal((await get("/social/people/unknown")).status, 404);
   assert.equal((await site.website.fetch(new Request("https://foreign.example/social"))).status, 421);
+});
+
+test("MOOSE applies its configured TUFTE theme to public human pages without changing ActivityPub or JSON", async () => {
+  const tufteTheme = {
+    name: "civic-field-notes",
+    themeColor: "#185C66",
+    styles: "body[data-tufte-theme=civic-field-notes]{--tufte-accent:#185C66;}",
+  };
+  const native = fixture(async () => ({ items: [{ id: ORIGIN + "/activities/public",
+    author: "garden", summary: "Original public record", visibility: "public",
+  }], hasMore: false }), async () => true, tufteTheme);
+  const human = await native.website.fetch(new Request(ORIGIN + "/", { headers: {
+    accept: "text/html",
+  } }));
+  assert.equal(human.status, 200);
+  const html = await human.text();
+  assert.match(html, /data-tufte-theme="civic-field-notes"/u);
+  assert.match(html, /--tufte-accent:#185C66/u);
+  assert.match(html, /<a class="tufte-skip" href="#tufte-content">Skip to content<\/a>/u);
+  assert.match(html, /Original public record/u);
+  const projection = await native.website.fetch(new Request(ORIGIN + "/", { headers: {
+    accept: "application/json",
+  } }));
+  const model = await projection.json();
+  assert.match(JSON.stringify(model), /Original public record/u);
+  assert.doesNotMatch(JSON.stringify(model), /--tufte-accent|civic-field-notes/u);
+  const fediverse = createMooseEngine({ sites: [native] });
+  const activity = await fediverse.fetch(new Request(ORIGIN + "/actors/garden", { headers: {
+    accept: "application/activity+json",
+  } }));
+  assert.equal((await activity.json()).type, "Group");
 });

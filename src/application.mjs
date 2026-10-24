@@ -56,7 +56,7 @@ function publicItems(readout, provider) {
 export function createMooseSite({
   origin, provider, readPublicTimeline, readPublicActor,
   authorizePublicRead, pages = [], kv, queue, release, custodyRoot,
-  basePath = "/",
+  basePath = "/", tufteTheme,
 } = {}) {
   const address = new URL(origin);
   if (address.origin !== origin || address.pathname !== "/" ||
@@ -92,6 +92,8 @@ export function createMooseSite({
   };
   const website = createLivingWebServer({
     origin, authorizePublicRead,
+    // TUFTE/LWS own presentation; MOOSE owns no CSS renderer or theme store.
+    ...(tufteTheme === undefined ? {} : { document: { theme: tufteTheme } }),
     ...(basePath === "/" ? { home: readHome } : {}),
     pages: [
       ...(basePath === "/" ? [] : [{ match: basePath, name: "home", read: readHome }]),
