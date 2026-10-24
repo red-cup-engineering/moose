@@ -196,3 +196,74 @@ test("one source-owned MOOSE reader serves both independent node and FeltOS cons
   assert.deepEqual(current.items, [], "deletion removes the current public object");
   assert.equal(current.hasMore, false);
 });
+
+
+test("original cursor-only and page=true first-page representations retain one bounded read", async () => {
+  const outbox = actorId("alice") + "/outbox";
+  const original = note("alice", "one", "2026-10-19T05:00:00Z");
+  for (const query of ["?cursor=9007199254740991", "?page=true", "?page=true&cursor=9007199254740991"]) {
+    for (const asObject of [false, true]) {
+      const first = outbox + query;
+      const calls = [];
+      const provider = { origin, async fetch(request) {
+        calls.push(request.url);
+        if (request.url === outbox) return Response.json({
+          type: "OrderedCollection", totalItems: 1,
+          first: asObject ? { id: first } : first,
+        });
+        assert.equal(request.url, first, "follow the original URI without rewriting its cursor");
+        return Response.json({ type: "OrderedCollectionPage", orderedItems: [original],
+          next: outbox + "?cursor=1" });
+      } };
+      const rows = await readPublicTimeline({ origin, provider, identifiers: ["alice"] });
+      assert.deepEqual(rows.map(row => row.id), [original.object.id]);
+      assert.deepEqual(calls, [outbox, first], "do not traverse another page");
+    }
+  }
+});
+
+test("cursor-only admission preserves original source and query refusals before fetching a page", async () => {
+  const outbox = actorId("alice") + "/outbox";
+  const refused = [
+    "https://foreign.example/actors/alice/outbox?cursor=1",
+    actorId("bob") + "/outbox?cursor=1",
+    outbox + "/other?cursor=1",
+    "https://user:password@moose.example/actors/alice/outbox?cursor=1",
+    outbox + "?cursor=1#fragment",
+    outbox + "?cursor=1&private=true",
+    outbox + "?page=false&cursor=1",
+    outbox + "?page=&cursor=1",
+    outbox,
+    outbox + "?cursor=",
+    outbox + "?cursor=1&cursor=2",
+  ];
+  for (const first of refused) {
+    const calls = [];
+    const provider = { origin, async fetch(request) {
+      calls.push(request.url);
+      return Response.json({ type: "OrderedCollection", totalItems: 1, first });
+    } };
+    await assert.rejects(readPublicTimeline({ origin, provider, identifiers: ["alice"] }),
+      /foreign or noncanonical/, first);
+    assert.deepEqual(calls, [outbox], "refuse before requesting the supplied page");
+  }
+});
+
+test("cursor-only pages still require the original page shape and 100-item bound", async () => {
+  const outbox = actorId("alice") + "/outbox";
+  for (const [page, error] of [
+    [{ type: "OrderedCollection", orderedItems: [] }, /malformed public outbox page/],
+    [{ type: "OrderedCollectionPage", orderedItems: {} }, /malformed public outbox page/],
+    [{ type: "OrderedCollectionPage", orderedItems: Array(101).fill(null) }, /exceeds a bounded page/],
+  ]) {
+    const calls = [];
+    const provider = { origin, async fetch(request) {
+      calls.push(request.url);
+      return Response.json(request.url === outbox
+        ? { type: "OrderedCollection", totalItems: 1, first: outbox + "?cursor=9007199254740991" }
+        : page);
+    } };
+    await assert.rejects(readPublicTimeline({ origin, provider, identifiers: ["alice"] }), error);
+    assert.deepEqual(calls, [outbox, outbox + "?cursor=9007199254740991"]);
+  }
+});
