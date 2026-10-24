@@ -17,8 +17,8 @@
   "dependencies": {
     "@red-cup-engineering/living-web-server": "0.1.0-dev.0",
     "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
-    "@red-cup-engineering/activitypub-engineering-services-section": "0.9.6-dev.0",
-    "@red-cup-engineering/javascript-file-engineering-services-section": "0.1.1"
+    "@red-cup-engineering/activitypub-services-section": "0.9.6-dev.0",
+    "@red-cup-engineering/javascript-file-services-section": "0.1.1"
   },
   "engines": {
     "node": ">=22.18"
