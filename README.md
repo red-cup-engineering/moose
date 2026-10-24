@@ -87,3 +87,28 @@ workspace or lockfile for every repository. It should MAYBE require a
 package.json". This independent provider has a package manifest and native
 tests; publication must qualify its actual artifacts and dependencies without
 adding a provider workspace or lockfile.
+
+## CAIRN-backed knowledge pages (source draft)
+
+MOOSE consumes source-authorized SignCraft knowledge **through CAIRN**, not
+through an independent MOOSE graph or a second codec implementation.
+`./cairn-pages` exports `createMooseCairnPage({match,cairn,principal,
+documentOptions,projectDocument})`. This creates an exact TUFTE page
+declaration to pass to the existing `createMooseSite({pages})`; it does
+**not** install a route by itself. The original CAIRN FARS source reader
+decides whether a host-selected principal may read a document. The
+publishing consumer supplies a bounded TUFTE projection, and the original
+Living Web Server still checks the site's public-read admission.
+
+For a FeltOS-native /social route, native source-page projection in existing
+MOOSE [PR #5](https://github.com/red-cup-engineering/moose/pull/5)
+must be received; this branch deliberately does not duplicate those
+pending changes. The current source uses CAIRN's explicitly supplied
+`cairn.fars/v1` runtime port; it has **not** bound a published
+`@red-cup-engineering/knowledge-system-server` package version or
+an installed SignCraft instance. It cannot by itself establish an accepted
+scientific article, a running social node, a public reading grant, a
+network publication, an ActivityPub federation or a FeltOS release.
+
+See the [original CAIRN integration issue](https://github.com/red-cup-engineering/knowledge-system-server/issues/14).
+
