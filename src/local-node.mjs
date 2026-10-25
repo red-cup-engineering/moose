@@ -1,7 +1,7 @@
 import { createFlatfileActivityPubRuntime } from "@red-cup-engineering/activitypub-services-section/flatfile-runtime";
 import { createActivityPubJournalCustody } from "@red-cup-engineering/activitypub-services-section/journal-custody";
 import { createLocalActivityPubProvider } from "@red-cup-engineering/activitypub-services-section/local-server";
-import { createMooseSite } from "./application.mjs";
+import { createMooseSite } from "./fetch.mjs";
 import { createMoosePublicReaders } from "./timeline.mjs";
 
 /**
@@ -46,12 +46,12 @@ export async function commissionLocalMooseSite({
         !local.provider.actorTypes?.includes("Group")) {
       throw new TypeError("MOOSE requires a Group-capable Fedify provider with one manually owned queue");
     }
-    const { readPublicActor, readPublicTimeline } = createMoosePublicReaders({ origin, provider: local.provider });
+    const { readPublicActor, readPublicTimeline, readPublicActorTimeline } = createMoosePublicReaders({ origin, provider: local.provider });
     const site = createMooseSite({
       origin, provider: local.provider,
       kv: custody.kv, queue: runtime.queue, release: () => local.close(),
       custodyRoot: runtime.stateDirectory,
-      readPublicTimeline, readPublicActor, authorizePublicRead,
+      readPublicTimeline, readPublicActor, readPublicActorTimeline, authorizePublicRead,
     });
     return Object.freeze({
       site,

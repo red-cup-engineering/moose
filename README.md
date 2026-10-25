@@ -30,9 +30,20 @@ both readouts. Its native peer at `/actors/:identifier/notes/:noteId` or
 original Fedify object dispatchers when the installed protocol supplier has
 public-object custody. That same URI is linked from the human timeline.
 
+The public human Actor homepage is now projected at `/@identifier/` (also
+`/@identifier`). It reads the same original Actor as `/people/:identifier`,
+plus a bounded source-owned reading of that Actor's own ActivityPub outbox, never a filter of a globally truncated feed. Missing native reader is shown as unavailable rather than falsely empty.
+The source ActivityPub Actor remains `/actors/:identifier`; the homepage is
+**not** an alternate signing identity, a new account or a separate database.
+A public feed preview is not complete history and is not permission to expose
+private or followers-only content. The old address remains available.
+Both global and per-Actor readings report bounded outbox coverage. `hasMore:
+false` means that the sampled source page supplied no confirmed additional
+post; it does not establish that a paginated source archive is exhausted.
+
 `/people/:identifier` is the standalone human actor view. With `basePath:
 "/social"`, FeltOS consumes the same MOOSE site at `/social` and
-`/social/people/:identifier` through the driver's **native-origin routes**.
+`/social/people/:identifier` through the driver's **native-origin routes**. The canonical `/@identifier/` stays at the origin root even when the timeline is mounted at `/social`; `/social/@identifier/` is only a secondary alias.
 It does not install MOOSE into MetroPlat as an enterprise application.
 The actor's signed machine face remains `/actors/:identifier`, served by the
 original provider. Other applications may independently contribute TUFTE pages.
@@ -44,7 +55,7 @@ descriptions and effective public Note/Article readouts from the existing
 signed provider. Both independent MOOSE and FeltOS use this **one** reader.
 
 `createMooseSite({origin, provider, readPublicTimeline,
-readPublicActor, authorizePublicRead, basePath, pages, kv, queue, release})`
+readPublicActor, readPublicActorTimeline, authorizePublicRead, basePath, pages, kv, queue, release})`
 accepts already-authorized source and native provider capabilities.
 It returns exact, public read-only route declarations for an existing host
 alongside the Living Web Fetch application; those declarations do not create
@@ -58,9 +69,9 @@ A source declaration alone cannot authorize an actor or serve private data.
 
 ## Release status and market requirement
 
-This source candidate is `0.1.0-dev.1`, declaring CAIRN `0.2.5-dev.0`,
+This source candidate is `0.1.0-dev.3`, declaring CAIRN `0.2.5-dev.0`,
 ActivityPub Services `0.9.6-dev.0`, ActivityPub Server `0.1.4-dev.89` and
-Living Web Server `0.1.0-dev.9`. The CAIRN source selection requires Node 24
+Living Web Server `0.1.0-dev.11`. The CAIRN source selection requires Node 24
 or later. The new CAIRN and MOOSE editions require their own native artifact
 publication and complete receiving; a source dependency declaration does not
 establish an installed FeltOS package, Cold Red Gate deployment or
@@ -68,6 +79,33 @@ Mastodon/Misskey/Lemmy interoperability. MOOSE must ultimately meet then beat
 each appropriate Fediverse incumbent in independently exercised social,
 moderation, identity, migration and operating workflows; source tests establish
 no such parity.
+
+## Fetch-only site consumer
+
+The package's `./fetch` entry exposes the existing live-site composition
+without eagerly importing Node-managed ActivityPub hosting or protocol readers.
+The original source readers are selected explicitly through `./public-readers`.
+The `.` entry keeps the original managed node and worker lifecycle.
+This is a code-level deployment prerequisite, not a claimed Worker
+installation or accepted ActivityPub federation service. Its real
+Causeway consumer must pass the same provider's per-Actor outbox reader.
+Sampled first pages do not certify the end of an Actor's published history.
+
+### Downstream application source views
+
+`./source-application` exports `createMooseApplication({origin, home, pages,
+authorizePublicRead, document})`. MOOSE social sites and ASSIST both consume
+this boundary. The original Living Web Server admits the origin and asks the
+host for permission before reading a page or JSON resource; TUFTE renders the
+returned model. Each page declares its authority name, route and source reader.
+Duplicate exact routes refuse. Route aliases can share one authority name.
+
+This entry imports no ActivityPub provider or Node listener. A public catalogue
+can therefore serve on the existing Worker without inventing a federation
+Actor. Signed federation remains a separately commissioned `createMooseSite`
+capability. The authored source reconciliation preserves the Actor-home branch
+and current CAIRN/source-page contracts; it is not a native SignCraft fabrication
+receipt.
 
 ## Required managed hosting supplier
 
@@ -115,11 +153,19 @@ cross-owner requirement remains
 
 ### Source receiving on 2026-10-25
 
-The declared Living Web Server `0.1.0-dev.0` artifact did not export `./fetch`,
-although the existing MOOSE source already imported it. This candidate selects
+The earlier declared Living Web Server `0.1.0-dev.0` artifact did not export `./fetch`,
+although the existing MOOSE source already imported it. Earlier source receiving selected
 the real published `0.1.0-dev.9` artifact, whose export map supplies that exact
 entrypoint (artifact source `9e6d657fda9df3bd50744294eb3bbd1412b854ad`).
 Node `24.22.1` received the original application contract with that supplier.
+
+The current downstream ASSIST candidate selects Living Web Server
+`0.1.0-dev.10`, which selects TUFTE `0.16.5-dev.0` for the original renderer's
+contact-link repair. These versions require upstream artifact publication and
+receiving in dependency order. The new `./source-application` entry composes
+that exact supplier without importing Node hosting or the ActivityPub provider.
+Source reconciliation and locally packed qualification do not establish a
+published cohort or an installed public host.
 
 The native result was 12 passing cases: 6 in `test/cairn-pages.test.mjs`,
 2 in `test/source-page-routes.test.mjs`, and 4 in
@@ -130,3 +176,27 @@ The original application cases exercise the Living Web and ActivityPub provider
 composition and exact FeltOS route declarations. These source-cohort results
 do not qualify publication of the new CAIRN/MOOSE editions or installed
 cross-Dimension federation.
+
+## Select the actual execution profile (0.1.0-dev.3)
+
+The mandatory installation is the original Living Web Server. Node hosting and
+federation are exact optional peers: an ordinary ASSIST Fetch application does
+not install a listener, Fedify, private-key custody or the CAIRN host.
+
+| Entry | Host-supplied package | Meaning |
+| --- | --- | --- |
+| `./source-application`, `./fetch` | None beyond Living Web Server | Source-authorized HTML/JSON or composition with an already supplied provider. |
+| `./public-readers` | ActivityPub Services `0.9.6-dev.0` | Original Actor/outbox protocol interpretation. |
+| `.` | ActivityPub Server `0.1.4-dev.89` and ActivityPub Services `0.9.6-dev.0` | Original managed social host and original public reader API. |
+| `./local-node` | ActivityPub Services `0.9.6-dev.0` | Original local key/journal/provider commissioning. |
+| `serve-moose` | The preceding host packages and JavaScript File Services `0.1.1` | Original CLI lifecycle guard. |
+| `./cairn-pages` | Host-provided original `cairn.fars/v1` capability | No copied SignCraft state or new knowledge engine. |
+
+These optional peers are development dependencies for the existing full social
+and CAIRN test suite. The CAIRN package is needed only by that suite because the
+production page adapter receives the original provider as a capability.
+A draft consumer that previously imported `createMoosePublicReaders` from
+`./fetch` must import it from `./public-readers`; the existing managed root API
+retains that export. The `test:fetch` command exercises the actual shared source
+application with real Living Web Server/TUFTE suppliers. It is distinct from the
+full social, signed-provider and local-node receiving suite.
