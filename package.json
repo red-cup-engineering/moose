@@ -12,6 +12,12 @@
     "./source-application": "./src/source-application.mjs",
     "./public-readers": "./src/timeline.mjs"
   },
+  "files": [
+    "src",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
   "bin": {
     "serve-moose": "./bin/serve.mjs"
   },
