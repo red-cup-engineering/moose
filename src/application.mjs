@@ -1,3 +1,4 @@
+import { exactPublicPageRoutes } from "./source-page-routes.mjs";
 import { createLivingWebServer } from "@red-cup-engineering/living-web-server/fetch";
 import { createActivityPubMultiSiteServerEngine } from "@red-cup-engineering/activitypub-server";
 import { serveManagedActivityPubSites } from "@red-cup-engineering/activitypub-server/managed-sites";
@@ -90,6 +91,7 @@ export function createMooseSite({
       ],
     };
   };
+  const sourcePageRoutes = exactPublicPageRoutes(pages, { basePath });
   const website = createLivingWebServer({
     origin, authorizePublicRead,
     ...(basePath === "/" ? { home: readHome } : {}),
@@ -121,6 +123,7 @@ export function createMooseSite({
   // no second listener are installed in the world driver.
   const paths = [
     { id: "moose.home", match: basePath },
+    ...sourcePageRoutes,
     ...provider.identifiers.map(identifier => ({
       id: "moose.actor." + identifier, match: profilePrefix + identifier,
     })),

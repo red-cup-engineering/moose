@@ -15,9 +15,11 @@ This app imports **Living Web Server** for live TUFTE human pages. It imports
 the existing **ActivityPub Server** for one site-aware HTTP/ActivityPub
 composition and its managed Fedify delivery lifecycle. Networking owns signed
 federation, WebFinger, inboxes, outboxes, followers and delivery. MOOSE owns the
-public social readout and its application composition. FeltOS/world authority
-and SignCell/SignGraph evidence remain upstream and are supplied through
-original source readers, never inferred from a route.
+public social readout and its application composition. CAIRN supplies the
+source-authorized SignCraft knowledge port. FeltOS is a downstream host which
+supplies its instance authority through the existing provider bindings.
+SignCell/SignGraph evidence stays with its original source readers; a route
+does not establish evidence or permission.
 
 The root page is a bounded, current source reading, not a stored feed copy.
 It now shows **effective public Note/Article objects**, not a noisy listing of
@@ -56,19 +58,16 @@ A source declaration alone cannot authorize an actor or serve private data.
 
 ## Release status and market requirement
 
-This is a source-owned *private pre-release package*, currently declaring
-ActivityPub Services `0.9.6-dev.0`, ActivityPub Server `0.1.3` and private
-Living Web Server `0.1.0-dev.0`. The hosting supplier's dependency manifest
-is updated to the new ActivityPub source, but its committed lock still names
-the older registry revision: a real locked install and release qualification
-are required before deployment. It has not been published
-to the private registry, imported by a received FeltOS package, installed on
-Cold Red Gate, or proven interoperable with Mastodon/Misskey/Lemmy. The
-Living Web Server package is currently also private source, so resolving
-the declared source imports into an installable application closure is still a
-required release step. MOOSE must ultimately meet then beat each appropriate
-Fediverse incumbent in independently exercised social, moderation, identity,
-migration, and operating workflows; these source tests establish no parity.
+This source candidate is `0.1.0-dev.1`, declaring CAIRN `0.2.5-dev.0`,
+ActivityPub Services `0.9.6-dev.0`, ActivityPub Server `0.1.4-dev.89` and
+Living Web Server `0.1.0-dev.9`. The CAIRN source selection requires Node 24
+or later. The new CAIRN and MOOSE editions require their own native artifact
+publication and complete receiving; a source dependency declaration does not
+establish an installed FeltOS package, Cold Red Gate deployment or
+Mastodon/Misskey/Lemmy interoperability. MOOSE must ultimately meet then beat
+each appropriate Fediverse incumbent in independently exercised social,
+moderation, identity, migration and operating workflows; source tests establish
+no such parity.
 
 ## Required managed hosting supplier
 
@@ -87,3 +86,47 @@ workspace or lockfile for every repository. It should MAYBE require a
 package.json". This independent provider has a package manifest and native
 tests; publication must qualify its actual artifacts and dependencies without
 adding a provider workspace or lockfile.
+
+## CAIRN-backed knowledge pages
+
+`./cairn-pages` exports the existing
+`createMooseCairnPage({match,cairn,principal,documentOptions,projectDocument})`
+composition. It consumes a host-bound CAIRN `cairn.fars/v1` reader and returns
+one page declaration for `createMooseSite({pages})`. CAIRN authorizes the
+host-selected principal before calling the original SignCraft reader. The
+publishing consumer supplies its TUFTE projection; Living Web Server separately
+checks the site's public-read policy before invoking the page.
+
+The existing projection bound is 64 tiles and 128 KiB of admitted JSON. MOOSE
+returns the measured representation, preserving the original protections against
+later mutation and `toJSON` substitutions. The original exact-page projection
+now includes eligible source pages in `site.resources`, so FeltOS receives the
+same finite route declarations as the Living Web application. Regular-expression
+pages remain unadvertised; unsafe, duplicate, home and protocol routes refuse.
+This retains one publisher and the existing site authorization.
+
+MOOSE declares the actual CAIRN source supplier, and native receiving binds
+`composeCairnFars` to the selected SignCraft `KnowledgeBase` before invoking the
+MOOSE page. The host-supplied port is an explicit capability; its shape alone is
+not origin authentication or a public reading grant. No second graph, codec,
+actor store, federation transport or listener is introduced. The original
+cross-owner requirement remains
+[CAIRN issue 14](https://github.com/red-cup-engineering/knowledge-system-server/issues/14).
+
+### Source receiving on 2026-10-25
+
+The declared Living Web Server `0.1.0-dev.0` artifact did not export `./fetch`,
+although the existing MOOSE source already imported it. This candidate selects
+the real published `0.1.0-dev.9` artifact, whose export map supplies that exact
+entrypoint (artifact source `9e6d657fda9df3bd50744294eb3bbd1412b854ad`).
+Node `24.22.1` received the original application contract with that supplier.
+
+The native result was 12 passing cases: 6 in `test/cairn-pages.test.mjs`,
+2 in `test/source-page-routes.test.mjs`, and 4 in
+`test/application.test.mjs`. The CAIRN page case constructs the actual
+SignCraft `0.5.7-dev.395` `KnowledgeBase`, binds the actual CAIRN source
+composition and checks its source document identity and authorization call.
+The original application cases exercise the Living Web and ActivityPub provider
+composition and exact FeltOS route declarations. These source-cohort results
+do not qualify publication of the new CAIRN/MOOSE editions or installed
+cross-Dimension federation.

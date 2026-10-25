@@ -1,12 +1,13 @@
 {
   "name": "@red-cup-engineering/moose",
-  "version": "0.1.0-dev.0",
+  "version": "0.1.0-dev.1",
   "type": "module",
-  "description": "MOOSE—MUD, Object Oriented, Socially Extended: reusable social/federation application over Living Web Server and ActivityPub++.",
+  "description": "MOOSE\u2014MUD, Object Oriented, Socially Extended: reusable social/federation application over Living Web Server and ActivityPub++.",
   "exports": {
     ".": "./src/application.mjs",
     "./local-node": "./src/local-node.mjs",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./cairn-pages": "./src/cairn-pages.mjs"
   },
   "bin": {
     "serve-moose": "./bin/serve.mjs"
@@ -15,13 +16,14 @@
     "test": "node --test test/*.test.mjs"
   },
   "dependencies": {
-    "@red-cup-engineering/living-web-server": "0.1.0-dev.0",
+    "@red-cup-engineering/living-web-server": "0.1.0-dev.9",
     "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
     "@red-cup-engineering/activitypub-services-section": "0.9.6-dev.0",
-    "@red-cup-engineering/javascript-file-services-section": "0.1.1"
+    "@red-cup-engineering/javascript-file-services-section": "0.1.1",
+    "@red-cup-engineering/knowledge-system-server": "0.2.5-dev.0"
   },
   "engines": {
-    "node": ">=22.18"
+    "node": ">=24"
   },
   "license": "MIT",
   "repository": {
@@ -31,5 +33,8 @@
   "funding": {
     "type": "individual",
     "url": "https://github.com/561-group/.github/blob/main/TIPS.md"
+  },
+  "devDependencies": {
+    "@red-cup-engineering/signcraft": "0.5.7-dev.395"
   }
 }
