@@ -2,7 +2,7 @@ name: MOOSE Fetch-only dependency boundary
 on:
   pull_request:
     paths:
-      - src/application.mjs
+      - src/**
       - package.json
       - test/fetch-dependency.test.mjs
       - .github/workflows/fetch-dependency.yml
