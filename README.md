@@ -69,9 +69,9 @@ A source declaration alone cannot authorize an actor or serve private data.
 
 ## Release status and market requirement
 
-This source candidate is `0.1.0-dev.2`, declaring CAIRN `0.2.5-dev.0`,
+This source candidate is `0.1.0-dev.3`, declaring CAIRN `0.2.5-dev.0`,
 ActivityPub Services `0.9.6-dev.0`, ActivityPub Server `0.1.4-dev.89` and
-Living Web Server `0.1.0-dev.10`. The CAIRN source selection requires Node 24
+Living Web Server `0.1.0-dev.11`. The CAIRN source selection requires Node 24
 or later. The new CAIRN and MOOSE editions require their own native artifact
 publication and complete receiving; a source dependency declaration does not
 establish an installed FeltOS package, Cold Red Gate deployment or
@@ -82,8 +82,9 @@ no such parity.
 
 ## Fetch-only site consumer
 
-The package's `./fetch` entry exposes the existing live-site and source
-readers without eagerly importing Node-managed ActivityPub hosting.
+The package's `./fetch` entry exposes the existing live-site composition
+without eagerly importing Node-managed ActivityPub hosting or protocol readers.
+The original source readers are selected explicitly through `./public-readers`.
 The `.` entry keeps the original managed node and worker lifecycle.
 This is a code-level deployment prerequisite, not a claimed Worker
 installation or accepted ActivityPub federation service. Its real
@@ -175,3 +176,27 @@ The original application cases exercise the Living Web and ActivityPub provider
 composition and exact FeltOS route declarations. These source-cohort results
 do not qualify publication of the new CAIRN/MOOSE editions or installed
 cross-Dimension federation.
+
+## Select the actual execution profile (0.1.0-dev.3)
+
+The mandatory installation is the original Living Web Server. Node hosting and
+federation are exact optional peers: an ordinary ASSIST Fetch application does
+not install a listener, Fedify, private-key custody or the CAIRN host.
+
+| Entry | Host-supplied package | Meaning |
+| --- | --- | --- |
+| `./source-application`, `./fetch` | None beyond Living Web Server | Source-authorized HTML/JSON or composition with an already supplied provider. |
+| `./public-readers` | ActivityPub Services `0.9.6-dev.0` | Original Actor/outbox protocol interpretation. |
+| `.` | ActivityPub Server `0.1.4-dev.89` and ActivityPub Services `0.9.6-dev.0` | Original managed social host and original public reader API. |
+| `./local-node` | ActivityPub Services `0.9.6-dev.0` | Original local key/journal/provider commissioning. |
+| `serve-moose` | The preceding host packages and JavaScript File Services `0.1.1` | Original CLI lifecycle guard. |
+| `./cairn-pages` | Host-provided original `cairn.fars/v1` capability | No copied SignCraft state or new knowledge engine. |
+
+These optional peers are development dependencies for the existing full social
+and CAIRN test suite. The CAIRN package is needed only by that suite because the
+production page adapter receives the original provider as a capability.
+A draft consumer that previously imported `createMoosePublicReaders` from
+`./fetch` must import it from `./public-readers`; the existing managed root API
+retains that export. The `test:fetch` command exercises the actual shared source
+application with real Living Web Server/TUFTE suppliers. It is distinct from the
+full social, signed-provider and local-node receiving suite.

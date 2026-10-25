@@ -42,3 +42,22 @@ test("source qualification parses the actual MOOSE Fetch, Actor outbox and appli
       { stdio: "pipe", timeout: 15_000 }), path + " must parse as native ESM");
   }
 });
+
+
+test("Fetch installation has no mandatory social or managed hosting supplier", () => {
+  const pkg = JSON.parse(file("package.json"));
+  assert.deepEqual(Object.keys(pkg.dependencies), ["@red-cup-engineering/living-web-server"]);
+  for (const [name, version] of Object.entries({
+    "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
+    "@red-cup-engineering/activitypub-services-section": "0.9.6-dev.0",
+    "@red-cup-engineering/javascript-file-services-section": "0.1.1",
+  })) {
+    assert.equal(pkg.peerDependencies[name], version);
+    assert.equal(pkg.peerDependenciesMeta[name].optional, true);
+    assert.equal(pkg.devDependencies[name], version);
+  }
+  assert.equal(pkg.exports["./public-readers"], "./src/timeline.mjs");
+  assert.doesNotMatch(file("src/fetch.mjs"), /from ["']\.\/timeline\.mjs["']/u);
+  assert.match(file("src/application.mjs"), /createMoosePublicReaders.*from ["']\.\/timeline\.mjs["']/u);
+  assert.equal(pkg.dependencies["@red-cup-engineering/knowledge-system-server"], undefined);
+});

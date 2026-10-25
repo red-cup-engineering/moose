@@ -1,7 +1,7 @@
 import { createFlatfileActivityPubRuntime } from "@red-cup-engineering/activitypub-services-section/flatfile-runtime";
 import { createActivityPubJournalCustody } from "@red-cup-engineering/activitypub-services-section/journal-custody";
 import { createLocalActivityPubProvider } from "@red-cup-engineering/activitypub-services-section/local-server";
-import { createMooseSite } from "./application.mjs";
+import { createMooseSite } from "./fetch.mjs";
 import { createMoosePublicReaders } from "./timeline.mjs";
 
 /**
