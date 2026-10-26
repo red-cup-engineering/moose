@@ -1,13 +1,16 @@
-# MOOSE — MUD, Object Oriented, Socially Extended
+# MOOSE — Multi-User Dimension, Object Oriented, Socially Extended
 
 <!-- 561-group-standards:badges:start -->
 [![Red Cup Engineering](https://img.shields.io/badge/561%20Group-Red%20Cup%20Engineering-c0392b)](https://github.com/red-cup-engineering)
-[![License: MIT](https://img.shields.io/badge/license-MIT-c0392b)](LICENSE)
+[![Source terms](https://img.shields.io/badge/license-see_NOTICE-c0392b)](NOTICE.md)
 [![Indigenous data: CARE](https://img.shields.io/badge/Indigenous%20data-CARE-4b6f44)](https://github.com/red-cup-engineering/.github/blob/main/GOVERNANCE.md)
 [![Tips welcome](https://img.shields.io/badge/tips-welcome-d4a017)](https://github.com/561-group/.github/blob/main/TIPS.md)
 <!-- 561-group-standards:badges:end -->
 
-MOOSE is the Semioverse's named, reusable **social application and platform**.
+MOOSE is the Semioverse's named, reusable **multi-user Dimension composition**:
+a MUD of many Worlds, with social views and source-owned coordination. This is
+the product contract; the current edition provides the reusable gateway and
+social/source views. Full multi-World host selection remains under development.
 Its original implementation is under Computer MUD Engineering in Computer
 Systems, not inside MetroPlat, an application site or the Fedify provider.
 
@@ -20,6 +23,28 @@ source-authorized SignCraft knowledge port. FeltOS is a downstream host which
 supplies its instance authority through the existing provider bindings.
 SignCell/SignGraph evidence stays with its original source readers; a route
 does not establish evidence or permission.
+
+## World coordination
+
+`./world-gateway` now owns the existing logical-World-to-execution-Actor gateway,
+relocated unchanged from FeltOS. It binds the original World, state authority,
+operation catalogue, issuing/receiving Actors, authenticated account and session
+to one native request. Its `invoke`/`observe` API preserves the original retained
+handle through lost replies, late custody and bounded timeouts. A pending or
+indeterminate result is observed without resending the act.
+
+The gateway consumes the original host-supplied `prepare`, `send`, `recover`
+and `result` port. ActivityPub/native Actor services retain signed transport and
+custody; the World library retains current account/session/office authorization.
+FeltOS's existing `./server/world-gateway` path is the downstream migration point.
+There is no second World store, queue or authorization database.
+
+This Node-only entry requires the exact optional peers Content Address Services
+`0.2.0` and JSON Services `0.4.0`. It does not enter the portable Fetch graph.
+Historical wire kinds and source terms remain intact; see [NOTICE](NOTICE.md).
+The complete original request, theory-to-contract mapping, ownership decision,
+verification scope and coupled Thing/World/history migration are retained in
+[Dimension and World coordination](specifications/dimension-world-coordination.md).
 
 The root page is a bounded, current source reading, not a stored feed copy.
 It now shows **effective public Note/Article objects**, not a noisy listing of
@@ -69,7 +94,7 @@ A source declaration alone cannot authorize an actor or serve private data.
 
 ## Release status and market requirement
 
-This source edition is `0.1.0-dev.75`, declaring CAIRN `0.2.5-dev.5`,
+This source edition is `0.1.0-dev.76`, declaring CAIRN `0.2.5-dev.5`,
 ActivityPub Services `0.9.6-dev.0`, ActivityPub Server `0.1.4-dev.89` and
 Living Web Server `0.1.0-dev.11`. The CAIRN finite reader requires Node 24.2
 or later. These CAIRN and MOOSE editions require their own native artifact
@@ -177,7 +202,7 @@ composition and exact FeltOS route declarations. These source-cohort results
 do not qualify publication of the new CAIRN/MOOSE editions or installed
 cross-Dimension federation.
 
-## Select the actual execution profile (0.1.0-dev.75)
+## Select the actual execution profile (0.1.0-dev.76)
 
 The runtime suppliers are the original Living Web Server and CAIRN. The
 separate `./cairn-file-claims` entry uses CAIRN; the portable `./fetch` and
@@ -193,6 +218,7 @@ Fetch application starts no listener, private-key custody or CAIRN host.
 | `./local-node` | ActivityPub Services `0.9.6-dev.0` | Original local key/journal/provider commissioning. |
 | `serve-moose` | The preceding host packages and JavaScript File Services `0.1.1` | Original CLI lifecycle guard. |
 | `./cairn-pages` | Host-provided original `cairn.fars/v1` capability | No copied SignCraft state or new knowledge engine. |
+| `./world-gateway` | Content Address Services `0.2.0` and JSON Services `0.4.0` | Original Node-only logical-World admission and recoverable native Actor coordination. |
 
 These optional peers remain development dependencies for the existing full
 social suite. The original page adapter still receives its FARS provider as

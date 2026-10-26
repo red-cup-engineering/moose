@@ -33,6 +33,7 @@ test("source qualification parses the actual MOOSE Fetch, Actor outbox and appli
     "src/source-application.mjs",
     "src/timeline.mjs",
     "src/local-node.mjs",
+    "src/world-gateway.mjs",
     "test/application.test.mjs",
     "test/timeline.test.mjs",
   ];
@@ -64,7 +65,17 @@ test("Fetch installation has no mandatory social or managed hosting supplier", (
   assert.match(file("src/application.mjs"), /createMoosePublicReaders.*from ["']\.\/timeline\.mjs["']/u);
   assert.equal(pkg.exports["./cairn-file-claims"], "./src/cairn-file-claims.mjs");
   for (const path of ["src/fetch.mjs", "src/source-application.mjs"]) {
-    assert.doesNotMatch(file(path), /from ["'](?:node:|@red-cup-engineering\/knowledge-system-server|\.\/cairn-file-claims\.mjs)/u,
-      "the separately selected CAIRN runtime export must not enter the portable Fetch import path");
+    assert.doesNotMatch(file(path), /from ["'](?:node:|@red-cup-engineering\/knowledge-system-server|\.\/(?:cairn-file-claims|world-gateway)\.mjs)/u,
+      "separate native CAIRN and World gateway exports must not enter the portable Fetch import path");
+  }
+  assert.equal(pkg.exports["./world-gateway"], "./src/world-gateway.mjs");
+  for (const [name, version] of Object.entries({
+    "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0",
+    "@red-cup-engineering/json-services-section": "0.4.0",
+  })) {
+    assert.equal(pkg.peerDependencies[name], version);
+    assert.equal(pkg.peerDependenciesMeta[name].optional, true);
+    assert.equal(pkg.devDependencies[name], version);
+    assert.equal(pkg.dependencies[name], undefined);
   }
 });
