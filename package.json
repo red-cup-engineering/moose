@@ -1,8 +1,8 @@
 {
   "name": "@red-cup-engineering/moose",
-  "version": "0.1.0-dev.76",
+  "version": "0.1.0-dev.81",
   "type": "module",
-  "description": "MOOSE—Multi-User Dimension, Object Oriented, Socially Extended: source-owned World coordination and social/federation composition over CAIRN, Living Web Server and ActivityPub++.",
+  "description": "MOOSE\u2014Multi-User Dimension, Object Oriented, Socially Extended: source-owned World coordination and social/federation composition over CAIRN, Living Web Server and ActivityPub++.",
   "exports": {
     ".": "./src/application.mjs",
     "./fetch": "./src/fetch.mjs",
@@ -12,7 +12,11 @@
     "./source-application": "./src/source-application.mjs",
     "./public-readers": "./src/timeline.mjs",
     "./cairn-file-claims": "./src/cairn-file-claims.mjs",
-    "./world-gateway": "./src/world-gateway.mjs"
+    "./world-gateway": "./src/world-gateway.mjs",
+    "./world": "./src/world.mjs",
+    "./world-reading": "./src/world-reading.mjs",
+    "./geometry": "./src/geometry.mjs",
+    "./world-history": "./src/world-history.mjs"
   },
   "files": [
     "src",
@@ -22,7 +26,8 @@
     "NOTICE.md",
     "specifications",
     "test/cairn-file-claims.test.mjs",
-    "test/world-gateway.test.mjs"
+    "test/world-gateway.test.mjs",
+    "test/world-history.test.mjs"
   ],
   "bin": {
     "serve-moose": "./bin/serve.mjs"
@@ -30,11 +35,15 @@
   "scripts": {
     "test": "node --test test/*.test.mjs",
     "test:fetch": "node --test test/fetch-dependency.test.mjs test/source-application.test.mjs test/source-page-routes.test.mjs",
-    "test:gateway": "node --test test/world-gateway.test.mjs"
+    "test:gateway": "node --test test/world-gateway.test.mjs",
+    "test:world": "node --test test/world-history.test.mjs"
   },
   "dependencies": {
     "@red-cup-engineering/living-web-server": "0.1.0-dev.11",
-    "@red-cup-engineering/knowledge-system-server": "0.2.5-dev.5"
+    "@red-cup-engineering/knowledge-system-server": "0.2.5-dev.272",
+    "@red-cup-engineering/signcell": "0.13.1-dev.0",
+    "@red-cup-engineering/computer-data-engineering-services-section": "0.2.0",
+    "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0"
   },
   "engines": {
     "node": ">=24"
@@ -53,14 +62,12 @@
     "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
     "@red-cup-engineering/activitypub-services-section": "0.9.6-dev.0",
     "@red-cup-engineering/javascript-file-services-section": "0.1.1",
-    "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0",
     "@red-cup-engineering/json-services-section": "0.4.0"
   },
   "peerDependencies": {
     "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
     "@red-cup-engineering/activitypub-services-section": "0.9.6-dev.0",
     "@red-cup-engineering/javascript-file-services-section": "0.1.1",
-    "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0",
     "@red-cup-engineering/json-services-section": "0.4.0"
   },
   "peerDependenciesMeta": {
@@ -73,15 +80,13 @@
     "@red-cup-engineering/javascript-file-services-section": {
       "optional": true
     },
-    "@red-cup-engineering/computer-content-address-engineering-services-section": {
-      "optional": true
-    },
     "@red-cup-engineering/json-services-section": {
       "optional": true
     }
   },
   "receivingTests": [
     "test/cairn-file-claims.test.mjs",
-    "test/world-gateway.test.mjs"
+    "test/world-gateway.test.mjs",
+    "test/world-history.test.mjs"
   ]
 }

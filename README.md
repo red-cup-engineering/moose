@@ -9,8 +9,8 @@
 
 MOOSE is the Semioverse's named, reusable **multi-user Dimension composition**:
 a MUD of many Worlds, with social views and source-owned coordination. This is
-the product contract; the current edition provides the reusable gateway and
-social/source views. Full multi-World host selection remains under development.
+the product contract; the current edition provides the reusable World, history and gateway
+interfaces alongside social/source views. Full multi-World host selection remains under development.
 Its original implementation is under Computer MUD Engineering in Computer
 Systems, not inside MetroPlat, an application site or the Fedify provider.
 
@@ -39,12 +39,39 @@ custody; the World library retains current account/session/office authorization.
 FeltOS's existing `./server/world-gateway` path is the downstream migration point.
 There is no second World store, queue or authorization database.
 
-This Node-only entry requires the exact optional peers Content Address Services
-`0.2.0` and JSON Services `0.4.0`. It does not enter the portable Fetch graph.
+This Node-only entry uses the exact runtime Content Address Services `0.2.0`
+and the optional JSON Services peer `0.4.0`. It does not enter the portable
+Fetch graph.
 Historical wire kinds and source terms remain intact; see [NOTICE](NOTICE.md).
 The complete original request, theory-to-contract mapping, ownership decision,
 verification scope and coupled Thing/World/history migration are retained in
 [Dimension and World coordination](specifications/dimension-world-coordination.md).
+
+### Original Worlds and one history supplier
+
+`./world`, `./world-reading` and `./geometry` own the original FeltOS World
+family. FeltOS's existing public paths forward these same function objects.
+`./world-history` forwards CAIRN's synchronous `./history` entry; World reading,
+archive bindings, occurrence frames, host admission and persistence all use
+that selected original history module. No second archive or frame registry is
+created. A copied frame cannot substitute for the original privately admitted
+frame, even when its visible fields match.
+
+`receiveComposedThingWorld` uses CAIRN's actual selected `./thing` operations
+to re-admit the original Thing composition and its relation identities. It
+projects admitted containment and exits into World observations with the
+existing source, causal parents and batch positions. Replaying the same
+composition produces no synthetic change. Its result confers neither an
+authority grant nor a movement effect. The projection does not add per-Mark
+witnesses that the original implementation did not retain.
+
+World cells and reading policies select the same original SignCell
+`0.13.1-dev.0` used by CAIRN’s history, alongside Computer Data `0.2.0` and
+Content Address `0.2.0` as exact runtime dependencies. This repairs the
+pre-existing byte-carrier rejection caused by using separate private Cell
+retention registries at the World/history boundary. Their entries remain separate from portable Fetch composition.
+The source move and actual receiving obligations are specified in
+[World and history migration](specifications/world-history-migration.md).
 
 The root page is a bounded, current source reading, not a stored feed copy.
 It now shows **effective public Note/Article objects**, not a noisy listing of
@@ -94,7 +121,7 @@ A source declaration alone cannot authorize an actor or serve private data.
 
 ## Release status and market requirement
 
-This source edition is `0.1.0-dev.76`, declaring CAIRN `0.2.5-dev.5`,
+This source edition is `0.1.0-dev.81`, declaring CAIRN `0.2.5-dev.272`,
 ActivityPub Services `0.9.6-dev.0`, ActivityPub Server `0.1.4-dev.89` and
 Living Web Server `0.1.0-dev.11`. The CAIRN finite reader requires Node 24.2
 or later. These CAIRN and MOOSE editions require their own native artifact
@@ -202,9 +229,10 @@ composition and exact FeltOS route declarations. These source-cohort results
 do not qualify publication of the new CAIRN/MOOSE editions or installed
 cross-Dimension federation.
 
-## Select the actual execution profile (0.1.0-dev.76)
+## Select the actual execution profile (0.1.0-dev.81)
 
-The runtime suppliers are the original Living Web Server and CAIRN. The
+The runtime suppliers are the original Living Web Server, CAIRN and the
+World family’s exact Cell, Data and Content Address services. The
 separate `./cairn-file-claims` entry uses CAIRN; the portable `./fetch` and
 `./source-application` entries do not eagerly import that native reader.
 Node hosting and federation remain exact optional peers. An ordinary ASSIST
@@ -218,7 +246,8 @@ Fetch application starts no listener, private-key custody or CAIRN host.
 | `./local-node` | ActivityPub Services `0.9.6-dev.0` | Original local key/journal/provider commissioning. |
 | `serve-moose` | The preceding host packages and JavaScript File Services `0.1.1` | Original CLI lifecycle guard. |
 | `./cairn-pages` | Host-provided original `cairn.fars/v1` capability | No copied SignCraft state or new knowledge engine. |
-| `./world-gateway` | Content Address Services `0.2.0` and JSON Services `0.4.0` | Original Node-only logical-World admission and recoverable native Actor coordination. |
+| `./world-gateway` | JSON Services `0.4.0`; Content Address is a runtime dependency | Original Node-only logical-World admission and recoverable native Actor coordination. |
+| `./world`, `./world-reading`, `./geometry`, `./world-history` | None beyond the declared runtime suppliers | Original World observations and readings; one CAIRN-selected history and Thing implementation. |
 
 These optional peers remain development dependencies for the existing full
 social suite. The original page adapter still receives its FARS provider as

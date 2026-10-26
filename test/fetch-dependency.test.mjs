@@ -34,6 +34,10 @@ test("source qualification parses the actual MOOSE Fetch, Actor outbox and appli
     "src/timeline.mjs",
     "src/local-node.mjs",
     "src/world-gateway.mjs",
+    "src/world.mjs",
+    "src/world-reading.mjs",
+    "src/world-history.mjs",
+    "src/geometry.mjs",
     "test/application.test.mjs",
     "test/timeline.test.mjs",
   ];
@@ -50,6 +54,9 @@ test("Fetch installation has no mandatory social or managed hosting supplier", (
   assert.deepEqual(Object.keys(pkg.dependencies), [
     "@red-cup-engineering/living-web-server",
     "@red-cup-engineering/knowledge-system-server",
+    "@red-cup-engineering/signcell",
+    "@red-cup-engineering/computer-data-engineering-services-section",
+    "@red-cup-engineering/computer-content-address-engineering-services-section",
   ]);
   for (const [name, version] of Object.entries({
     "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
@@ -65,12 +72,22 @@ test("Fetch installation has no mandatory social or managed hosting supplier", (
   assert.match(file("src/application.mjs"), /createMoosePublicReaders.*from ["']\.\/timeline\.mjs["']/u);
   assert.equal(pkg.exports["./cairn-file-claims"], "./src/cairn-file-claims.mjs");
   for (const path of ["src/fetch.mjs", "src/source-application.mjs"]) {
-    assert.doesNotMatch(file(path), /from ["'](?:node:|@red-cup-engineering\/knowledge-system-server|\.\/(?:cairn-file-claims|world-gateway)\.mjs)/u,
-      "separate native CAIRN and World gateway exports must not enter the portable Fetch import path");
+    assert.doesNotMatch(file(path), /from ["'](?:node:|@red-cup-engineering\/knowledge-system-server|\.\/(?:cairn-file-claims|world(?:-gateway|-reading|-history)?|geometry)\.mjs)/u,
+      "separate native CAIRN and World exports must not enter the portable Fetch import path");
   }
   assert.equal(pkg.exports["./world-gateway"], "./src/world-gateway.mjs");
+  for (const entry of ["world", "world-reading", "world-history", "geometry"]) {
+    assert.equal(pkg.exports["./" + entry], "./src/" + entry + ".mjs");
+  }
   for (const [name, version] of Object.entries({
+    "@red-cup-engineering/signcell": "0.13.1-dev.0",
+    "@red-cup-engineering/computer-data-engineering-services-section": "0.2.0",
     "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0",
+  })) {
+    assert.equal(pkg.dependencies[name], version);
+    assert.equal(pkg.peerDependencies[name], undefined);
+  }
+  for (const [name, version] of Object.entries({
     "@red-cup-engineering/json-services-section": "0.4.0",
   })) {
     assert.equal(pkg.peerDependencies[name], version);

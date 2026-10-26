@@ -12,6 +12,13 @@ emsenn, 2026-10-25 (America/Chicago), supplied this complete requirement:
 >
 > We want to target this toward the 561 Group Semioverse being able to run more autonomously and distributed, by more stuff happening through our ActivityPub++ network using standard data formats to coordinate everything as Things in Worlds, realizing and using our best ideas on ledgers, modalities, messages, channels, actors.
 
+In the renewed instruction, emsenn added:
+
+> you need to treat this all like shit no sane engineer would tolerate, pretend you're a human engineer from the 80s laughing at vibeslop,a nd actually fix shit.
+
+That instruction requires executed source correction and receiving. It does not
+turn a source move into evidence for unimplemented distributed behavior.
+
 The whole requirement remains the governing outcome. A source relocation below
 completes one prerequisite; it does not replace the multi-World requirement with
 an HTTP façade, nor establish autonomous operation merely by exposing a method.
@@ -175,7 +182,7 @@ Alternatives considered:
 | Owner | Responsibility |
 | --- | --- |
 | SignCraft and its original upstream providers | Thing identity, witnessed relations, causal history, evidence operations and original semantic computation. |
-| CAIRN | Source custody and authorized knowledge/codecs; the required original Thing/history port remains a specific missing edge. |
+| CAIRN | Source custody and authorized knowledge/codecs; synchronous original Thing/history ports now retain the selected SignCraft instance. |
 | MOOSE | Composition of a multi-user Dimension, World-facing Actor/message/channel relationships and the reusable logical-World gateway. |
 | ActivityPub and Computer System providers | Signed protocol admission, keys, request/reply custody, execution-state transitions and transport. |
 | FeltOS | Hosting, lifecycle, World/library selection, live process/resource management, local state ownership and effect admission. |
@@ -204,8 +211,8 @@ provenance are retained in `NOTICE.md`; the move does not relicense that body.
 
 The original content-address supplier `0.2.0` and JSON supplier `0.4.0` provide
 semantic identity and canonical JSON. No local imitation or new encoder replaces
-them. These are optional host peers for this Node entry, with exact development
-selections for its receiving tests. They do not become eager Fetch imports.
+them. Content Address becomes a runtime dependency with the World family move; JSON
+remains an optional host peer with an exact development selection for receiving. They do not become eager Fetch imports.
 
 FeltOS's existing `./server/world-gateway` path forwards the same original MOOSE
 exports. Its `serve-instance` requester, `instance-config` reader and MetroPlat
