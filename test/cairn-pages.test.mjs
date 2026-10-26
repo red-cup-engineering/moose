@@ -29,8 +29,10 @@ test("MOOSE delegates a TUFTE source page reading to original CAIRN FARS", async
   const result = await page.read({ request: new Request("https://social.example/social/research") });
   assert.equal(result.title, "A received observation");
   assert.equal(result.tiles[0].content, signcraft.document(documentOptions).id);
-  assert.deepEqual(seen, [{ principal: "public-source-reader", resource: "signcraft",
-    operation: "document", options: documentOptions }]);
+  assert.equal(seen.length, 2, "original CAIRN authorizes both before and after the document read");
+  assert.equal(seen[1], seen[0], "the final check retains the same captured authorization request");
+  assert.deepEqual(seen[0], { principal: "public-source-reader", resource: "signcraft",
+    operation: "document", options: documentOptions });
 });
 
 test("MOOSE refuses missing CAIRN ports, caller-supplied routes and invalid projections", async () => {

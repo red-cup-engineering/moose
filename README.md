@@ -69,10 +69,10 @@ A source declaration alone cannot authorize an actor or serve private data.
 
 ## Release status and market requirement
 
-This source candidate is `0.1.0-dev.3`, declaring CAIRN `0.2.5-dev.0`,
+This source edition is `0.1.0-dev.75`, declaring CAIRN `0.2.5-dev.5`,
 ActivityPub Services `0.9.6-dev.0`, ActivityPub Server `0.1.4-dev.89` and
-Living Web Server `0.1.0-dev.11`. The CAIRN source selection requires Node 24
-or later. The new CAIRN and MOOSE editions require their own native artifact
+Living Web Server `0.1.0-dev.11`. The CAIRN finite reader requires Node 24.2
+or later. These CAIRN and MOOSE editions require their own native artifact
 publication and complete receiving; a source dependency declaration does not
 establish an installed FeltOS package, Cold Red Gate deployment or
 Mastodon/Misskey/Lemmy interoperability. MOOSE must ultimately meet then beat
@@ -177,11 +177,13 @@ composition and exact FeltOS route declarations. These source-cohort results
 do not qualify publication of the new CAIRN/MOOSE editions or installed
 cross-Dimension federation.
 
-## Select the actual execution profile (0.1.0-dev.3)
+## Select the actual execution profile (0.1.0-dev.75)
 
-The mandatory installation is the original Living Web Server. Node hosting and
-federation are exact optional peers: an ordinary ASSIST Fetch application does
-not install a listener, Fedify, private-key custody or the CAIRN host.
+The runtime suppliers are the original Living Web Server and CAIRN. The
+separate `./cairn-file-claims` entry uses CAIRN; the portable `./fetch` and
+`./source-application` entries do not eagerly import that native reader.
+Node hosting and federation remain exact optional peers. An ordinary ASSIST
+Fetch application starts no listener, private-key custody or CAIRN host.
 
 | Entry | Host-supplied package | Meaning |
 | --- | --- | --- |
@@ -192,11 +194,24 @@ not install a listener, Fedify, private-key custody or the CAIRN host.
 | `serve-moose` | The preceding host packages and JavaScript File Services `0.1.1` | Original CLI lifecycle guard. |
 | `./cairn-pages` | Host-provided original `cairn.fars/v1` capability | No copied SignCraft state or new knowledge engine. |
 
-These optional peers are development dependencies for the existing full social
-and CAIRN test suite. The CAIRN package is needed only by that suite because the
-production page adapter receives the original provider as a capability.
+These optional peers remain development dependencies for the existing full
+social suite. The original page adapter still receives its FARS provider as
+a host capability; the finite-claims export instead forwards the declared
+CAIRN runtime supplier without changing the Fetch entry's import boundary.
 A draft consumer that previously imported `createMoosePublicReaders` from
 `./fetch` must import it from `./public-readers`; the existing managed root API
 retains that export. The `test:fetch` command exercises the actual shared source
 application with real Living Web Server/TUFTE suppliers. It is distinct from the
 full social, signed-provider and local-node receiving suite.
+
+# Original CAIRN finite claim capability
+
+`@red-cup-engineering/moose/cairn-file-claims` forwards the original CAIRN
+`readCairnFiniteFileClaims`, `encodeCairnFiniteFileClaims`, and
+`admitCairnFiniteFileClaims` functions without wrapping or reimplementing them.
+CAIRN is a runtime dependency for this export. The native host supplies its
+complete finite selection and actual source/reader policies; MOOSE contributes
+no filesystem root, reader identity, graph, codec, or grant. FeltOS can use this
+port in its original one-shot child without constructing a graph in the
+serving parent. The existing Living Web/public page authorization remains an
+independent interface and does not authorize the finite source population.

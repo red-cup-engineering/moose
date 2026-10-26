@@ -46,7 +46,10 @@ test("source qualification parses the actual MOOSE Fetch, Actor outbox and appli
 
 test("Fetch installation has no mandatory social or managed hosting supplier", () => {
   const pkg = JSON.parse(file("package.json"));
-  assert.deepEqual(Object.keys(pkg.dependencies), ["@red-cup-engineering/living-web-server"]);
+  assert.deepEqual(Object.keys(pkg.dependencies), [
+    "@red-cup-engineering/living-web-server",
+    "@red-cup-engineering/knowledge-system-server",
+  ]);
   for (const [name, version] of Object.entries({
     "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
     "@red-cup-engineering/activitypub-services-section": "0.9.6-dev.0",
@@ -59,5 +62,9 @@ test("Fetch installation has no mandatory social or managed hosting supplier", (
   assert.equal(pkg.exports["./public-readers"], "./src/timeline.mjs");
   assert.doesNotMatch(file("src/fetch.mjs"), /from ["']\.\/timeline\.mjs["']/u);
   assert.match(file("src/application.mjs"), /createMoosePublicReaders.*from ["']\.\/timeline\.mjs["']/u);
-  assert.equal(pkg.dependencies["@red-cup-engineering/knowledge-system-server"], undefined);
+  assert.equal(pkg.exports["./cairn-file-claims"], "./src/cairn-file-claims.mjs");
+  for (const path of ["src/fetch.mjs", "src/source-application.mjs"]) {
+    assert.doesNotMatch(file(path), /from ["'](?:node:|@red-cup-engineering\/knowledge-system-server|\.\/cairn-file-claims\.mjs)/u,
+      "the separately selected CAIRN runtime export must not enter the portable Fetch import path");
+  }
 });
