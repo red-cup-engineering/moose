@@ -53,7 +53,7 @@ const occurrencePolicy = MooseReading.defineWorldReadingPolicy({
 
 test('MOOSE World and history retain the actual selected CAIRN original supplier', t => {
   assert.equal(selectedManifest.name, '@red-cup-engineering/signcraft');
-  assert.equal(selectedManifest.version, '0.6.1-dev.4');
+  assert.equal(selectedManifest.version, '0.6.1-dev.471');
   assert.equal(blobOf(historyPath), 'e7f0a1ff039b50662c11b3018881b20a63c3fd0b');
   assert.equal(blobOf(thingPath), '2bcea3ab88f077829608f6621b19c76135a49082');
   t.diagnostic(JSON.stringify({ version: selectedManifest.version, gitHead: selectedManifest.gitHead,

@@ -77,6 +77,12 @@ All five history/provider and retained-representative cases passed in that
 layout. The full MOOSE clean npm gate remains the required downstream check.
 The history body changes only its original-provider import.
 
+The original publisher released this source as SignCraft `0.6.1-dev.471` on
+2026-10-26. Its 57 packaged source files match the merged source, and its
+selected Cell supplier is the published `0.13.1-dev.163`. The consumer
+continuation selects that artifact through CAIRN, preserving CAIRN’s merged
+shared-graph file population at `5842c770056f456b39c1916ef57cfaf1fd28a299`.
+
 FeltOS's three public entries forward all 75 original values. All 32 former
 history imports (12 runtime and 20 test imports) are routed through MOOSE;
 the two relocated runtime modules then resolve CAIRN from MOOSE's own context.
