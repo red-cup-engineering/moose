@@ -1,0 +1,525 @@
+{
+  "kind": "native-supplier-adoption-qualification",
+  "recordedAt": "2026-10-26T20:41:05.130087+00:00",
+  "repository": "red-cup-engineering/moose",
+  "baseCommit": "1fc8bedfc971a8bd9ef0606b1e6fb348dac80ced",
+  "status": "bounded CAIRN adoption received; one independently reproduced pre-existing social cursor failure remains owned by open PR 3",
+  "scope": {
+    "change": "Adopt issued CAIRN 0.2.5-dev.356 in the existing MOOSE owner; preserve native World/history/Thing and portable Fetch boundaries.",
+    "runtimeSourceChanges": 0,
+    "manifestChange": "Only dependencies.@red-cup-engineering/knowledge-system-server changes from 0.2.5-dev.280 to 0.2.5-dev.356. All other package fields and pins are structurally identical.",
+    "sourcePackageVersionRetained": "0.1.0-dev.84",
+    "sourceChanges": [
+      {
+        "path": "README.md",
+        "baseGitBlob": "b717632fb1e167a565cdc67685383e22646b5da5",
+        "bytes": 17722,
+        "sha256": "d630c88241b891d0d94cc5696d8d0ed0b060ea34cdfe8116c4de87e5734d8a31",
+        "gitBlob": "d7d2cd10defd78cf8ec79f4a3e14c6e8269d294f"
+      },
+      {
+        "path": "package.json",
+        "baseGitBlob": "fbfdb74d0f8fadc96d9116e7e85c45f7aaccacd5",
+        "bytes": 3470,
+        "sha256": "020196b847cf6dee654a2f613a397ba11f93587ec0dec50fde28f5faf639fadd",
+        "gitBlob": "bd1ebb339f49547ec819c91f5f3336c3b3e91625"
+      },
+      {
+        "path": "test/world-history.test.mjs",
+        "baseGitBlob": "d222ac08c866b3f94c68b0a079b7d3fcb5a36cdf",
+        "bytes": 18966,
+        "sha256": "19f00ddfe88de49265ca68139037bcbdcee4d8c0440673468a6865e13677201e",
+        "gitBlob": "1140d88056d45463a2350c363862f83539117e58"
+      }
+    ],
+    "originalBlobsVerifiedBeforeEditing": 32,
+    "originalBlobsStillUnchanged": 29,
+    "snapshot": "Exact source files materialized from official GitHub blobs and matching issued MOOSE 84 files; no synthetic git history."
+  },
+  "intake": {
+    "openIndependentIssues": 0,
+    "openPullRequests": [
+      {
+        "number": 10,
+        "title": "Make MOOSE section resource inventories actionable without inventing GET or authority",
+        "head": "403ba19ecf25c730cc9bc87da93b5e0cbf816395",
+        "headBranch": "feat/section-resource-inventory-moose-20261023"
+      },
+      {
+        "number": 9,
+        "title": "Consume CAIRN FARS source-authorized SignCraft pages through existing MOOSE site",
+        "head": "37774ed5f37ed5e566cf8e8e4ece053494406b04",
+        "headBranch": "feat/consume-cairn-fars-pages-20261023"
+      },
+      {
+        "number": 8,
+        "title": "Make each MOOSE section a real navigable house, not a generic social screen",
+        "head": "8d7fce3270c1f2b7c85f1d616d900ee96279ead9",
+        "headBranch": "feat/section-sourced-public-moose-homes-20261023"
+      },
+      {
+        "number": 7,
+        "title": "Let each MOOSE site theme its one LWS/TUFTE renderer",
+        "head": "af045dd4d79fc60f219fea3f10df587a933d6f71",
+        "headBranch": "feat/source-owned-tufte-theme-in-moose-20261023"
+      },
+      {
+        "number": 5,
+        "title": "Expose source-authorized research pages through original MOOSE/FeltOS routes",
+        "head": "d2c63b92c9a88a445fabe63a0cdd85c935cb1ffe",
+        "headBranch": "fix/exact-research-pages-feltos-20261022"
+      },
+      {
+        "number": 3,
+        "title": "Accept original cursor-only outbox first pages",
+        "head": "4f2381f346ad0bf2462fd69301e61a7dcad73950",
+        "headBranch": "fix/cursor-only-outbox-first-page"
+      }
+    ],
+    "branchCount": 19,
+    "otherBranchesCompared": 18,
+    "result": "No newer CAIRN adoption on current main or reviewed branches. Preserve ongoing PR ownership; no cursor, section, source-route or FARS changes are incorporated."
+  },
+  "supplier": {
+    "name": "@red-cup-engineering/knowledge-system-server",
+    "version": "0.2.5-dev.356",
+    "gitHead": "4504657f251ca5692348aee5066bad53137b803c",
+    "url": "https://registry.561.group/@red-cup-engineering/knowledge-system-server/-/knowledge-system-server-0.2.5-dev.356.tgz",
+    "integrity": "sha512-oO9jXvoKWvHlyJSBLsHnzKsIKCJqHKxCDRlFwTbLSNI4Mvr4rbLvSrRRJPNf9S/QmExfXCwefusbL6tYeQhQgg==",
+    "sha256": "d7761cf8777f22622269f719e7afa589cf304e02efcc4b56ad645bddfdbeba06",
+    "bytes": 468908,
+    "files": 136,
+    "sourceExactNonmanifestFiles": 135,
+    "manifestChanges": [
+      "version",
+      "gitHead"
+    ]
+  },
+  "providers": {
+    "installation": "Reuse nine exact original direct/dev/optional-peer providers through symlinks; CAIRN selects the independently verified actual published archive. No new install or lock file.",
+    "freshFrozenInstall": false,
+    "originalLockOrWorkspacePresent": false,
+    "allNineManifestsAndSelectedPathsRecheckedAfterTests": true,
+    "actualCairn136ArchiveMembersUnchangedAfterReceiving": true,
+    "selected": {
+      "@red-cup-engineering/living-web-server": {
+        "version": "0.1.0-dev.11",
+        "realpath": "/workspace/scratch/455c183ed200/feltos/node_modules/.pnpm/@red-cup-engineering+living-web-server@0.1.0-dev.11_@red-cup-engineering+computer-seria_dfefc41eaaf14810d8a87796add691c6/node_modules/@red-cup-engineering/living-web-server",
+        "manifestSha256": "404e34681023b6212e99f4343f645e4b14db427fe8ac967ae22746691a7a998a",
+        "gitHead": "5044f78201cad7e2c77b977c47061b75e770fbd9"
+      },
+      "@red-cup-engineering/knowledge-system-server": {
+        "version": "0.2.5-dev.356",
+        "realpath": "/workspace/scratch/455c183ed200/evidence/published-cairn-356/package",
+        "manifestSha256": "9f0c94ea10b33a0064a0e04f6506c1ebc005eb8e31e886ddde89c71bf5c2fada",
+        "gitHead": "4504657f251ca5692348aee5066bad53137b803c"
+      },
+      "@red-cup-engineering/computer-data-engineering-services-section": {
+        "version": "0.2.0",
+        "realpath": "/workspace/scratch/455c183ed200/feltos/node_modules/.pnpm/@red-cup-engineering+computer-data-engineering-services-section@0.2.0/node_modules/@red-cup-engineering/computer-data-engineering-services-section",
+        "manifestSha256": "d054adc1d03cd518eff79b3e25e3cacaf2ec914e45dde17df80e9196c8063e3c",
+        "gitHead": null
+      },
+      "@red-cup-engineering/signcraft": {
+        "version": "0.5.7-dev.395",
+        "realpath": "/workspace/scratch/455c183ed200/feltos/node_modules/.pnpm/@red-cup-engineering+signcraft@0.5.7-dev.395/node_modules/@red-cup-engineering/signcraft",
+        "manifestSha256": "229a317d42e063497b3a202b489d7ac87ad7b619547f6089429088f688df33b0",
+        "gitHead": "9eb2124fdd8c7582035b13557ff2600a17039842"
+      },
+      "@red-cup-engineering/activitypub-server": {
+        "version": "0.1.4-dev.89",
+        "realpath": "/workspace/scratch/455c183ed200/feltos/node_modules/.pnpm/@red-cup-engineering+activitypub-server@0.1.4-dev.89_@types+node@26.6.5_bufferutil@4.1._c4ba6c7efed53146f28a0a3eaa30880b/node_modules/@red-cup-engineering/activitypub-server",
+        "manifestSha256": "1484a8524426c66cd1e1f91edbdafc9a29efee581f8bd6f84a6e6c438e883ba5",
+        "gitHead": "26acb5ebcb97f9aac3f4f2f214d86c98244e08ce"
+      },
+      "@red-cup-engineering/activitypub-services-section": {
+        "version": "0.9.6-dev.0",
+        "realpath": "/workspace/scratch/455c183ed200/feltos/node_modules/.pnpm/@red-cup-engineering+activitypub-services-section@0.9.6-dev.0_@types+node@26.6.5_buffer_eaedc171ccbbb2ca4b7ee3acec6368a4/node_modules/@red-cup-engineering/activitypub-services-section",
+        "manifestSha256": "b9d3defc29f7eefa188296b367406e0bbe6fa4c2993ad4c69a47eff189ba07d1",
+        "gitHead": "98c97282089f73b2edd3abb11623e2b8fe189d11"
+      },
+      "@red-cup-engineering/javascript-file-services-section": {
+        "version": "0.1.1",
+        "realpath": "/workspace/scratch/455c183ed200/feltos/node_modules/.pnpm/@red-cup-engineering+javascript-file-services-section@0.1.1/node_modules/@red-cup-engineering/javascript-file-services-section",
+        "manifestSha256": "1d78ca3f6045525d98eaa3f7bbf9cc8aa4a12cc206c05f9242f520b8b2a925bc",
+        "gitHead": null
+      },
+      "@red-cup-engineering/json-services-section": {
+        "version": "0.4.0",
+        "realpath": "/workspace/scratch/455c183ed200/feltos/node_modules/.pnpm/@red-cup-engineering+json-services-section@0.4.0/node_modules/@red-cup-engineering/json-services-section",
+        "manifestSha256": "1b5945abba04ed87ad57a2a97586ee03b4742d8539fe43c2fabdec1161c181be",
+        "gitHead": null
+      },
+      "@red-cup-engineering/computer-content-address-engineering-services-section": {
+        "version": "0.2.0",
+        "realpath": "/workspace/scratch/455c183ed200/feltos/node_modules/.pnpm/@red-cup-engineering+computer-content-address-engineering-services-section@0.2.0/node_modules/@red-cup-engineering/computer-content-address-engineering-services-section",
+        "manifestSha256": "cff45a5b99d892048b7e50ec4516e435f1c00cbe7d0e316e9307fe10fdc400c4",
+        "gitHead": null
+      }
+    }
+  },
+  "originalWorldSelection": {
+    "cairnVersion": "0.2.5-dev.356",
+    "signcraftVersion": "0.6.1-dev.495",
+    "signcraftGitHead": "1bb1a43ffe2df068f34ae7455c7540e9a76fc706",
+    "historyGitBlob": "e7f0a1ff039b50662c11b3018881b20a63c3fd0b",
+    "thingGitBlob": "2bcea3ab88f077829608f6621b19c76135a49082",
+    "cellPortGitBlob": "40d7d947430ad944f9baa2172c34cfceb1abdd41",
+    "cellPortSource": "export * from \"@red-cup-engineering/signcell/cell\"; export { articulatingUtter, articulatingPair } from \"@red-cup-engineering/signcell/utterance\";",
+    "expectationCorrection": "Assert the complete exact union and strict original function identities from both selected SignCell ports; preserve unchanged history/Thing source hashes. This is not a subset comparison.",
+    "selectedCraftCellSignCellVersion": "0.13.1-dev.185",
+    "historicalDirectDevSigncraftRetained": "0.5.7-dev.395",
+    "boundary": "Original supplier selection and private content retention stay together; this adoption does not replace CAIRN history or add a journal-query API to it."
+  },
+  "native": {
+    "cwd": "/workspace/scratch/455c183ed200/moose",
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "--test",
+      "--test-reporter=tap",
+      "test/application.test.mjs",
+      "test/cairn-file-claims.test.mjs",
+      "test/cairn-pages.test.mjs",
+      "test/fetch-dependency.test.mjs",
+      "test/local-node.test.mjs",
+      "test/source-application.test.mjs",
+      "test/source-page-routes.test.mjs",
+      "test/timeline.test.mjs",
+      "test/world-gateway.test.mjs",
+      "test/world-history.test.mjs"
+    ],
+    "startedAt": "2026-10-26T20:38:05.027Z",
+    "finishedAt": "2026-10-26T20:38:06.291Z",
+    "exitCode": 1,
+    "signal": null,
+    "counts": {
+      "tests": 53,
+      "suites": 0,
+      "pass": 52,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 1221.838208
+    },
+    "stderr": "",
+    "tap": {
+      "path": "docs/receiving-records/2026-10-26-cairn-356-adoption/native.tap",
+      "bytes": 14794,
+      "sha256": "57d556b74c4880c3b61fa688931bf1bb6ab9036cf7330d3095d0f07c2eff3bb2",
+      "gitBlob": "bc08301471be1adcfdd226c53e58731703ff4d87"
+    },
+    "remainingFailure": "Only local-node public home timeline after publishing a real Note returns 500 at original test/local-node.test.mjs:51. Actor GET, authoring and native Note GET succeed.",
+    "fetchGuard": "All three original fetch-dependency cases passed, including no mandatory social/managed host supplier and no eager CAIRN import in the portable Fetch path."
+  },
+  "baseline": {
+    "package": {
+      "name": "@red-cup-engineering/moose",
+      "version": "0.1.0-dev.84",
+      "gitHead": "1fc8bedfc971a8bd9ef0606b1e6fb348dac80ced",
+      "cairnPin": "0.2.5-dev.280",
+      "directory": "/workspace/scratch/455c183ed200/feltos/node_modules/.pnpm/@red-cup-engineering+moose@0.1.0-dev.84_df636ed49667f4b80b68b41511ee1e6b/node_modules/@red-cup-engineering/moose",
+      "manifest": {
+        "bytes": 3524,
+        "sha256": "520346410d7db20cd5228fcfabdd7a5a9864d8e210d00f9be27fd88cc8bb70af",
+        "gitBlob": "6fd8e2e1edd612d560e47d26f56131d0b191a10f"
+      }
+    },
+    "sourceEvidence": "All 13 issued baseline src files match the exact original main Git blobs. The four files exercised here also remain byte-identical in this candidate.",
+    "relevantSource": [
+      {
+        "path": "src/local-node.mjs",
+        "bytes": 3757,
+        "sha256": "4da03ee2b05b2b52a1e2b95eeb2035a9010dd26a38bbea84a62d7cd816428b16",
+        "gitBlob": "ee4d4d99001b035ad6ba653685f8810d1a926a55"
+      },
+      {
+        "path": "src/application.mjs",
+        "bytes": 833,
+        "sha256": "e955ff65e1c3c82abc643f84b6fdfe3f7ddf8c4d25a1a32366c47fe649811e05",
+        "gitBlob": "148161e0b9d644a1488415b011b38d20a38e0502"
+      },
+      {
+        "path": "src/fetch.mjs",
+        "bytes": 10369,
+        "sha256": "9ab3ec9216e006680a5a7dc5aba42fe9fd4d386992af714a8ac6e3be8bd77244",
+        "gitBlob": "4a45a41ae779e84751f15cbf2402c6935f37c25e"
+      },
+      {
+        "path": "src/timeline.mjs",
+        "bytes": 7423,
+        "sha256": "8915710495a96b15a61aa867a9c083f1019788075c81b398017ccac9d9f92333",
+        "gitBlob": "a2a74097cd211dff2a4392b88a7db9e8f9f41fd1"
+      }
+    ],
+    "fixture": "Original test/local-node.test.mjs, with only its two relative implementation imports replaced by absolute paths into the exact issued baseline package; assertions unchanged.",
+    "originalFixture": {
+      "path": "test/local-node.test.mjs",
+      "bytes": 6125,
+      "sha256": "91b35e9816637d9b2f1c6a7b90c2b135c437a76ae090aaae9e76c68ccf0ed78b",
+      "gitBlob": "abc1654c7019346dc5319175327aef069cfa694e"
+    },
+    "runFixtureSha256": "0ad75e70906ca296d2aed833019c801459a981045eee7ea87c62921c54427689",
+    "command": [
+      "node",
+      "--test",
+      "--test-reporter=tap",
+      "/workspace/scratch/455c183ed200/evidence/moose356-baseline-local-node.test.mjs"
+    ],
+    "exitCode": 1,
+    "counts": {
+      "tests": 2,
+      "suites": 0,
+      "pass": 1,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 978.651467
+    },
+    "tap": {
+      "path": "docs/receiving-records/2026-10-26-cairn-356-adoption/baseline-local-node.tap",
+      "bytes": 1160,
+      "sha256": "6a37ce5945c34d8bd39dfb242f855f570df04e24455e972db1be7bb4aba63f63",
+      "gitBlob": "450ff1345889f7fc2a6d5b4c712a115e2fe292a8"
+    },
+    "observedCause": "Actual original outbox collection first page is https://social.example/actors/garden/outbox?cursor=9007199254740991. Existing src/timeline.mjs requires page=true and rejects this cursor-only page; the unchanged native host surfaces the refusal as 500.",
+    "owner": "https://github.com/red-cup-engineering/moose/pull/3",
+    "action": "Preserve open PR 3 ownership; no cursor production repair or test weakening in this CAIRN adoption."
+  },
+  "pack": {
+    "command": {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "/workspace/scratch/6274801a90c9/fabrication-suppliers/qualification/tools/pnpm@11.28.5/package/bin/pnpm.cjs",
+        "pack",
+        "--pack-destination",
+        "/workspace/scratch/455c183ed200/evidence/moose-cairn356-local-pack"
+      ],
+      "cwd": "/workspace/scratch/455c183ed200/moose",
+      "exitCode": 0,
+      "signal": null
+    },
+    "packageManager": "pnpm 11.28.5",
+    "sourceOnlyLocalArtifact": true,
+    "archiveName": "red-cup-engineering-moose-0.1.0-dev.84.tgz",
+    "archiveBytes": 67150,
+    "archiveSha256": "fe7994b952645803709cca443a14a9be5bc3ff503b46ab3ac4d1391a67dcf486",
+    "memberCount": 24,
+    "sourceComparison": "All non-manifest package files byte-identical; native pnpm pack rewrites manifest formatting/key order only, parsed manifest is exactly equal.",
+    "all24MembersUnchangedAfterReceiving": true,
+    "declaredReceivingTests": [
+      "test/cairn-file-claims.test.mjs",
+      "test/world-gateway.test.mjs",
+      "test/world-history.test.mjs"
+    ],
+    "receiving": {
+      "cwd": "/workspace/scratch/455c183ed200/evidence/moose-cairn356-local-pack/package",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "--test",
+        "--test-reporter=tap",
+        "test/cairn-file-claims.test.mjs",
+        "test/world-gateway.test.mjs",
+        "test/world-history.test.mjs"
+      ],
+      "startedAt": "2026-10-26T20:39:21.470Z",
+      "finishedAt": "2026-10-26T20:39:22.499Z",
+      "exitCode": 0,
+      "signal": null,
+      "counts": {
+        "tests": 20,
+        "suites": 0,
+        "pass": 20,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 989.334871
+      },
+      "stderr": "",
+      "tap": {
+        "path": "docs/receiving-records/2026-10-26-cairn-356-adoption/packed-receiving.tap",
+        "bytes": 6913,
+        "sha256": "a79294deedd4146410f0c1bb079326463489dc086e17cd5bfc9cc83f43aaf7ff",
+        "gitBlob": "b79042e9872812f05583937399bc1e3004651d91"
+      }
+    },
+    "members": [
+      {
+        "path": "LICENSE",
+        "bytes": 1101,
+        "sha256": "e264f6d8d0c46911b9ca7a2a46a10fd1a2e7b64822f236b04a6afa7ee79083af",
+        "gitBlob": "61dbf67e6e610419422691ddd728f2c3647608bb",
+        "sourceByteIdentical": true
+      },
+      {
+        "path": "package.json",
+        "bytes": 3466,
+        "sha256": "be922382fec09745267bde9589c3d7c541307dfc5950622e64ed22f9aacef1f9",
+        "gitBlob": "ccda43d2a389b7f708c6026db38dc1d4248d48df",
+        "sourceByteIdentical": false
+      },
+      {
+        "path": "specifications/world-host/coordination-ingress.md",
+        "bytes": 827,
+        "sha256": "e4ea27450e4ba8a841fa0707c3f9878a0a3c53b014ea4c610e4013f041bbee97",
+        "gitBlob": "36bb21f9664367df4a2b865a3981e33b71c34036",
+        "sourceByteIdentical": true
+      },
+      {
+        "path": "specifications/dimension-world-coordination.md",
+        "bytes": 31975,
+        "sha256": "5dcde6e14cd574b5b59586c5fb866733c86568f12c6fc1010b99b989e4562aa0",
+        "gitBlob": "3b3b012563dcbb833118a08802da9dde82dbc566",
+        "sourceByteIdentical": true
+      },
+      {
+        "path": "NOTICE.md",
+        "bytes": 2631,
+        "sha256": "51311de3ea0109a21a9690b898bdfb058b28e930436f392f09ac267cbe2b1cdd",
+        "gitBlob": "459583355d18483d12063c1671878bbacca26555",
+        "sourceByteIdentical": true
+      },
+      {
+        "path": "README.md",
+        "bytes": 17722,
+        "sha256": "d630c88241b891d0d94cc5696d8d0ed0b060ea34cdfe8116c4de87e5734d8a31",
+        "gitBlob": "d7d2cd10defd78cf8ec79f4a3e14c6e8269d294f",
+        "sourceByteIdentical": true
+      },
+      {
+        "path": "specifications/world-history-migration.md",
+        "bytes": 23928,
+        "sha256": "cdff88ddd5d333eb1288ea143ce1dbb9367f422cbe362f2dc994ab1fd9029282",
+        "gitBlob": "42621913816af12c4ef13a8b1a70357ac53cda2d",
+        "sourceByteIdentical": true
+      },
+      {
+        "path": "src/application.mjs",
+        "bytes": 833,
+        "sha256": "e955ff65e1c3c82abc643f84b6fdfe3f7ddf8c4d25a1a32366c47fe649811e05",
+        "gitBlob": "148161e0b9d644a1488415b011b38d20a38e0502",
+        "sourceByteIdentical": true
+      },
+      {
+        "path": "src/cairn-file-claims.mjs",
+        "bytes": 330,
+        "sha256": "111bcb52e5076f376fae559d30ad1d65af179cd901f306425ad6eef881752dea",
+        "gitBlob": "bd381a46da6f69e90f39d2ca09aee6aa1febe725",
+        "sourceByteIdentical": true
+      },
+      {
+        "path": "test/cairn-file-claims.test.mjs",
+        "bytes": 554,
+        "sha256": "644a33b3f066e3c70da920db10d558923da61182126f8ff4d8c0ed430af3116f",
+        "gitBlob": "41517da8c6a4de84d107741a48a70f06536a49c0",
+        "sourceByteIdentical": true
+      },
+      {
+        "path": "src/cairn-pages.mjs",
+        "bytes": 3953,
+        "sha256": "73afc022492ec1043a2960cd9d82b5fc8096779e442b7144dd15b52c8150c16a",
+        "gitBlob": "5d6a4aa5b050ae086570e21082bc611f18f2c681",
+        "sourceByteIdentical": true
+      },
+      {
+        "path": "src/fetch.mjs",
+        "bytes": 10369,
+        "sha256": "9ab3ec9216e006680a5a7dc5aba42fe9fd4d386992af714a8ac6e3be8bd77244",
+        "gitBlob": "4a45a41ae779e84751f15cbf2402c6935f37c25e",
+        "sourceByteIdentical": true
+      },
+      {
+        "path": "src/geometry.mjs",
+        "bytes": 10799,
+        "sha256": "4cf8fa262794db378e24bdea4f6d0f5e75af940a374045dc1ddcd137bad973f0",
+        "gitBlob": "cac5e1c182530fd1d6d365f3f83bdf8819410a1d",
+        "sourceByteIdentical": true
+      },
+      {
+        "path": "src/local-node.mjs",
+        "bytes": 3757,
+        "sha256": "4da03ee2b05b2b52a1e2b95eeb2035a9010dd26a38bbea84a62d7cd816428b16",
+        "gitBlob": "ee4d4d99001b035ad6ba653685f8810d1a926a55",
+        "sourceByteIdentical": true
+      },
+      {
+        "path": "bin/serve.mjs",
+        "bytes": 1745,
+        "sha256": "8bdeef0e71bc4717b8d4bdf3716d41a0ad584e8a0257f6b5df3f360a68f5a3ea",
+        "gitBlob": "03433f9e4361fb42836f3d09582385e1cd0187a1",
+        "sourceByteIdentical": true
+      },
+      {
+        "path": "src/source-application.mjs",
+        "bytes": 1470,
+        "sha256": "9ee1b09ce6724dc624c32b329bb08a43f515b720d643032531bd7fb11402b097",
+        "gitBlob": "3580f4356f88a86022fee62a07fd62265c7a6ea3",
+        "sourceByteIdentical": true
+      },
+      {
+        "path": "src/source-page-routes.mjs",
+        "bytes": 2592,
+        "sha256": "ed872c3f17d6d71f63cde984076de35e3a312cf6289ace1d5b16bdf5029e009a",
+        "gitBlob": "3020b1d552482c1e6e1b8e57993178e0be3864c5",
+        "sourceByteIdentical": true
+      },
+      {
+        "path": "src/timeline.mjs",
+        "bytes": 7423,
+        "sha256": "8915710495a96b15a61aa867a9c083f1019788075c81b398017ccac9d9f92333",
+        "gitBlob": "a2a74097cd211dff2a4392b88a7db9e8f9f41fd1",
+        "sourceByteIdentical": true
+      },
+      {
+        "path": "src/world-gateway.mjs",
+        "bytes": 17722,
+        "sha256": "4ca29fc4173fd1f628dff7717ce92730e85d906b7f60897ce0e231314267044a",
+        "gitBlob": "919345f6a627b17a76b5e4cc62b49bde360a7d2f",
+        "sourceByteIdentical": true
+      },
+      {
+        "path": "test/world-gateway.test.mjs",
+        "bytes": 22265,
+        "sha256": "4d2f01be93a06155d0bd8d01e8464d68a98bdb244b10ee9ec3fe6f53a7e476bc",
+        "gitBlob": "a47240d078da8487da5b435f73f70bd36c474278",
+        "sourceByteIdentical": true
+      },
+      {
+        "path": "src/world-history.mjs",
+        "bytes": 160,
+        "sha256": "56821d29f0b139fb4207d71b2ce36ca592601bb702b2929409bd164f78c8ae57",
+        "gitBlob": "5a13e0d2ac8533b62a39a29c2174f724d3a2f6c0",
+        "sourceByteIdentical": true
+      },
+      {
+        "path": "test/world-history.test.mjs",
+        "bytes": 18966,
+        "sha256": "19f00ddfe88de49265ca68139037bcbdcee4d8c0440673468a6865e13677201e",
+        "gitBlob": "1140d88056d45463a2350c363862f83539117e58",
+        "sourceByteIdentical": true
+      },
+      {
+        "path": "src/world-reading.mjs",
+        "bytes": 10561,
+        "sha256": "910bc2023a68c6ba2db15000f3942703cc76b08d08dde334c0b253a5968acb6c",
+        "gitBlob": "6c1fb4240e0e2b5ac3d30afde6ef969e35a3842e",
+        "sourceByteIdentical": true
+      },
+      {
+        "path": "src/world.mjs",
+        "bytes": 28357,
+        "sha256": "2577f040d66678884a0f8513373213942a7fcb0b009b280cf41e34de466b1409",
+        "gitBlob": "6cb7373f0307152ba3ebf1969390b90ab18952d7",
+        "sourceByteIdentical": true
+      }
+    ]
+  },
+  "limits": [
+    "Local candidate pack is not a newly published MOOSE edition and is not a deployment.",
+    "Full native result is 52/53, not an all-green claim; the remaining source-identical baseline failure belongs to open PR 3. All three declared packed receiving suites passed 20/20.",
+    "Reused exact provider closure does not constitute a new frozen installation; this original repository has no lock or workspace policy to override.",
+    "No fleet-wide routing, broker, subscription or interoperability completion is established by this dependency adoption."
+  ]
+}

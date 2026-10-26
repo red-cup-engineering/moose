@@ -125,11 +125,11 @@ A source declaration alone cannot authorize an actor or serve private data.
 
 ## Release status and market requirement
 
-This source edition is `0.1.0-dev.83`, declaring CAIRN `0.2.5-dev.279`,
+This source edition is `0.1.0-dev.84`, declaring the issued CAIRN `0.2.5-dev.356`,
 ActivityPub Services `0.9.6-dev.0`, ActivityPub Server `0.1.4-dev.89` and
 Living Web Server `0.1.0-dev.11`. The CAIRN finite reader requires Node 24.2
-or later. These CAIRN and MOOSE editions require their own native artifact
-publication and complete receiving; a source dependency declaration does not
+or later. This MOOSE candidate requires its own native artifact publication
+and receiving; a source dependency declaration does not
 establish an installed FeltOS package, Cold Red Gate deployment or
 Mastodon/Misskey/Lemmy interoperability. MOOSE must ultimately meet then beat
 each appropriate Fediverse incumbent in independently exercised social,
