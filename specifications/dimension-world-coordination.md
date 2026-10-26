@@ -211,8 +211,9 @@ provenance are retained in `NOTICE.md`; the move does not relicense that body.
 
 The original content-address supplier `0.2.0` and JSON supplier `0.4.0` provide
 semantic identity and canonical JSON. No local imitation or new encoder replaces
-them. Content Address becomes a runtime dependency with the World family move; JSON
-remains an optional host peer with an exact development selection for receiving. They do not become eager Fetch imports.
+them. Both remain optional host peers with exact development selections for
+gateway receiving. World reading instead receives the original content functions
+through CAIRN’s `./signcell` port. They do not become eager Fetch imports.
 
 FeltOS's existing `./server/world-gateway` path forwards the same original MOOSE
 exports. Its `serve-instance` requester, `instance-config` reader and MetroPlat
@@ -290,30 +291,70 @@ The relocation is a source-preserving architectural normalization, not a claim o
 newly fabricated mathematical semantics. Candidate source, package tests and a
 deployment receipt each establish only their own stage.
 
-## Remaining coupled World migration
+## Coupled World migration and remaining host work
 
-The complete World, world-reading and geometry family already exists in FeltOS.
+The original World, World-reading and geometry family is relocated from FeltOS
+into MOOSE, with FeltOS’s public entries forwarding the original operations.
 Its source witnesses, read-only interpretation, tracked queries, occurrence-frame
-currentness and historical kinds must survive the eventual MOOSE move. CAIRN
-must expose the original required operations. For each World or explicitly
-admitted shared custody domain, its World, persistence, archive and occurrence
-consumers must resolve the same actual SignCraft history instance. Matching
-names or bytes alone do not share its private bindings; cross-World read access
-does not merge distinct Worlds' mutable custody.
+currentness and historical kinds are retained. CAIRN supplies the original
+history and Thing ports. Clean npm receiving exposed a further private
+content-provider split, whose explicit SignCell/SignCraft/CAIRN port repair is
+tracked in [World and history migration](./world-history-migration.md).
 
-The existing `feltos.dimension-selection/v1` design remains the host declaration:
-one Dimension identity and a finite World selection, each with source section
-revision, library module/version, host and per-World application selections.
-At the inspected baseline its `dimension-selection.mjs` implementation is absent.
-That is a distinct implementation obligation, alongside World-scoped mutable
-handles, destination resolution, signed cross-Dimension arrival and preserved
-pending custody. This migration does not introduce a rival Dimension schema.
-Admission of an individual application or successful installation of one gateway
-does not establish admission of the complete Dimension. The remaining receiving
-must exercise two Worlds from independent application declarations, the same
-application selected for more than one World, and an available unselected third
-section. It must observe actual isolation, failure cleanup and recovery under
-the original host; constructed descriptors alone cannot satisfy these cases.
+For each World or explicitly admitted shared custody domain, its World,
+persistence, archive and occurrence consumers must resolve the same actual
+SignCraft history instance and selected Cell/content owner. Matching names,
+versions or bytes alone do not share private bindings; cross-World read access
+does not merge distinct Worlds’ mutable custody.
+
+The host retains the existing declaration of one Dimension identity and a finite
+World selection, each with source section revision, library module/version, host
+and per-World application selections. Structural admission is implemented by
+[FeltOS #202](https://github.com/red-cup-engineering/feltos/pull/202), merged at
+`ea54dfbc466d51506dbb6540567b2c476a4abca9`. Its original SignCell
+`feltos.dimension.selection.v1` mark retains the complete ordered declaration
+and re-admits each World’s captured immutable application selection. The
+typed-mark supplier remains independent of the history/Cell repair.
+
+Accepted FeltOS source at `34d3475fe9d50bf76d00afbc8c2f06e51f8a0865` now
+connects this declaration to Dimension execution through
+[FeltOS #209](https://github.com/red-cup-engineering/feltos/pull/209) and
+[FeltOS #210](https://github.com/red-cup-engineering/feltos/pull/210):
+
+- The [Dimension host](https://github.com/red-cup-engineering/feltos/blob/34d3475fe9d50bf76d00afbc8c2f06e51f8a0865/src/server/dimension-host.mjs)
+  prepares every selected World through `installedDimensionWeb`. It captures
+  original source bytes, verifies exact installed library identities and module
+  closures, admits selected applications and explicit environment mappings, and
+  checks source currentness, route conflicts and overlapping mutable custody
+  before activation. Structural admission alone still does not establish these
+  installed bindings.
+- The [Dimension runtime](https://github.com/red-cup-engineering/feltos/blob/34d3475fe9d50bf76d00afbc8c2f06e51f8a0865/src/server/dimension-runtime.mjs)
+  composes each World’s original enterprise platform and supervisor behind a
+  Dimension-owned entrance listener. It implements per-World start, stop and
+  restart, selection-guarded reconfiguration, and draining of acquired resources.
+  Retained Worlds keep their exact bindings; incomplete cleanup retains custody
+  and refuses unsafe reuse. Required-actor failure withdraws that World’s
+  availability and drains its resources.
+- The [Dimension entrance](https://github.com/red-cup-engineering/feltos/blob/34d3475fe9d50bf76d00afbc8c2f06e51f8a0865/src/server/entrance.mjs)
+  routes original native applications by selected origin and retains request
+  leases through response, error and upgrade completion. The
+  [ActivityPub node](https://github.com/red-cup-engineering/feltos/blob/34d3475fe9d50bf76d00afbc8c2f06e51f8a0865/src/server/activitypub-node.mjs)
+  carries the selected World and Dimension context while preserving the
+  signature-resolved sender, addressed recipient and original local admission.
+- The [FeltOS CLI](https://github.com/red-cup-engineering/feltos/blob/34d3475fe9d50bf76d00afbc8c2f06e51f8a0865/feltos.mjs)
+  invokes the Dimension lifecycle while preserving the original single-World
+  driver’s process-restart behavior.
+
+These are inspected accepted source capabilities. Live deployment and
+independently received cross-Dimension exchange remain unreceived in this record.
+Existing theory premises and separate effect-admission contracts continue to
+apply; this migration introduces no rival Dimension schema. Installed and live
+receiving must exercise two Worlds from independent application declarations,
+the same application selected for more than one World, and an available
+unselected third section. It must observe actual isolation, failure cleanup,
+recovery and preserved pending custody under the original host, with the
+independent signed exchange required by M-DIST-2. Source inspection and
+constructed descriptors alone cannot supply those receipts.
 
 ## Receiving record
 

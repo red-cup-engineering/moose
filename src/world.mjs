@@ -1,4 +1,4 @@
-import { cell, certainObject, knowledgeReading } from "@red-cup-engineering/signcell/cell";
+import { cell, certainObject, knowledgeReading } from "@red-cup-engineering/knowledge-system-server/signcell";
 import { isReading, sidesOfReading } from "@red-cup-engineering/computer-data-engineering-services-section/four";
 import { captureHistoryReads, createHistory, validateHistory, observeHistory, replayHistory, continueHistory, historySection, historySubjects, historyHeads, queryHistory, withFunctionalPredicates } from "@red-cup-engineering/knowledge-system-server/history";
 import { deriveWorldReading, isWorldReading, rebindWorldReading } from "./world-reading.mjs";

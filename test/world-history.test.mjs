@@ -5,8 +5,7 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import * as MooseCell from '@red-cup-engineering/signcell/cell';
-import * as MooseCarrier from '@red-cup-engineering/semiotic-content-address';
+import * as CairnCell from '@red-cup-engineering/knowledge-system-server/signcell';
 import * as CairnHistory from '@red-cup-engineering/knowledge-system-server/history';
 import * as CairnThing from '@red-cup-engineering/knowledge-system-server/thing';
 import * as MooseHistory from '@red-cup-engineering/moose/world-history';
@@ -20,10 +19,16 @@ const thingPath = fromCairn.resolve('@red-cup-engineering/signcraft/thing');
 const CurrentHistory = await import(pathToFileURL(historyPath).href);
 const CurrentThing = await import(pathToFileURL(thingPath).href);
 const fromCurrentSigncraft = createRequire(historyPath);
-const cellPath = fromCurrentSigncraft.resolve('@red-cup-engineering/signcell/cell');
+const signcraftCellPath = fromCairn.resolve('@red-cup-engineering/signcraft/cell');
+const SigncraftCell = await import(pathToFileURL(signcraftCellPath).href);
+const historyCellPath = fromCurrentSigncraft.resolve('./cell.mjs');
+const HistoryCell = await import(pathToFileURL(historyCellPath).href);
+const fromHistoryCell = createRequire(historyCellPath);
+const cellPath = fromHistoryCell.resolve('@red-cup-engineering/signcell/cell');
 const CurrentCell = await import(pathToFileURL(cellPath).href);
-const CurrentCarrier = await import(pathToFileURL(fromCurrentSigncraft.resolve('@red-cup-engineering/semiotic-content-address')).href);
-const CellCarrier = await import(pathToFileURL(createRequire(cellPath).resolve('@red-cup-engineering/semiotic-content-address')).href);
+const fromCurrentCell = createRequire(cellPath);
+const contentPath = fromCurrentCell.resolve('@red-cup-engineering/semiotic-content-address');
+const CurrentContent = await import(pathToFileURL(contentPath).href);
 const { utterance } = await import(pathToFileURL(fromCurrentSigncraft.resolve('@red-cup-engineering/signcell/utterance')).href);
 const selectedManifest = JSON.parse(readFileSync(resolve(dirname(historyPath), '..', 'package.json'), 'utf8'));
 function blobOf(path) {
@@ -49,15 +54,20 @@ const occurrencePolicy = MooseReading.defineWorldReadingPolicy({
 test('MOOSE World and history retain the actual selected CAIRN original supplier', t => {
   assert.equal(selectedManifest.name, '@red-cup-engineering/signcraft');
   assert.equal(selectedManifest.version, '0.6.1-dev.4');
-  assert.equal(blobOf(historyPath), 'ef4979f362ba9d3d02c0dad87c93fbadb36714a2');
+  assert.equal(blobOf(historyPath), 'e7f0a1ff039b50662c11b3018881b20a63c3fd0b');
   assert.equal(blobOf(thingPath), '2bcea3ab88f077829608f6621b19c76135a49082');
   t.diagnostic(JSON.stringify({ version: selectedManifest.version, gitHead: selectedManifest.gitHead,
-    historyPath, historyBlob: blobOf(historyPath), thingPath, thingBlob: blobOf(thingPath), cellPath }));
+    historyPath, historyBlob: blobOf(historyPath), thingPath, thingBlob: blobOf(thingPath),
+    signcraftCellPath, historyCellPath, cellPath, contentPath }));
   assertSameExports(CairnHistory, CurrentHistory, 'CAIRN history');
   assertSameExports(CairnThing, CurrentThing, 'CAIRN Thing');
-  assertSameExports(MooseCell, CurrentCell, 'MOOSE cell and CAIRN-selected SignCell');
-  assertSameExports(MooseCarrier, CurrentCarrier, 'MOOSE reading and CAIRN-selected history carrier');
-  assertSameExports(CellCarrier, CurrentCarrier, 'SignCell and history carrier');
+  assertSameExports(CairnCell, SigncraftCell, 'CAIRN SignCell and selected SignCraft Cell port');
+  assertSameExports(SigncraftCell, HistoryCell, 'public Cell port and history-local selected Cell');
+  assertSameExports(HistoryCell, CurrentCell, 'history-selected original SignCell');
+  for (const name of ['bytesToHex', 'retainedCarrier', 'semanticBytes', 'semanticId', 'coincides', 'coincidenceKey']) {
+    assert.equal(typeof CairnCell[name], 'function', `${name} must be an original content operation`);
+    assert.equal(CairnCell[name], CurrentContent[name], `${name} must retain the selected SignCell content owner's identity`);
+  }
   assertSameExports(MooseHistory, CairnHistory, 'MOOSE world history');
   assert.equal(MooseWorld.validateWorld, CairnHistory.validateHistory);
   assert.equal(MooseWorld.declareFunctional, CairnHistory.withFunctionalPredicates);
@@ -248,11 +258,35 @@ test('World tell and reading retain private byte content across the actual reloc
   bytes.fill(9);
   world.revisions[0].cells[0].object.bytes.fill(8);
   const frame = MooseHistory.captureHistoryOccurrences(world, { archive: true });
-  const reading = MooseReading.readWorld(world, { policy: occurrencePolicy, occurrenceFrame: frame });
+  const editionBytes = new Uint8Array([4, 8, 16]);
+  const edition = CairnCell.retainedCarrier({ source: 'original byte reading edition', bytes: editionBytes });
+  const policy = MooseReading.defineWorldReadingPolicy({
+    id: 'test.moose-byte-edition', version: '1',
+    read: ({ source, edition }) => {
+      const cells = source.rawOccurrences('byte-carrier', 'payload', { archive: true }).rows.map(row => row.cell);
+      return { cells, metadata: CairnCell.retainedCarrier({ editionBytes: edition.bytes, cellBytes: cells[0].object.bytes }) };
+    },
+  });
+  const sourceVersion = CairnCell.semanticId(edition);
+  const readingVersion = CairnCell.semanticId({ policy: { id: policy.id, version: policy.version }, edition, occurrenceFrame: frame.id });
+  const reading = MooseReading.readWorld(world, { policy, edition, occurrenceFrame: frame });
+  editionBytes.fill(6);
+  edition.bytes.fill(5);
+  assert.equal(reading.sourceVersion, sourceVersion);
+  assert.equal(reading.readingVersion, readingVersion);
   const read = reading.section('byte-carrier', 'payload')[0];
   assert.deepEqual([...read.object.bytes], [0, 1, 127, 128, 255]);
   read.object.bytes.fill(7);
   assert.deepEqual([...reading.section('byte-carrier', 'payload')[0].object.bytes], [0, 1, 127, 128, 255]);
+  const metadata = reading.metadata();
+  assert.deepEqual([...metadata.editionBytes], [4, 8, 16]);
+  assert.deepEqual([...metadata.cellBytes], [0, 1, 127, 128, 255]);
+  metadata.editionBytes.fill(3);
+  metadata.cellBytes.fill(2);
+  assert.deepEqual([...reading.metadata().editionBytes], [4, 8, 16]);
+  assert.deepEqual([...reading.metadata().cellBytes], [0, 1, 127, 128, 255]);
+  assert.equal(reading.sourceVersion, sourceVersion);
+  assert.equal(reading.readingVersion, readingVersion);
   const restored = CairnHistory.restoreHistory(structuredClone(CairnHistory.materializeHistory(world)));
   assert.deepEqual(CairnHistory.historyHeads(restored), head);
   assert.deepEqual([...CairnHistory.historySubjectCells(restored, 'byte-carrier')[0].object.bytes], [0, 1, 127, 128, 255]);

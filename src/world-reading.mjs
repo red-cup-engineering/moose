@@ -3,8 +3,7 @@
  * It is neither a history nor an effect. The supplied policy owns interpretation;
  * SignCraft still owns raw observations, evidence combination and causal history.
  */
-import { admitCell, coincides } from '@red-cup-engineering/signcell/cell';
-import { retainedCarrier, semanticId } from '@red-cup-engineering/semiotic-content-address';
+import { admitCell, coincides, retainedCarrier, semanticId } from '@red-cup-engineering/knowledge-system-server/signcell';
 import {
   historyDerivation, historyHeads, historyRawOccurrences, historySection, historySectionOfCells,
   historySubjectCells, historySubjectKey, historySubjects, queryHistory, restoreHistory,
