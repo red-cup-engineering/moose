@@ -1,6 +1,6 @@
 {
   "name": "@red-cup-engineering/moose",
-  "version": "0.1.0-dev.3",
+  "version": "0.1.0-dev.75",
   "type": "module",
   "description": "MOOSE—MUD, Object Oriented, Socially Extended: reusable social/federation application over Living Web Server and ActivityPub++.",
   "exports": {
@@ -10,13 +10,15 @@
     "./package.json": "./package.json",
     "./cairn-pages": "./src/cairn-pages.mjs",
     "./source-application": "./src/source-application.mjs",
-    "./public-readers": "./src/timeline.mjs"
+    "./public-readers": "./src/timeline.mjs",
+    "./cairn-file-claims": "./src/cairn-file-claims.mjs"
   },
   "files": [
     "src",
     "bin",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "test/cairn-file-claims.test.mjs"
   ],
   "bin": {
     "serve-moose": "./bin/serve.mjs"
@@ -26,7 +28,8 @@
     "test:fetch": "node --test test/fetch-dependency.test.mjs test/source-application.test.mjs test/source-page-routes.test.mjs"
   },
   "dependencies": {
-    "@red-cup-engineering/living-web-server": "0.1.0-dev.11"
+    "@red-cup-engineering/living-web-server": "0.1.0-dev.11",
+    "@red-cup-engineering/knowledge-system-server": "0.2.5-dev.5"
   },
   "engines": {
     "node": ">=24"
@@ -44,8 +47,7 @@
     "@red-cup-engineering/signcraft": "0.5.7-dev.395",
     "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
     "@red-cup-engineering/activitypub-services-section": "0.9.6-dev.0",
-    "@red-cup-engineering/javascript-file-services-section": "0.1.1",
-    "@red-cup-engineering/knowledge-system-server": "0.2.5-dev.0"
+    "@red-cup-engineering/javascript-file-services-section": "0.1.1"
   },
   "peerDependencies": {
     "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
@@ -62,5 +64,8 @@
     "@red-cup-engineering/javascript-file-services-section": {
       "optional": true
     }
-  }
+  },
+  "receivingTests": [
+    "test/cairn-file-claims.test.mjs"
+  ]
 }
