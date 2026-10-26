@@ -1,6 +1,7 @@
 # World and history migration through the original CAIRN supplier
 
-Status: proposed bounded source change; implementation and receiving remain pending.
+Status: implemented source with native provider and World receiving; publication
+and downstream registry receiving remain distinct evidence stages.
 Owner: MOOSE with the original CAIRN, SignCraft and FeltOS owners.
 The governing demand and theory obligations remain in
 [dimension-world-coordination.md](./dimension-world-coordination.md).
@@ -8,7 +9,78 @@ The governing demand and theory obligations remain in
 The preceding gateway move is recorded in [MOOSE #14](https://github.com/red-cup-engineering/moose/pull/14)
 and [FeltOS #204](https://github.com/red-cup-engineering/feltos/pull/204).
 Its receiving does not qualify the World/history change specified here.
-This contract introduces no implementation claim, deployment receipt or delivery date.
+Implementation is source-authored under this contract. Source, package and installed
+receiving remain distinct from a live-host deployment receipt.
+
+## Current implementation selection
+
+The initial comparison below is retained as the original design evidence. On
+implementation intake, CAIRN main had advanced to
+`85855c347c4f7421fac9525abcb0073ed96fdd95`, selecting SignCraft
+`0.6.1-dev.4`, SignGraph `0.7.1-dev.3` and Metrologic `0.14.3-dev.4`.
+That accepted cohort is preserved. The selected history body remains
+`ef4979f362ba9d3d02c0dad87c93fbadb36714a2`; the actual newer Thing body is
+`2bcea3ab88f077829608f6621b19c76135a49082`. The ordinary World Thing receiver
+uses that supplier through CAIRN without injected replacement operations.
+
+[CAIRN #30](https://github.com/red-cup-engineering/knowledge-system-server/pull/30)
+adds the two synchronous forwarding entries. All 34 declared receiving modules
+passed on Node 24.22.1: 252 cases, zero failures and skips. The native publisher released CAIRN `0.2.5-dev.272` from merged source
+`2597c0a96c75fdfadc03ea97a4916a984b8a61c7`, exact tree
+`45639b9f4bfae507c4e3f23c4db942fb6f44ae1f`. The native Git provider independently
+derived that five-leaf source normalization; it does not certify semantic
+fabrication or host activation.
+
+The original World family is moved from FeltOS
+`2cdc8ab5747c386db1f2eee70245d1c16cca9242`. Geometry is unchanged; World and
+World-reading preserve their bodies apart from the selected supplier import
+paths and corresponding explanatory wording. Data `0.2.0` and Content Address `0.2.0` remain direct MOOSE dependencies.
+SignCell is selected at `0.13.1-dev.0`, exactly the original supplier selected by
+CAIRN’s SignCraft history. The first actual byte-retention case exposed a private
+registry split at World Cell `0.4.2` → history Cell `0.13.1-dev.0`: admission
+refused a retained byte carrier as an untrusted accessor. The same case also
+refused in unchanged published FeltOS `0.21.9-dev.1034`, where history selected
+Cell `0.10.0`. The supplier alignment repairs that existing boundary without
+copying bytes through a new codec, dropping data or accepting arbitrary accessors.
+FeltOS's three public entries forward all 75 original values. All 32 former
+history imports (12 runtime and 20 test imports) are routed through MOOSE;
+the two relocated runtime modules then resolve CAIRN from MOOSE's own context.
+Independent SignCraft knowledge/primitives uses remain at their existing owner.
+
+The original FeltOS World test's direct SignCraft `0.5.7-dev.395` Thing producer
+is retained as an older-producer interchange case. Separate receiving resolves
+SignCraft from MOOSE's actual CAIRN selection, so FeltOS's unrelated CAIRN
+development dependency cannot conceal a second history owner. Receiving also
+constructs real older `.395` histories and restores their original revision and
+checkpoint identities and Unicode representatives. That original producer
+refuses the attempted byte-bearing history before any old carrier exists; this
+refusal is retained explicitly instead of inventing a historical fixture. The
+current producer is separately required to retain byte content through actual
+World observation and snapshot restoration.
+
+The native PNPM provider acquisition retained exact locked dependencies but
+returned `ERR_PNPM_IGNORED_BUILDS` for unrelated dependency lifecycle scripts.
+No lifecycle approval was added; the original workspace policy was restored
+after PNPM's automatic unresolved placeholders. The 252 executed receiving
+cases establish their stated behavior, not successful exit of that acquisition
+command.
+
+### Executed MOOSE receiving
+
+The complete packed MOOSE source selects the actual published CAIRN
+`0.2.5-dev.272`. All 98 files in that CAIRN archive matched the merged source;
+only publisher-owned `version` and `gitHead` metadata differ. All three MOOSE
+declared receiving modules passed: 20 cases, zero failures and skips. The
+separate source/Fetch boundary passed all three cases.
+
+The new World case asserts identical original history, Thing and SignCell
+functions, composes two source-derived Worlds inside a Dimension, retains
+actual source/revision/position witnesses and distinct equal-content
+occurrences, and checks no-change Thing replay. Real archive materialization,
+forged or missing ancestry, cold and warm tracked reads, same-carrier
+currentness invalidation and defensive byte retention are executed boundaries.
+These are source/runtime composition results, not two activated World hosts or
+independent cross-Dimension federation.
 
 ## 1. Exact source baseline
 
@@ -170,7 +242,10 @@ Run these eight steps with actual installed original suppliers and retained publ
 7. Replay the same Thing composition and retained revision; no synthetic act or second
    effect may appear. Equal bytes at distinct original occurrences remain distinguishable.
 8. Restore an actual older-artifact history fixture under the selected closure and compare
-   original identities/readings, including Unicode and retained byte representatives.
+   original identities/readings, including Unicode representatives. Where that original
+   producer refuses byte-bearing history, record its actual refusal rather than fabricate
+   a carrier. Require current World/history production, snapshot/restoration and defensive
+   byte retention to pass independently.
 
 Reuse the original SignCraft suites: `history-occurrence-frames`, `history-occurrences`,
 `history-derivation`, `history-projection`, `history-retained-representatives`,

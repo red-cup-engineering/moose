@@ -6,6 +6,7 @@ on:
       - package.json
       - test/fetch-dependency.test.mjs
       - test/world-gateway.test.mjs
+      - test/world-history.test.mjs
       - .github/workflows/fetch-dependency.yml
 permissions:
   contents: read
@@ -36,3 +37,37 @@ jobs:
           npm install --prefix "$gateway_dependencies" --no-save --no-package-lock --ignore-scripts --no-audit --no-fund --fetch-retries=1 --fetch-timeout=30000 --registry=https://registry.561.group @red-cup-engineering/computer-content-address-engineering-services-section@0.2.0 @red-cup-engineering/json-services-section@0.4.0
           ln -s "$gateway_dependencies/node_modules" node_modules
           node --test --test-reporter=tap test/world-gateway.test.mjs
+  world-history:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Receive the original World and history supplier composition
+        env:
+          WORLD_DEPENDENCIES: ${{ runner.temp }}/moose-world-history
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$WORLD_DEPENDENCIES"
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+          import { spawnSync } from 'node:child_process';
+          const { dependencies } = JSON.parse(readFileSync('package.json', 'utf8'));
+          const suppliers = [
+            '@red-cup-engineering/knowledge-system-server',
+            '@red-cup-engineering/signcell',
+            '@red-cup-engineering/computer-data-engineering-services-section',
+            '@red-cup-engineering/computer-content-address-engineering-services-section',
+            '@red-cup-engineering/semiotic-content-address',
+          ].map(name => `${name}@${dependencies[name]}`);
+          const result = spawnSync('npm', ['install', '--prefix', process.env.WORLD_DEPENDENCIES,
+            '--no-save', '--no-package-lock', '--ignore-scripts', '--no-audit', '--no-fund',
+            '--fetch-retries=1', '--fetch-timeout=30000', '--registry=https://registry.561.group',
+            ...suppliers], { stdio: 'inherit' });
+          process.exit(result.status ?? 1);
+          NODE
+          ln -s "$WORLD_DEPENDENCIES/node_modules" node_modules
+      - run: node --test --test-reporter=tap test/world-history.test.mjs
