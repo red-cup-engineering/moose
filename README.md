@@ -125,7 +125,7 @@ A source declaration alone cannot authorize an actor or serve private data.
 
 ## Release status and market requirement
 
-This source edition is `0.1.0-dev.82`, declaring CAIRN `0.2.5-dev.273`,
+This source edition is `0.1.0-dev.83`, declaring CAIRN `0.2.5-dev.279`,
 ActivityPub Services `0.9.6-dev.0`, ActivityPub Server `0.1.4-dev.89` and
 Living Web Server `0.1.0-dev.11`. The CAIRN finite reader requires Node 24.2
 or later. These CAIRN and MOOSE editions require their own native artifact
@@ -233,7 +233,7 @@ composition and exact FeltOS route declarations. These source-cohort results
 do not qualify publication of the new CAIRN/MOOSE editions or installed
 cross-Dimension federation.
 
-## Select the actual execution profile (0.1.0-dev.82)
+## Select the actual execution profile (0.1.0-dev.83)
 
 The runtime suppliers are the original Living Web Server, CAIRN and Computer
 Data. CAIRN retains the World family’s exact history, Thing and Cell selection. The
