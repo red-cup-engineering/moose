@@ -1,6 +1,6 @@
 {
   "name": "@red-cup-engineering/moose",
-  "version": "0.1.0-dev.83",
+  "version": "0.1.0-dev.84",
   "type": "module",
   "description": "MOOSE\u2014Multi-User Dimension, Object Oriented, Socially Extended: source-owned World coordination and social/federation composition over CAIRN, Living Web Server and ActivityPub++.",
   "exports": {
@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@red-cup-engineering/living-web-server": "0.1.0-dev.11",
-    "@red-cup-engineering/knowledge-system-server": "0.2.5-dev.279",
+    "@red-cup-engineering/knowledge-system-server": "0.2.5-dev.280",
     "@red-cup-engineering/computer-data-engineering-services-section": "0.2.0"
   },
   "engines": {
