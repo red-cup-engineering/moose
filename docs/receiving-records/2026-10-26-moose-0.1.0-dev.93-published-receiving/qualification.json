@@ -1,0 +1,300 @@
+{
+  "kind": "published-package-receiving",
+  "recordedAt": "2026-10-26T20:51:37.490918+00:00",
+  "repository": "red-cup-engineering/moose",
+  "version": "0.1.0-dev.93",
+  "gitHead": "96866ef8ac58b39ee3239a9fc9da68941b624130",
+  "tree": "583a6489d84846ba8a7e72acf83a29559205c22f",
+  "status": "received",
+  "registry": {
+    "observedAt": "2026-10-26T20:51:34.423312+00:00",
+    "url": "https://registry.561.group/@red-cup-engineering%2fmoose",
+    "metadataSha256": "bcb98085169e280361e37553a0cdf26c5671a286ed53549b15f3cc739e886576",
+    "expectedGitHead": "96866ef8ac58b39ee3239a9fc9da68941b624130",
+    "observations": 1,
+    "distTags": {
+      "dev": "0.1.0-dev.93"
+    },
+    "currentTag": {
+      "tag": "dev",
+      "version": "0.1.0-dev.93",
+      "gitHead": "96866ef8ac58b39ee3239a9fc9da68941b624130"
+    },
+    "matchingVersions": [
+      "0.1.0-dev.93"
+    ],
+    "state": "exact-issue-observed",
+    "selectedVersion": "0.1.0-dev.93"
+  },
+  "archive": {
+    "url": "https://registry.561.group/@red-cup-engineering/moose/-/moose-0.1.0-dev.93.tgz",
+    "path": "/workspace/scratch/455c183ed200/evidence/published-moose-0.1.0-dev.93/moose-0.1.0-dev.93.tgz",
+    "integrity": "sha512-cW8WkGG1m+EdjZQzUYKU7VooClhq5QIwGH31TVhBEabVFSwU/kCDhufnpb6XYOx6zMH4ymXo1iNGCFzqbtx1iQ==",
+    "sha1": "cde244daa1a285d34b877d18675280a7cbe1f523",
+    "bytes": 66989,
+    "sha256": "5bb82393e1c88d54b2e90a4c00e67d4d917bf35dafbdfc3458a7df77dd7b723c",
+    "gitBlob": "6c67f6ba92f7cb4a9a5e1cae23ea1128bc968f87"
+  },
+  "sourceVerification": {
+    "officialTreeUrl": "https://api.github.com/repos/red-cup-engineering/moose/git/trees/583a6489d84846ba8a7e72acf83a29559205c22f?recursive=1",
+    "repositoryBlobsVerifiedBeforeReceiving": 36,
+    "archiveMembers": 24,
+    "nonManifestMembersExactOfficialGitBlobs": 23,
+    "runtimeSourceFiles": 13,
+    "manifestChanges": [
+      "version",
+      "gitHead"
+    ],
+    "allPayloadMembersUnchangedAfterReceiving": true,
+    "members": [
+      {
+        "path": "LICENSE",
+        "bytes": 1101,
+        "sha256": "e264f6d8d0c46911b9ca7a2a46a10fd1a2e7b64822f236b04a6afa7ee79083af",
+        "gitBlob": "61dbf67e6e610419422691ddd728f2c3647608bb"
+      },
+      {
+        "path": "package.json",
+        "bytes": 3524,
+        "sha256": "a173c8293839a982d4fce7ae55447ca21024dfa2f46ee030146cc441792415ae",
+        "gitBlob": "b2984bbad9087933ef661f594ea9276312271762"
+      },
+      {
+        "path": "specifications/world-host/coordination-ingress.md",
+        "bytes": 827,
+        "sha256": "e4ea27450e4ba8a841fa0707c3f9878a0a3c53b014ea4c610e4013f041bbee97",
+        "gitBlob": "36bb21f9664367df4a2b865a3981e33b71c34036"
+      },
+      {
+        "path": "specifications/dimension-world-coordination.md",
+        "bytes": 31975,
+        "sha256": "5dcde6e14cd574b5b59586c5fb866733c86568f12c6fc1010b99b989e4562aa0",
+        "gitBlob": "3b3b012563dcbb833118a08802da9dde82dbc566"
+      },
+      {
+        "path": "NOTICE.md",
+        "bytes": 2631,
+        "sha256": "51311de3ea0109a21a9690b898bdfb058b28e930436f392f09ac267cbe2b1cdd",
+        "gitBlob": "459583355d18483d12063c1671878bbacca26555"
+      },
+      {
+        "path": "README.md",
+        "bytes": 17722,
+        "sha256": "d630c88241b891d0d94cc5696d8d0ed0b060ea34cdfe8116c4de87e5734d8a31",
+        "gitBlob": "d7d2cd10defd78cf8ec79f4a3e14c6e8269d294f"
+      },
+      {
+        "path": "specifications/world-history-migration.md",
+        "bytes": 23928,
+        "sha256": "cdff88ddd5d333eb1288ea143ce1dbb9367f422cbe362f2dc994ab1fd9029282",
+        "gitBlob": "42621913816af12c4ef13a8b1a70357ac53cda2d"
+      },
+      {
+        "path": "src/application.mjs",
+        "bytes": 833,
+        "sha256": "e955ff65e1c3c82abc643f84b6fdfe3f7ddf8c4d25a1a32366c47fe649811e05",
+        "gitBlob": "148161e0b9d644a1488415b011b38d20a38e0502"
+      },
+      {
+        "path": "src/cairn-file-claims.mjs",
+        "bytes": 330,
+        "sha256": "111bcb52e5076f376fae559d30ad1d65af179cd901f306425ad6eef881752dea",
+        "gitBlob": "bd381a46da6f69e90f39d2ca09aee6aa1febe725"
+      },
+      {
+        "path": "test/cairn-file-claims.test.mjs",
+        "bytes": 554,
+        "sha256": "644a33b3f066e3c70da920db10d558923da61182126f8ff4d8c0ed430af3116f",
+        "gitBlob": "41517da8c6a4de84d107741a48a70f06536a49c0"
+      },
+      {
+        "path": "src/cairn-pages.mjs",
+        "bytes": 3953,
+        "sha256": "73afc022492ec1043a2960cd9d82b5fc8096779e442b7144dd15b52c8150c16a",
+        "gitBlob": "5d6a4aa5b050ae086570e21082bc611f18f2c681"
+      },
+      {
+        "path": "src/fetch.mjs",
+        "bytes": 10369,
+        "sha256": "9ab3ec9216e006680a5a7dc5aba42fe9fd4d386992af714a8ac6e3be8bd77244",
+        "gitBlob": "4a45a41ae779e84751f15cbf2402c6935f37c25e"
+      },
+      {
+        "path": "src/geometry.mjs",
+        "bytes": 10799,
+        "sha256": "4cf8fa262794db378e24bdea4f6d0f5e75af940a374045dc1ddcd137bad973f0",
+        "gitBlob": "cac5e1c182530fd1d6d365f3f83bdf8819410a1d"
+      },
+      {
+        "path": "src/local-node.mjs",
+        "bytes": 3757,
+        "sha256": "4da03ee2b05b2b52a1e2b95eeb2035a9010dd26a38bbea84a62d7cd816428b16",
+        "gitBlob": "ee4d4d99001b035ad6ba653685f8810d1a926a55"
+      },
+      {
+        "path": "bin/serve.mjs",
+        "bytes": 1745,
+        "sha256": "8bdeef0e71bc4717b8d4bdf3716d41a0ad584e8a0257f6b5df3f360a68f5a3ea",
+        "gitBlob": "03433f9e4361fb42836f3d09582385e1cd0187a1"
+      },
+      {
+        "path": "src/source-application.mjs",
+        "bytes": 1470,
+        "sha256": "9ee1b09ce6724dc624c32b329bb08a43f515b720d643032531bd7fb11402b097",
+        "gitBlob": "3580f4356f88a86022fee62a07fd62265c7a6ea3"
+      },
+      {
+        "path": "src/source-page-routes.mjs",
+        "bytes": 2592,
+        "sha256": "ed872c3f17d6d71f63cde984076de35e3a312cf6289ace1d5b16bdf5029e009a",
+        "gitBlob": "3020b1d552482c1e6e1b8e57993178e0be3864c5"
+      },
+      {
+        "path": "src/timeline.mjs",
+        "bytes": 7423,
+        "sha256": "8915710495a96b15a61aa867a9c083f1019788075c81b398017ccac9d9f92333",
+        "gitBlob": "a2a74097cd211dff2a4392b88a7db9e8f9f41fd1"
+      },
+      {
+        "path": "src/world-gateway.mjs",
+        "bytes": 17722,
+        "sha256": "4ca29fc4173fd1f628dff7717ce92730e85d906b7f60897ce0e231314267044a",
+        "gitBlob": "919345f6a627b17a76b5e4cc62b49bde360a7d2f"
+      },
+      {
+        "path": "test/world-gateway.test.mjs",
+        "bytes": 22265,
+        "sha256": "4d2f01be93a06155d0bd8d01e8464d68a98bdb244b10ee9ec3fe6f53a7e476bc",
+        "gitBlob": "a47240d078da8487da5b435f73f70bd36c474278"
+      },
+      {
+        "path": "src/world-history.mjs",
+        "bytes": 160,
+        "sha256": "56821d29f0b139fb4207d71b2ce36ca592601bb702b2929409bd164f78c8ae57",
+        "gitBlob": "5a13e0d2ac8533b62a39a29c2174f724d3a2f6c0"
+      },
+      {
+        "path": "test/world-history.test.mjs",
+        "bytes": 18966,
+        "sha256": "19f00ddfe88de49265ca68139037bcbdcee4d8c0440673468a6865e13677201e",
+        "gitBlob": "1140d88056d45463a2350c363862f83539117e58"
+      },
+      {
+        "path": "src/world-reading.mjs",
+        "bytes": 10561,
+        "sha256": "910bc2023a68c6ba2db15000f3942703cc76b08d08dde334c0b253a5968acb6c",
+        "gitBlob": "6c1fb4240e0e2b5ac3d30afde6ef969e35a3842e"
+      },
+      {
+        "path": "src/world.mjs",
+        "bytes": 28357,
+        "sha256": "2577f040d66678884a0f8513373213942a7fcb0b009b280cf41e34de466b1409",
+        "gitBlob": "6cb7373f0307152ba3ebf1969390b90ab18952d7"
+      }
+    ]
+  },
+  "receiving": {
+    "cwd": "/workspace/scratch/455c183ed200/evidence/published-moose-0.1.0-dev.93/package",
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "--test",
+      "--test-reporter=tap",
+      "test/cairn-file-claims.test.mjs",
+      "test/world-gateway.test.mjs",
+      "test/world-history.test.mjs"
+    ],
+    "startedAt": "2026-10-26T20:51:36.338833+00:00",
+    "finishedAt": "2026-10-26T20:51:37.488749+00:00",
+    "exitCode": 0,
+    "counts": {
+      "tests": 20,
+      "suites": 0,
+      "pass": 20,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 1108.312673
+    },
+    "tap": {
+      "path": "receiving.tap",
+      "bytes": 6913,
+      "sha256": "39a71193c79b5fffb577115fffd4ff0571c0e36ac71fa118665977193e5e5fa2",
+      "gitBlob": "436eb41f5e4b7fee93daae9313d309066461631d"
+    },
+    "stderrBytes": 0
+  },
+  "providers": {
+    "mode": "reuse exact existing nine-provider closure through local links",
+    "freshFrozenInstall": false,
+    "unchangedAfterReceiving": true,
+    "selected": {
+      "@red-cup-engineering/living-web-server": {
+        "version": "0.1.0-dev.11",
+        "realpath": "/workspace/scratch/455c183ed200/feltos/node_modules/.pnpm/@red-cup-engineering+living-web-server@0.1.0-dev.11_@red-cup-engineering+computer-seria_dfefc41eaaf14810d8a87796add691c6/node_modules/@red-cup-engineering/living-web-server",
+        "manifestSha256": "404e34681023b6212e99f4343f645e4b14db427fe8ac967ae22746691a7a998a",
+        "gitHead": "5044f78201cad7e2c77b977c47061b75e770fbd9"
+      },
+      "@red-cup-engineering/knowledge-system-server": {
+        "version": "0.2.5-dev.356",
+        "realpath": "/workspace/scratch/455c183ed200/evidence/published-cairn-356/package",
+        "manifestSha256": "9f0c94ea10b33a0064a0e04f6506c1ebc005eb8e31e886ddde89c71bf5c2fada",
+        "gitHead": "4504657f251ca5692348aee5066bad53137b803c"
+      },
+      "@red-cup-engineering/computer-data-engineering-services-section": {
+        "version": "0.2.0",
+        "realpath": "/workspace/scratch/455c183ed200/feltos/node_modules/.pnpm/@red-cup-engineering+computer-data-engineering-services-section@0.2.0/node_modules/@red-cup-engineering/computer-data-engineering-services-section",
+        "manifestSha256": "d054adc1d03cd518eff79b3e25e3cacaf2ec914e45dde17df80e9196c8063e3c",
+        "gitHead": null
+      },
+      "@red-cup-engineering/signcraft": {
+        "version": "0.5.7-dev.395",
+        "realpath": "/workspace/scratch/455c183ed200/feltos/node_modules/.pnpm/@red-cup-engineering+signcraft@0.5.7-dev.395/node_modules/@red-cup-engineering/signcraft",
+        "manifestSha256": "229a317d42e063497b3a202b489d7ac87ad7b619547f6089429088f688df33b0",
+        "gitHead": "9eb2124fdd8c7582035b13557ff2600a17039842"
+      },
+      "@red-cup-engineering/activitypub-server": {
+        "version": "0.1.4-dev.89",
+        "realpath": "/workspace/scratch/455c183ed200/feltos/node_modules/.pnpm/@red-cup-engineering+activitypub-server@0.1.4-dev.89_@types+node@26.6.5_bufferutil@4.1._c4ba6c7efed53146f28a0a3eaa30880b/node_modules/@red-cup-engineering/activitypub-server",
+        "manifestSha256": "1484a8524426c66cd1e1f91edbdafc9a29efee581f8bd6f84a6e6c438e883ba5",
+        "gitHead": "26acb5ebcb97f9aac3f4f2f214d86c98244e08ce"
+      },
+      "@red-cup-engineering/activitypub-services-section": {
+        "version": "0.9.6-dev.0",
+        "realpath": "/workspace/scratch/455c183ed200/feltos/node_modules/.pnpm/@red-cup-engineering+activitypub-services-section@0.9.6-dev.0_@types+node@26.6.5_buffer_eaedc171ccbbb2ca4b7ee3acec6368a4/node_modules/@red-cup-engineering/activitypub-services-section",
+        "manifestSha256": "b9d3defc29f7eefa188296b367406e0bbe6fa4c2993ad4c69a47eff189ba07d1",
+        "gitHead": "98c97282089f73b2edd3abb11623e2b8fe189d11"
+      },
+      "@red-cup-engineering/javascript-file-services-section": {
+        "version": "0.1.1",
+        "realpath": "/workspace/scratch/455c183ed200/feltos/node_modules/.pnpm/@red-cup-engineering+javascript-file-services-section@0.1.1/node_modules/@red-cup-engineering/javascript-file-services-section",
+        "manifestSha256": "1d78ca3f6045525d98eaa3f7bbf9cc8aa4a12cc206c05f9242f520b8b2a925bc",
+        "gitHead": null
+      },
+      "@red-cup-engineering/json-services-section": {
+        "version": "0.4.0",
+        "realpath": "/workspace/scratch/455c183ed200/feltos/node_modules/.pnpm/@red-cup-engineering+json-services-section@0.4.0/node_modules/@red-cup-engineering/json-services-section",
+        "manifestSha256": "1b5945abba04ed87ad57a2a97586ee03b4742d8539fe43c2fabdec1161c181be",
+        "gitHead": null
+      },
+      "@red-cup-engineering/computer-content-address-engineering-services-section": {
+        "version": "0.2.0",
+        "realpath": "/workspace/scratch/455c183ed200/feltos/node_modules/.pnpm/@red-cup-engineering+computer-content-address-engineering-services-section@0.2.0/node_modules/@red-cup-engineering/computer-content-address-engineering-services-section",
+        "manifestSha256": "cff45a5b99d892048b7e50ec4516e435f1c00cbe7d0e316e9307fe10fdc400c4",
+        "gitHead": null
+      }
+    }
+  },
+  "priorBaseline": {
+    "receipt": "../2026-10-26-cairn-356-adoption/qualification.json",
+    "gitBlob": "31487bf9695b0938e276ad34bd6185cc7103da57",
+    "nativeResult": "52/53; original issued MOOSE 84 reproduces the cursor-only public timeline failure",
+    "owner": "https://github.com/red-cup-engineering/moose/pull/3",
+    "rerunOrRepair": false
+  },
+  "limits": [
+    "Receives the actual issued artifact, not a deployment or a fleet-wide interoperability claim.",
+    "Runs all three declared receiving suites; does not claim the separately known social baseline defect repaired.",
+    "No fresh installation, policy change, FeltOS edit, provider edit or remote write."
+  ]
+}

@@ -1,0 +1,131 @@
+TAP version 13
+# Subtest: MOOSE forwards the same original CAIRN producer and receipt codec capabilities
+ok 1 - MOOSE forwards the same original CAIRN producer and receipt codec capabilities
+  ---
+  duration_ms: 1.899082
+  type: 'test'
+  ...
+# Subtest: the extracted gateway preserves its wire vocabulary, catalogue identity and exact logical binding
+ok 2 - the extracted gateway preserves its wire vocabulary, catalogue identity and exact logical binding
+  ---
+  duration_ms: 4.777375
+  type: 'test'
+  ...
+# Subtest: admission binds authenticated context and a captured call with the original finite lifetime
+ok 3 - admission binds authenticated context and a captured call with the original finite lifetime
+  ---
+  duration_ms: 7.275195
+  type: 'test'
+  ...
+# Subtest: the receiving execution rejects altered world, principal, session, audience and exact call before authorization
+ok 4 - the receiving execution rejects altered world, principal, session, audience and exact call before authorization
+  ---
+  duration_ms: 12.904631
+  type: 'test'
+  ...
+# Subtest: execution uses the ordinary authorizer and rechecks current authority immediately before its effect
+ok 5 - execution uses the ordinary authorizer and rechecks current authority immediately before its effect
+  ---
+  duration_ms: 7.382537
+  type: 'test'
+  ...
+# Subtest: a terminal invocation is observed through its original handle without another preparation or send
+ok 6 - a terminal invocation is observed through its original handle without another preparation or send
+  ---
+  duration_ms: 7.641896
+  type: 'test'
+  ...
+# Subtest: known retention after a lost response remains pending and observation never resubmits it
+ok 7 - known retention after a lost response remains pending and observation never resubmits it
+  ---
+  duration_ms: 3.689972
+  type: 'test'
+  ...
+# Subtest: a timeout before native admission prevents later retention while keeping the unfinished slot occupied
+ok 8 - a timeout before native admission prevents later retention while keeping the unfinished slot occupied
+  ---
+  duration_ms: 13.282107
+  type: 'test'
+  ...
+# Subtest: a fresh gateway recovers uncertain late retention from the original identity without another send
+ok 9 - a fresh gateway recovers uncertain late retention from the original identity without another send
+  ---
+  duration_ms: 18.529763
+  type: 'test'
+  ...
+# Subtest: timed-out invocations and observations retain the shared finite in-flight bound until settled
+ok 10 - timed-out invocations and observations retain the shared finite in-flight bound until settled
+  ---
+  duration_ms: 36.879065
+  type: 'test'
+  ...
+# Subtest: preparation cannot substitute the audience or become asynchronous before native submission
+ok 11 - preparation cannot substitute the audience or become asynchronous before native submission
+  ---
+  duration_ms: 1.482096
+  type: 'test'
+  ...
+# Subtest: observation refuses another caller or world before reading the original result
+ok 12 - observation refuses another caller or world before reading the original result
+  ---
+  duration_ms: 5.990487
+  type: 'test'
+  ...
+# Subtest: the addressed reply must retain the exact native request, principal, session and world
+ok 13 - the addressed reply must retain the exact native request, principal, session and world
+  ---
+  duration_ms: 35.055226
+  type: 'test'
+  ...
+# Subtest: an oversized terminal result refuses with the retained handle and cannot invite replay
+ok 14 - an oversized terminal result refuses with the retained handle and cannot invite replay
+  ---
+  duration_ms: 5.477596
+  type: 'test'
+  ...
+# Subtest: a later recognized session may observe the same bearer while preserving the original execution hand
+ok 15 - a later recognized session may observe the same bearer while preserving the original execution hand
+  ---
+  duration_ms: 3.99509
+  type: 'test'
+  ...
+# Subtest: later-session result access rechecks the bearer after the native read settles
+ok 16 - later-session result access rechecks the bearer after the native read settles
+  ---
+  duration_ms: 2.865513
+  type: 'test'
+  ...
+# Subtest: MOOSE World and history retain the actual selected CAIRN original supplier
+ok 17 - MOOSE World and history retain the actual selected CAIRN original supplier
+  ---
+  duration_ms: 4.541009
+  type: 'test'
+  ...
+# {"version":"0.6.1-dev.495","gitHead":"1bb1a43ffe2df068f34ae7455c7540e9a76fc706","historyPath":"/workspace/scratch/10adc8949912/cairn-file-effects/qualification/final-cohort/packed-cairn/package/node_modules/.pnpm/@red-cup-engineering+signcraft@0.6.1-dev.495/node_modules/@red-cup-engineering/signcraft/src/history.mjs","historyBlob":"e7f0a1ff039b50662c11b3018881b20a63c3fd0b","thingPath":"/workspace/scratch/10adc8949912/cairn-file-effects/qualification/final-cohort/packed-cairn/package/node_modules/.pnpm/@red-cup-engineering+signcraft@0.6.1-dev.495/node_modules/@red-cup-engineering/signcraft/src/thing.mjs","thingBlob":"2bcea3ab88f077829608f6621b19c76135a49082","signcraftCellPath":"/workspace/scratch/10adc8949912/cairn-file-effects/qualification/final-cohort/packed-cairn/package/node_modules/.pnpm/@red-cup-engineering+signcraft@0.6.1-dev.495/node_modules/@red-cup-engineering/signcraft/src/cell.mjs","historyCellPath":"/workspace/scratch/10adc8949912/cairn-file-effects/qualification/final-cohort/packed-cairn/package/node_modules/.pnpm/@red-cup-engineering+signcraft@0.6.1-dev.495/node_modules/@red-cup-engineering/signcraft/src/cell.mjs","cellPath":"/workspace/scratch/10adc8949912/cairn-file-effects/qualification/final-cohort/packed-cairn/package/node_modules/.pnpm/@red-cup-engineering+signcell@0.13.1-dev.185/node_modules/@red-cup-engineering/signcell/src/cell.mjs","contentPath":"/workspace/scratch/10adc8949912/cairn-file-effects/qualification/final-cohort/packed-cairn/package/node_modules/.pnpm/@red-cup-engineering+semiotic-content-address@0.1.1/node_modules/@red-cup-engineering/semiotic-content-address/src/semiotic-content-address.mjs"}
+# Subtest: original Thing composition, native archive and occurrence reading compose without another history owner
+ok 18 - original Thing composition, native archive and occurrence reading compose without another history owner
+  ---
+  duration_ms: 875.006491
+  type: 'test'
+  ...
+# Subtest: incomplete and forged archives refuse ancestry while same-carrier visibility changes invalidate the reading
+ok 19 - incomplete and forged archives refuse ancestry while same-carrier visibility changes invalidate the reading
+  ---
+  duration_ms: 5.493811
+  type: 'test'
+  ...
+# Subtest: World tell and reading retain private byte content across the actual relocated lower suppliers
+ok 20 - World tell and reading retain private byte content across the actual relocated lower suppliers
+  ---
+  duration_ms: 2.709589
+  type: 'test'
+  ...
+1..20
+# tests 20
+# suites 0
+# pass 20
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1108.312673
