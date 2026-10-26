@@ -1,8 +1,8 @@
 {
   "name": "@red-cup-engineering/moose",
-  "version": "0.1.0-dev.75",
+  "version": "0.1.0-dev.76",
   "type": "module",
-  "description": "MOOSE—MUD, Object Oriented, Socially Extended: reusable social/federation application over Living Web Server and ActivityPub++.",
+  "description": "MOOSE—Multi-User Dimension, Object Oriented, Socially Extended: source-owned World coordination and social/federation composition over CAIRN, Living Web Server and ActivityPub++.",
   "exports": {
     ".": "./src/application.mjs",
     "./fetch": "./src/fetch.mjs",
@@ -11,21 +11,26 @@
     "./cairn-pages": "./src/cairn-pages.mjs",
     "./source-application": "./src/source-application.mjs",
     "./public-readers": "./src/timeline.mjs",
-    "./cairn-file-claims": "./src/cairn-file-claims.mjs"
+    "./cairn-file-claims": "./src/cairn-file-claims.mjs",
+    "./world-gateway": "./src/world-gateway.mjs"
   },
   "files": [
     "src",
     "bin",
     "README.md",
     "LICENSE",
-    "test/cairn-file-claims.test.mjs"
+    "NOTICE.md",
+    "specifications",
+    "test/cairn-file-claims.test.mjs",
+    "test/world-gateway.test.mjs"
   ],
   "bin": {
     "serve-moose": "./bin/serve.mjs"
   },
   "scripts": {
     "test": "node --test test/*.test.mjs",
-    "test:fetch": "node --test test/fetch-dependency.test.mjs test/source-application.test.mjs test/source-page-routes.test.mjs"
+    "test:fetch": "node --test test/fetch-dependency.test.mjs test/source-application.test.mjs test/source-page-routes.test.mjs",
+    "test:gateway": "node --test test/world-gateway.test.mjs"
   },
   "dependencies": {
     "@red-cup-engineering/living-web-server": "0.1.0-dev.11",
@@ -34,7 +39,7 @@
   "engines": {
     "node": ">=24"
   },
-  "license": "MIT",
+  "license": "SEE LICENSE IN NOTICE.md",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/red-cup-engineering/moose.git"
@@ -47,12 +52,16 @@
     "@red-cup-engineering/signcraft": "0.5.7-dev.395",
     "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
     "@red-cup-engineering/activitypub-services-section": "0.9.6-dev.0",
-    "@red-cup-engineering/javascript-file-services-section": "0.1.1"
+    "@red-cup-engineering/javascript-file-services-section": "0.1.1",
+    "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0",
+    "@red-cup-engineering/json-services-section": "0.4.0"
   },
   "peerDependencies": {
     "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
     "@red-cup-engineering/activitypub-services-section": "0.9.6-dev.0",
-    "@red-cup-engineering/javascript-file-services-section": "0.1.1"
+    "@red-cup-engineering/javascript-file-services-section": "0.1.1",
+    "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0",
+    "@red-cup-engineering/json-services-section": "0.4.0"
   },
   "peerDependenciesMeta": {
     "@red-cup-engineering/activitypub-server": {
@@ -63,9 +72,16 @@
     },
     "@red-cup-engineering/javascript-file-services-section": {
       "optional": true
+    },
+    "@red-cup-engineering/computer-content-address-engineering-services-section": {
+      "optional": true
+    },
+    "@red-cup-engineering/json-services-section": {
+      "optional": true
     }
   },
   "receivingTests": [
-    "test/cairn-file-claims.test.mjs"
+    "test/cairn-file-claims.test.mjs",
+    "test/world-gateway.test.mjs"
   ]
 }
