@@ -36,8 +36,8 @@ Their inclusion does not grant MIT rights or change original authorship.
 
 | Original and current path | Original Git blob | Intentional changes |
 | --- | --- | --- |
-| `src/world.mjs` | `e2b77571b9f8222d86be10f18d3767481fd10181` | Imports the original history and Thing operations through CAIRN; supplier comment and refusal wording follow that selection. |
-| `src/world-reading.mjs` | `b4a10c63a8f678ee45586793ca2b09df288b3725` | Imports the original history operations through CAIRN. |
+| `src/world.mjs` | `e2b77571b9f8222d86be10f18d3767481fd10181` | Imports the original history, Thing and Cell operations through CAIRN; supplier comment and refusal wording follow that selection. |
+| `src/world-reading.mjs` | `b4a10c63a8f678ee45586793ca2b09df288b3725` | Imports history and its Cell-owned content operations through CAIRN. |
 | `src/geometry.mjs` | `cac5e1c182530fd1d6d365f3f83bdf8819410a1d` | None; the original body is byte-for-byte unchanged. |
 
 Historical `feltos.*` record kinds, policy identities, sources, causal revisions

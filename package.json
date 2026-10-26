@@ -1,6 +1,6 @@
 {
   "name": "@red-cup-engineering/moose",
-  "version": "0.1.0-dev.81",
+  "version": "0.1.0-dev.82",
   "type": "module",
   "description": "MOOSE\u2014Multi-User Dimension, Object Oriented, Socially Extended: source-owned World coordination and social/federation composition over CAIRN, Living Web Server and ActivityPub++.",
   "exports": {
@@ -40,11 +40,8 @@
   },
   "dependencies": {
     "@red-cup-engineering/living-web-server": "0.1.0-dev.11",
-    "@red-cup-engineering/knowledge-system-server": "0.2.5-dev.272",
-    "@red-cup-engineering/signcell": "0.13.1-dev.0",
-    "@red-cup-engineering/computer-data-engineering-services-section": "0.2.0",
-    "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0",
-    "@red-cup-engineering/semiotic-content-address": "0.1.1"
+    "@red-cup-engineering/knowledge-system-server": "0.2.5-dev.273",
+    "@red-cup-engineering/computer-data-engineering-services-section": "0.2.0"
   },
   "engines": {
     "node": ">=24"
@@ -63,13 +60,15 @@
     "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
     "@red-cup-engineering/activitypub-services-section": "0.9.6-dev.0",
     "@red-cup-engineering/javascript-file-services-section": "0.1.1",
-    "@red-cup-engineering/json-services-section": "0.4.0"
+    "@red-cup-engineering/json-services-section": "0.4.0",
+    "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0"
   },
   "peerDependencies": {
     "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
     "@red-cup-engineering/activitypub-services-section": "0.9.6-dev.0",
     "@red-cup-engineering/javascript-file-services-section": "0.1.1",
-    "@red-cup-engineering/json-services-section": "0.4.0"
+    "@red-cup-engineering/json-services-section": "0.4.0",
+    "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0"
   },
   "peerDependenciesMeta": {
     "@red-cup-engineering/activitypub-server": {
@@ -82,6 +81,9 @@
       "optional": true
     },
     "@red-cup-engineering/json-services-section": {
+      "optional": true
+    },
+    "@red-cup-engineering/computer-content-address-engineering-services-section": {
       "optional": true
     }
   },

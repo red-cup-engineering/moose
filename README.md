@@ -39,8 +39,8 @@ custody; the World library retains current account/session/office authorization.
 FeltOS's existing `./server/world-gateway` path is the downstream migration point.
 There is no second World store, queue or authorization database.
 
-This Node-only entry uses the exact runtime Content Address Services `0.2.0`
-and the optional JSON Services peer `0.4.0`. It does not enter the portable
+This Node-only entry uses the exact optional Content Address Services `0.2.0`
+and JSON Services `0.4.0` peers. It does not enter the portable
 Fetch graph.
 Historical wire kinds and source terms remain intact; see [NOTICE](NOTICE.md).
 The complete original request, theory-to-contract mapping, ownership decision,
@@ -65,11 +65,15 @@ composition produces no synthetic change. Its result confers neither an
 authority grant nor a movement effect. The projection does not add per-Mark
 witnesses that the original implementation did not retain.
 
-World cells and reading policies select the same original SignCell
-`0.13.1-dev.0` used by CAIRN’s history, alongside Computer Data `0.2.0` and
-Content Address `0.2.0` as exact runtime dependencies. This repairs the
-pre-existing byte-carrier rejection caused by using separate private Cell
-retention registries at the World/history boundary. Their entries remain separate from portable Fetch composition.
+World cells and reading policies use CAIRN’s `./signcell` port. It forwards
+SignCraft’s `./cell` port, which retains the selected SignCell implementation
+and that implementation’s own content-retention and addressing functions.
+History consumes the same port. This explicit binding is required to retain
+private byte carriers when npm installs separate physical copies of the
+content provider; matching dependency versions alone is insufficient. The
+clean npm World test qualifies that boundary.
+Computer Data `0.2.0` remains a direct runtime dependency for the original
+World operations. These entries remain separate from portable Fetch composition.
 The source move and actual receiving obligations are specified in
 [World and history migration](specifications/world-history-migration.md).
 
@@ -121,7 +125,7 @@ A source declaration alone cannot authorize an actor or serve private data.
 
 ## Release status and market requirement
 
-This source edition is `0.1.0-dev.81`, declaring CAIRN `0.2.5-dev.272`,
+This source edition is `0.1.0-dev.82`, declaring CAIRN `0.2.5-dev.273`,
 ActivityPub Services `0.9.6-dev.0`, ActivityPub Server `0.1.4-dev.89` and
 Living Web Server `0.1.0-dev.11`. The CAIRN finite reader requires Node 24.2
 or later. These CAIRN and MOOSE editions require their own native artifact
@@ -229,10 +233,10 @@ composition and exact FeltOS route declarations. These source-cohort results
 do not qualify publication of the new CAIRN/MOOSE editions or installed
 cross-Dimension federation.
 
-## Select the actual execution profile (0.1.0-dev.81)
+## Select the actual execution profile (0.1.0-dev.82)
 
-The runtime suppliers are the original Living Web Server, CAIRN and the
-World family’s exact Cell, Data and Content Address services. The
+The runtime suppliers are the original Living Web Server, CAIRN and Computer
+Data. CAIRN retains the World family’s exact history, Thing and Cell selection. The
 separate `./cairn-file-claims` entry uses CAIRN; the portable `./fetch` and
 `./source-application` entries do not eagerly import that native reader.
 Node hosting and federation remain exact optional peers. An ordinary ASSIST
@@ -246,7 +250,7 @@ Fetch application starts no listener, private-key custody or CAIRN host.
 | `./local-node` | ActivityPub Services `0.9.6-dev.0` | Original local key/journal/provider commissioning. |
 | `serve-moose` | The preceding host packages and JavaScript File Services `0.1.1` | Original CLI lifecycle guard. |
 | `./cairn-pages` | Host-provided original `cairn.fars/v1` capability | No copied SignCraft state or new knowledge engine. |
-| `./world-gateway` | JSON Services `0.4.0`; Content Address is a runtime dependency | Original Node-only logical-World admission and recoverable native Actor coordination. |
+| `./world-gateway` | JSON Services `0.4.0` and Content Address Services `0.2.0` | Original Node-only logical-World admission and recoverable native Actor coordination. |
 | `./world`, `./world-reading`, `./geometry`, `./world-history` | None beyond the declared runtime suppliers | Original World observations and readings; one CAIRN-selected history and Thing implementation. |
 
 These optional peers remain development dependencies for the existing full

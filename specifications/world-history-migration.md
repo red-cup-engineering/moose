@@ -1,7 +1,8 @@
 # World and history migration through the original CAIRN supplier
 
-Status: implemented source with native provider and World receiving; publication
-and downstream registry receiving remain distinct evidence stages.
+Status: World migration implemented; clean npm receiving exposed a retained-content
+provider split. The explicit owner-port repair is being qualified through its
+original upstream publishers before downstream acceptance.
 Owner: MOOSE with the original CAIRN, SignCraft and FeltOS owners.
 The governing demand and theory obligations remain in
 [dimension-world-coordination.md](./dimension-world-coordination.md).
@@ -18,7 +19,7 @@ The initial comparison below is retained as the original design evidence. On
 implementation intake, CAIRN main had advanced to
 `85855c347c4f7421fac9525abcb0073ed96fdd95`, selecting SignCraft
 `0.6.1-dev.4`, SignGraph `0.7.1-dev.3` and Metrologic `0.14.3-dev.4`.
-That accepted cohort is preserved. The selected history body remains
+That cohort was the first implementation candidate. Its selected history body was
 `ef4979f362ba9d3d02c0dad87c93fbadb36714a2`; the actual newer Thing body is
 `2bcea3ab88f077829608f6621b19c76135a49082`. The ordinary World Thing receiver
 uses that supplier through CAIRN without injected replacement operations.
@@ -34,14 +35,54 @@ fabrication or host activation.
 The original World family is moved from FeltOS
 `2cdc8ab5747c386db1f2eee70245d1c16cca9242`. Geometry is unchanged; World and
 World-reading preserve their bodies apart from the selected supplier import
-paths and corresponding explanatory wording. Data `0.2.0` and Content Address `0.2.0` remain direct MOOSE dependencies.
-SignCell is selected at `0.13.1-dev.0`, exactly the original supplier selected by
-CAIRN’s SignCraft history. The first actual byte-retention case exposed a private
+paths and corresponding explanatory wording. Data `0.2.0` remains a direct MOOSE
+dependency. The gateway’s Content Address `0.2.0` dependency remains an optional
+peer. The first candidate directly selected SignCell `0.13.1-dev.0`, the same
+edition selected by CAIRN’s SignCraft history. The first byte-retention case exposed a private
 registry split at World Cell `0.4.2` → history Cell `0.13.1-dev.0`: admission
 refused a retained byte carrier as an untrusted accessor. The same case also
 refused in unchanged published FeltOS `0.21.9-dev.1034`, where history selected
-Cell `0.10.0`. The supplier alignment repairs that existing boundary without
-copying bytes through a new codec, dropping data or accepting arbitrary accessors.
+Cell `0.10.0`. Matching Cell versions made the local pnpm cohort pass, but
+clean npm receiving exposed another split: history and Cell could still load
+separate copies of Semiotic Content Address `0.1.1`. That result invalidated
+the first candidate’s claim of installation-independent byte retention.
+
+The repair exposes SignCell’s already imported `bytesToHex`, `retainedCarrier`,
+`semanticBytes` and `semanticId` through its existing `./cell` entry. SignCraft
+forwards that original namespace through `./cell`; its history imports Cell
+and these content operations together through that port. CAIRN forwards the
+same selection through `./signcell`, distinct from its existing catalogue
+vocabulary at `./cell`. MOOSE World and World-reading use `./signcell` for
+both Cell and content operations. No direct MOOSE SignCell pin, installer
+deduplication, new codec, global registry or acceptance of external accessors
+is used to make this boundary work.
+[SignCell #21](https://github.com/red-cup-engineering/signcell/pull/21) merged
+the original content-function exports at
+`2f617c595e92282c3e560334467d818993fe9865`. The native publisher released
+`0.13.1-dev.163`; all 32 archive files match reviewed source apart from
+publisher-owned manifest metadata. The full source suite passed 198 cases;
+the actual published artifact’s declared receiving module passed all four
+cases in its native installed package context.
+
+[SignCraft #22](https://github.com/red-cup-engineering/signcraft/pull/22) merges
+the explicit history/Cell binding at
+`8732bbb16ec2dc7322c7965f825a3a103f006c9e`. Its reconciled source preserves
+the accepted file-to-L-Space reader, Data `0.7.1` and File `0.8.4`. The full
+67-module source gate passed 544 cases. A separate clean npm installation of
+the packed candidate passed all 68 cases in its seven declared receiving
+modules. That initial standalone npm graph shares one SCA instance. A normal
+mixed-version npm consumer then installed separate SCA `0.1.1` instances behind
+Cell and SignCraft; both original paths and versions were independently read.
+All five history/provider and retained-representative cases passed in that
+layout. The full MOOSE clean npm gate remains the required downstream check.
+The history body changes only its original-provider import.
+
+The original publisher released this source as SignCraft `0.6.1-dev.471` on
+2026-10-26. Its 57 packaged source files match the merged source, and its
+selected Cell supplier is the published `0.13.1-dev.163`. The consumer
+continuation selects that artifact through CAIRN, preserving CAIRN’s merged
+shared-graph file population at `5842c770056f456b39c1916ef57cfaf1fd28a299`.
+
 FeltOS's three public entries forward all 75 original values. All 32 former
 history imports (12 runtime and 20 test imports) are routed through MOOSE;
 the two relocated runtime modules then resolve CAIRN from MOOSE's own context.
@@ -56,7 +97,14 @@ checkpoint identities and Unicode representatives. That original producer
 refuses the attempted byte-bearing history before any old carrier exists; this
 refusal is retained explicitly instead of inventing a historical fixture. The
 current producer is separately required to retain byte content through actual
-World observation and snapshot restoration.
+World observation and snapshot restoration. Separately, actual published
+SignCraft `0.6.1-dev.4` (gitHead `4e21c983a41850db263e0f56f78adf6539fba701`)
+can produce byte history in its original pnpm closure. One explicit receiving
+case creates that real history, then restores its byte-bearing revisions and
+checkpoint archive in the repaired mixed npm closure. It preserves exact heads,
+revision identities, both witness lanes and decomposed Unicode spelling while
+protecting retained data from later mutation. That compatibility case uses an
+actual old producer; it does not fabricate an old serialized byte fixture.
 
 The native PNPM provider acquisition retained exact locked dependencies but
 returned `ERR_PNPM_IGNORED_BUILDS` for unrelated dependency lifecycle scripts.
@@ -65,13 +113,23 @@ after PNPM's automatic unresolved placeholders. The 252 executed receiving
 cases establish their stated behavior, not successful exit of that acquisition
 command.
 
-### Executed MOOSE receiving
+### Preliminary receiving and the clean npm failure
 
-The complete packed MOOSE source selects the actual published CAIRN
+The first complete packed MOOSE candidate selected the actual published CAIRN
 `0.2.5-dev.272`. All 98 files in that CAIRN archive matched the merged source;
 only publisher-owned `version` and `gitHead` metadata differ. All three MOOSE
 declared receiving modules passed: 20 cases, zero failures and skips. The
-separate source/Fetch boundary passed all three cases.
+separate source/Fetch boundary passed all three cases. FeltOS’s selected
+35-module cohort passed 237 cases, and eight original SignCraft history/Thing
+suites passed 74 cases in that pnpm layout.
+
+The subsequent [clean npm CI run](https://github.com/red-cup-engineering/moose/actions/runs/40262939392)
+passed source-contract and World-gateway jobs, but failed the fourth World/history
+case. `observeHistory` attempted to retain a Cell-owned byte carrier through
+SignCraft’s separate content-provider instance and rejected its accessor. The
+Cell identity case passed. These preliminary local results therefore do not
+qualify the first candidate for release. The original clean npm gate and byte
+assertions remain mandatory for the explicit owner-port repair.
 
 The new World case asserts identical original history, Thing and SignCell
 functions, composes two source-derived Worlds inside a Dimension, retains
@@ -81,6 +139,24 @@ forged or missing ancestry, cold and warm tracked reads, same-carrier
 currentness invalidation and defensive byte retention are executed boundaries.
 These are source/runtime composition results, not two activated World hosts or
 independent cross-Dimension federation.
+
+After the explicit owner-port repair, the complete World/history test passed
+all four cases in a clean native npm installation of the prepared candidate
+chain. An ordinary mixed npm consumer then selected its own Cell and an older
+content-address package, producing separate physical SCA `0.1.1` instances
+behind Cell and SignCraft; all four World/history cases passed again. The
+original assertions and supplier bytes were retained, with no overrides or
+forced deduplication. These candidate receipts do not select a not-yet-published
+registry artifact. The clean acquisition exceeded the original eight-minute CI
+bound; that bound and actual final CI receiving remain unchanged obligations.
+
+The current accepted FeltOS Dimension source was separately received with this
+candidate chain through its native prepack and the complete 44-module,
+291-case cohort, including all 19 declared modules. This includes bounded
+signed request/reply behavior among three original providers in two Dimensions
+over local receiving transport. The broader Dimension contract distinguishes
+that executed protocol evidence from final publication and live organizational
+receiving.
 
 ## 1. Exact source baseline
 
@@ -117,6 +193,7 @@ Add these public entries to the existing CAIRN package and retain original funct
 | --- | --- | --- |
 | `./history` | `src/history.mjs` | Existing public exports of `@red-cup-engineering/signcraft/history` |
 | `./thing` | `src/thing.mjs` | Existing public exports of `@red-cup-engineering/signcraft/thing` |
+| `./signcell` | `src/signcell.mjs` | SignCraft `./cell`, retaining the selected Cell and its content functions |
 
 The files forward the identified original exports without wrapping their data or operations.
 CAIRN's actual selected SignCraft dependency supplies the implementation.
@@ -139,8 +216,8 @@ Use the FeltOS originals at `cae43a25f2134235ab2f2f92c96374760d71074d`:
 
 | Original | Git blob | Required change |
 | --- | --- | --- |
-| [src/world.mjs](https://github.com/red-cup-engineering/feltos/blob/cae43a25f2134235ab2f2f92c96374760d71074d/src/world.mjs) | `e2b77571b9f8222d86be10f18d3767481fd10181` | Move to MOOSE; route history and dynamic Thing imports through the CAIRN entries. |
-| [src/world-reading.mjs](https://github.com/red-cup-engineering/feltos/blob/cae43a25f2134235ab2f2f92c96374760d71074d/src/world-reading.mjs) | `b4a10c63a8f678ee45586793ca2b09df288b3725` | Move with World; use the same CAIRN history functions for reads, derivation and frames. |
+| [src/world.mjs](https://github.com/red-cup-engineering/feltos/blob/cae43a25f2134235ab2f2f92c96374760d71074d/src/world.mjs) | `e2b77571b9f8222d86be10f18d3767481fd10181` | Move to MOOSE; route history, Cell and dynamic Thing imports through the CAIRN entries. |
+| [src/world-reading.mjs](https://github.com/red-cup-engineering/feltos/blob/cae43a25f2134235ab2f2f92c96374760d71074d/src/world-reading.mjs) | `b4a10c63a8f678ee45586793ca2b09df288b3725` | Move with World; use CAIRN history for reads, derivation and frames, and CAIRN `./signcell` for Cell and content operations. |
 | [src/geometry.mjs](https://github.com/red-cup-engineering/feltos/blob/cae43a25f2134235ab2f2f92c96374760d71074d/src/geometry.mjs) | `cac5e1c182530fd1d6d365f3f83bdf8819410a1d` | Move the original dependency-free module; no algorithm rewrite in this placement change. |
 
 Expose the family through MOOSE's `./world`, `./world-reading` and `./geometry` entries.
@@ -258,9 +335,11 @@ mock ports and source-only tests cannot substitute for it.
 
 ## 7. Completion and evidence stages
 
-The bounded source change consists of the two CAIRN entries, the original three-file
-MOOSE family, the MOOSE history entry, FeltOS forwarding/import changes, provenance
-and the necessary receiving adjustments. Host lifecycle and effect admission stay in FeltOS.
+The bounded source change consists of the original three-file MOOSE family,
+the MOOSE history entry, FeltOS forwarding/import changes, provenance and
+receiving adjustments, plus CAIRN’s history/Thing/Cell forwarding entries and
+the original SignCell/SignCraft ports required to preserve private retention
+ownership across real installer layouts. Host lifecycle and effect admission stay in FeltOS.
 No new history owner, journal, scheduler, transport or authority database is required.
 
 Record separately: reviewed source commits; published package/catalogue selection;
