@@ -345,16 +345,25 @@ connects this declaration to Dimension execution through
   invokes the Dimension lifecycle while preserving the original single-World
   driver’s process-restart behavior.
 
-These are inspected accepted source capabilities. Live deployment and
-independently received cross-Dimension exchange remain unreceived in this record.
-Existing theory premises and separate effect-admission contracts continue to
-apply; this migration introduces no rival Dimension schema. Installed and live
-receiving must exercise two Worlds from independent application declarations,
-the same application selected for more than one World, and an available
-unselected third section. It must observe actual isolation, failure cleanup,
-recovery and preserved pending custody under the original host, with the
-independent signed exchange required by M-DIST-2. Source inspection and
-constructed descriptors alone cannot supply those receipts.
+These accepted capabilities have also been exercised locally with the prepared
+World/history supplier chain. The native 44-module cohort, including all 19
+declared FeltOS receiving modules, passed 291 cases without failures or skips.
+The original `dimension-activitypub` case exercises three original providers
+in two Dimensions with real signatures and original request/outcome custody.
+Its HTTP transport is locally routed and its executor is a receiving callback;
+this establishes the bounded signed protocol behavior, with its actual
+admission and refusal cases. It does not receive a deployed organizational job.
+
+Final registry-selected composition, host installation and live organizational
+receiving remain outstanding. Existing theory premises and separate
+effect-admission contracts continue to apply; this migration introduces no
+rival Dimension schema. Live acceptance must exercise two Worlds from
+independent application declarations, the same application selected for more
+than one World, and an available unselected third section. It must observe
+actual isolation, failure cleanup, recovery and preserved pending custody under
+the original host, with signed exchange between independently configured
+Dimensions as required by M-DIST-2. Local protocol receiving and inspected source alone cannot supply
+those live receipts.
 
 ## Receiving record
 

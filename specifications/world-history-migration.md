@@ -134,6 +134,24 @@ currentness invalidation and defensive byte retention are executed boundaries.
 These are source/runtime composition results, not two activated World hosts or
 independent cross-Dimension federation.
 
+After the explicit owner-port repair, the complete World/history test passed
+all four cases in a clean native npm installation of the prepared candidate
+chain. An ordinary mixed npm consumer then selected its own Cell and an older
+content-address package, producing separate physical SCA `0.1.1` instances
+behind Cell and SignCraft; all four World/history cases passed again. The
+original assertions and supplier bytes were retained, with no overrides or
+forced deduplication. These candidate receipts do not select a not-yet-published
+registry artifact. The clean acquisition exceeded the original eight-minute CI
+bound; that bound and actual final CI receiving remain unchanged obligations.
+
+The current accepted FeltOS Dimension source was separately received with this
+candidate chain through its native prepack and the complete 44-module,
+291-case cohort, including all 19 declared modules. This includes bounded
+signed request/reply behavior among three original providers in two Dimensions
+over local receiving transport. The broader Dimension contract distinguishes
+that executed protocol evidence from final publication and live organizational
+receiving.
+
 ## 1. Exact source baseline
 
 Both selected SignCraft archives were read from their source-declared registry.
