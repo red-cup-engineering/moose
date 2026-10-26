@@ -6,6 +6,7 @@ import { createRequire } from 'node:module';
 import { dirname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import * as MooseCell from '@red-cup-engineering/signcell/cell';
+import * as MooseCarrier from '@red-cup-engineering/semiotic-content-address';
 import * as CairnHistory from '@red-cup-engineering/knowledge-system-server/history';
 import * as CairnThing from '@red-cup-engineering/knowledge-system-server/thing';
 import * as MooseHistory from '@red-cup-engineering/moose/world-history';
@@ -21,6 +22,8 @@ const CurrentThing = await import(pathToFileURL(thingPath).href);
 const fromCurrentSigncraft = createRequire(historyPath);
 const cellPath = fromCurrentSigncraft.resolve('@red-cup-engineering/signcell/cell');
 const CurrentCell = await import(pathToFileURL(cellPath).href);
+const CurrentCarrier = await import(pathToFileURL(fromCurrentSigncraft.resolve('@red-cup-engineering/semiotic-content-address')).href);
+const CellCarrier = await import(pathToFileURL(createRequire(cellPath).resolve('@red-cup-engineering/semiotic-content-address')).href);
 const { utterance } = await import(pathToFileURL(fromCurrentSigncraft.resolve('@red-cup-engineering/signcell/utterance')).href);
 const selectedManifest = JSON.parse(readFileSync(resolve(dirname(historyPath), '..', 'package.json'), 'utf8'));
 function blobOf(path) {
@@ -53,6 +56,8 @@ test('MOOSE World and history retain the actual selected CAIRN original supplier
   assertSameExports(CairnHistory, CurrentHistory, 'CAIRN history');
   assertSameExports(CairnThing, CurrentThing, 'CAIRN Thing');
   assertSameExports(MooseCell, CurrentCell, 'MOOSE cell and CAIRN-selected SignCell');
+  assertSameExports(MooseCarrier, CurrentCarrier, 'MOOSE reading and CAIRN-selected history carrier');
+  assertSameExports(CellCarrier, CurrentCarrier, 'SignCell and history carrier');
   assertSameExports(MooseHistory, CairnHistory, 'MOOSE world history');
   assert.equal(MooseWorld.validateWorld, CairnHistory.validateHistory);
   assert.equal(MooseWorld.declareFunctional, CairnHistory.withFunctionalPredicates);

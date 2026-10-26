@@ -43,7 +43,8 @@
     "@red-cup-engineering/knowledge-system-server": "0.2.5-dev.272",
     "@red-cup-engineering/signcell": "0.13.1-dev.0",
     "@red-cup-engineering/computer-data-engineering-services-section": "0.2.0",
-    "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0"
+    "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0",
+    "@red-cup-engineering/semiotic-content-address": "0.1.1"
   },
   "engines": {
     "node": ">=24"

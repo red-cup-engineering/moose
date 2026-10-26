@@ -4,7 +4,7 @@
  * SignCraft still owns raw observations, evidence combination and causal history.
  */
 import { admitCell, coincides } from '@red-cup-engineering/signcell/cell';
-import { retainedCarrier, semanticId } from '@red-cup-engineering/computer-content-address-engineering-services-section/semiotic-content-address';
+import { retainedCarrier, semanticId } from '@red-cup-engineering/semiotic-content-address';
 import {
   historyDerivation, historyHeads, historyRawOccurrences, historySection, historySectionOfCells,
   historySubjectCells, historySubjectKey, historySubjects, queryHistory, restoreHistory,

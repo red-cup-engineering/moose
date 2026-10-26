@@ -61,6 +61,7 @@ jobs:
             '@red-cup-engineering/signcell',
             '@red-cup-engineering/computer-data-engineering-services-section',
             '@red-cup-engineering/computer-content-address-engineering-services-section',
+            '@red-cup-engineering/semiotic-content-address',
           ].map(name => `${name}@${dependencies[name]}`);
           const result = spawnSync('npm', ['install', '--prefix', process.env.WORLD_DEPENDENCIES,
             '--no-save', '--no-package-lock', '--ignore-scripts', '--no-audit', '--no-fund',

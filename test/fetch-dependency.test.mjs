@@ -57,6 +57,7 @@ test("Fetch installation has no mandatory social or managed hosting supplier", (
     "@red-cup-engineering/signcell",
     "@red-cup-engineering/computer-data-engineering-services-section",
     "@red-cup-engineering/computer-content-address-engineering-services-section",
+    "@red-cup-engineering/semiotic-content-address",
   ]);
   for (const [name, version] of Object.entries({
     "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
@@ -83,6 +84,7 @@ test("Fetch installation has no mandatory social or managed hosting supplier", (
     "@red-cup-engineering/signcell": "0.13.1-dev.0",
     "@red-cup-engineering/computer-data-engineering-services-section": "0.2.0",
     "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0",
+    "@red-cup-engineering/semiotic-content-address": "0.1.1",
   })) {
     assert.equal(pkg.dependencies[name], version);
     assert.equal(pkg.peerDependencies[name], undefined);
