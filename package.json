@@ -1,6 +1,6 @@
 {
   "name": "@red-cup-engineering/moose",
-  "version": "0.1.0-dev.84",
+  "version": "0.1.1-dev.0",
   "type": "module",
   "description": "MOOSE\u2014Multi-User Dimension, Object Oriented, Socially Extended: source-owned World coordination and social/federation composition over CAIRN, Living Web Server and ActivityPub++.",
   "exports": {
@@ -27,7 +27,9 @@
     "specifications",
     "test/cairn-file-claims.test.mjs",
     "test/world-gateway.test.mjs",
-    "test/world-history.test.mjs"
+    "test/world-history.test.mjs",
+    "test/local-node.test.mjs",
+    "test/timeline.test.mjs"
   ],
   "bin": {
     "serve-moose": "./bin/serve.mjs"
@@ -58,14 +60,14 @@
   "devDependencies": {
     "@red-cup-engineering/signcraft": "0.5.7-dev.395",
     "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
-    "@red-cup-engineering/activitypub-services-section": "0.9.6-dev.0",
+    "@red-cup-engineering/activitypub-services-section": "0.11.2",
     "@red-cup-engineering/javascript-file-services-section": "0.1.1",
     "@red-cup-engineering/json-services-section": "0.4.0",
     "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0"
   },
   "peerDependencies": {
     "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
-    "@red-cup-engineering/activitypub-services-section": "0.9.6-dev.0",
+    "@red-cup-engineering/activitypub-services-section": "0.11.2",
     "@red-cup-engineering/javascript-file-services-section": "0.1.1",
     "@red-cup-engineering/json-services-section": "0.4.0",
     "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0"
@@ -90,6 +92,8 @@
   "receivingTests": [
     "test/cairn-file-claims.test.mjs",
     "test/world-gateway.test.mjs",
-    "test/world-history.test.mjs"
+    "test/world-history.test.mjs",
+    "test/local-node.test.mjs",
+    "test/timeline.test.mjs"
   ]
 }

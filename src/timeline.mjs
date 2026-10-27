@@ -1,4 +1,4 @@
-import { projectPublicActorPosts } from "@red-cup-engineering/activitypub-services-section/public-posts";
+import { projectPublicActorPostsFromWire } from "@red-cup-engineering/activitypub-services-section/public-posts";
 export { PUBLIC } from "@red-cup-engineering/activitypub-services-section/as2";
 
 const actorPattern = /^[a-z0-9][a-z0-9._-]*$/u;
@@ -69,7 +69,7 @@ export async function readPublicTimelineAtSource({ origin, provider, identifiers
     }
     if (items.length > 100) throw new TypeError("MOOSE public outbox exceeds a bounded page");
     const actor = new URL("/actors/" + identifier, base).href;
-    return projectPublicActorPosts(items, { actor, origin: base.origin })
+    return (await projectPublicActorPostsFromWire(items, { actor, origin: base.origin }))
       .map(post => Object.freeze({ ...post, identifier }));
   }));
   const unique = new Map();
