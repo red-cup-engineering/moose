@@ -47,9 +47,14 @@ export async function readPublicTimelineAtSource({ origin, provider, identifiers
       const firstId = identity(collection.first);
       if (typeof firstId !== "string") throw new TypeError("MOOSE outbox lacks the original first page");
       const first = new URL(firstId);
+      // The original Fedify provider emits a cursor-only first-page URI.
+      // Keep its opaque cursor and the existing page=true representation.
+      const cursorOnly = !first.searchParams.has("page") &&
+        first.searchParams.getAll("cursor").length === 1 &&
+        first.searchParams.get("cursor") !== "";
       if (first.origin !== base.origin || first.pathname !== outbox.pathname ||
           first.username || first.password || first.hash ||
-          first.searchParams.get("page") !== "true" ||
+          (first.searchParams.get("page") !== "true" && !cursorOnly) ||
           [...first.searchParams.keys()].some(key => !["page", "cursor"].includes(key))) {
         throw new TypeError("MOOSE refuses a foreign or noncanonical outbox cursor");
       }
