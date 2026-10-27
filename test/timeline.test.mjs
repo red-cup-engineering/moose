@@ -264,6 +264,10 @@ test("cursor-only admission preserves original source and query refusals before 
     outbox,
     outbox + "?cursor=",
     outbox + "?cursor=1&cursor=2",
+    outbox + "?page=true&page=true",
+    outbox + "?page=true&page=false",
+    outbox + "?page=true&cursor=1&cursor=2",
+    outbox + "?page=true&cursor=",
   ];
   for (const first of refused) {
     const calls = [];

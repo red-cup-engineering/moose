@@ -49,12 +49,15 @@ export async function readPublicTimelineAtSource({ origin, provider, identifiers
       const first = new URL(firstId);
       // The original Fedify provider emits a cursor-only first-page URI.
       // Keep its opaque cursor and the existing page=true representation.
-      const cursorOnly = !first.searchParams.has("page") &&
-        first.searchParams.getAll("cursor").length === 1 &&
-        first.searchParams.get("cursor") !== "";
+      const pages = first.searchParams.getAll("page");
+      const cursors = first.searchParams.getAll("cursor");
+      const validCursor = cursors.length === 1 && cursors[0] !== "";
+      const canonicalPage = pages.length === 1 && pages[0] === "true" &&
+        (cursors.length === 0 || validCursor);
+      const cursorOnly = pages.length === 0 && validCursor;
       if (first.origin !== base.origin || first.pathname !== outbox.pathname ||
           first.username || first.password || first.hash ||
-          (first.searchParams.get("page") !== "true" && !cursorOnly) ||
+          (!canonicalPage && !cursorOnly) ||
           [...first.searchParams.keys()].some(key => !["page", "cursor"].includes(key))) {
         throw new TypeError("MOOSE refuses a foreign or noncanonical outbox cursor");
       }
