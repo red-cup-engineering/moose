@@ -146,6 +146,11 @@ npm install --registry=https://registry.561.group
 npm test
 ```
 
+`npm run test:pack` independently checks npm's actual offline dry-run archive: it
+requires every exported entry and CLI file, original source terms, and exactly
+the declared packaged receiving tests. Development-only test sources must stay
+out of the published archive; the check itself is source-only.
+
 CI ([`fetch-dependency.yml`](.github/workflows/fetch-dependency.yml)) runs on
 every pull request and on `main`: the dependency-free source contract
 (Fetch boundary, section site, resource inventory and native route suites), the
