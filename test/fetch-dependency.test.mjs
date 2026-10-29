@@ -51,14 +51,27 @@ test("source qualification parses the actual MOOSE Fetch, Actor outbox and appli
 
 test("Fetch installation has no mandatory social or managed hosting supplier", () => {
   const pkg = JSON.parse(file("package.json"));
-  assert.deepEqual(Object.keys(pkg.dependencies), [
-    "@red-cup-engineering/living-web-server",
-    "@red-cup-engineering/knowledge-system-server",
-    "@red-cup-engineering/computer-data-engineering-services-section",
-  ]);
+  const qualifiedSuppliers = Object.freeze({
+    "@red-cup-engineering/living-web-server": "0.1.0-dev.11",
+    "@red-cup-engineering/knowledge-system-server": "0.2.5-dev.356",
+    "@red-cup-engineering/computer-data-engineering-services-section": "0.2.0",
+  });
+  const qualify = suppliers => assert.deepEqual(suppliers, qualifiedSuppliers);
+  qualify(pkg.dependencies);
+  qualify(Object.fromEntries(Object.entries(pkg.dependencies).reverse()));
+  // The same exact identity/versions contract refuses missing, added,
+  // and misversioned suppliers; a managed-hosting import cannot slip in.
+  const [, ...remaining] = Object.entries(pkg.dependencies);
+  assert.throws(() => qualify(Object.fromEntries(remaining)), { code: "ERR_ASSERTION" });
+  assert.throws(() => qualify({
+    ...pkg.dependencies, "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
+  }), { code: "ERR_ASSERTION" });
+  assert.throws(() => qualify({
+    ...pkg.dependencies, [Object.keys(pkg.dependencies)[0]]: "0.0.0",
+  }), { code: "ERR_ASSERTION" });
   for (const [name, version] of Object.entries({
     "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
-    "@red-cup-engineering/activitypub-services-section": "0.11.2",
+    "@red-cup-engineering/activitypub-services-section": "0.11.4",
     "@red-cup-engineering/javascript-file-services-section": "0.1.1",
     "@fedify/fedify": "2.3.14",
     "@fedify/vocab": "2.3.14",
