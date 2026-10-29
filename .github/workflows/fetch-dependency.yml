@@ -1,15 +1,17 @@
 name: MOOSE Fetch-only dependency boundary
 on:
+  push:
+    branches: [main]
+    paths:
+      - src/**
+      - test/**
+      - package.json
+      - .github/workflows/fetch-dependency.yml
   pull_request:
     paths:
       - src/**
+      - test/**
       - package.json
-      - test/fetch-dependency.test.mjs
-      - test/section-site.test.mjs
-      - test/resource-readout.test.mjs
-      - test/source-page-routes.test.mjs
-      - test/world-gateway.test.mjs
-      - test/world-history.test.mjs
       - .github/workflows/fetch-dependency.yml
 permissions:
   contents: read
@@ -48,7 +50,7 @@ jobs:
           node --test --test-reporter=tap test/world-gateway.test.mjs
   world-history:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020

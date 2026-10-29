@@ -28,7 +28,7 @@ function exactPath(path) {
  * Project an existing LWS page declaration. This creates no content,
  * authorisation, listener, location registry, or extra publication.
  */
-export function exactPublicPageRoutes(pages, { basePath = "/" } = {}) {
+export function exactPublicPageRoutes(pages, { basePath = "/", sectionRoot = false } = {}) {
   if (!Array.isArray(pages) || (basePath !== "/" &&
       (typeof basePath !== "string" || !/^\/[a-z][a-z0-9-]*$/u.test(basePath)))) {
     throw new TypeError("MOOSE native page projection requires original pages and site prefix");
@@ -45,9 +45,10 @@ export function exactPublicPageRoutes(pages, { basePath = "/" } = {}) {
       ...RESERVED_PREFIXES, basePath + "/people", basePath + "/actors",
       basePath + "/inbox", basePath + "/outbox", basePath + "/.well-known",
     ];
-    // A nested social site must not seize /, but may advertise the original
-    // source-authorized publication homepage supplied in pages.
-    const reserved = (basePath === "/" && match === "/") || match === basePath ||
+    // A nested social site must not seize /. Only the owning section's admitted
+    // public site may advertise its source-authorized publication homepage there.
+    const root = match === "/" && (basePath === "/" || !sectionRoot);
+    const reserved = root || match === basePath ||
       claimed.some(prefix => match === prefix || match.startsWith(prefix + "/"));
     if (reserved || occupied.has(match)) {
       throw new TypeError("MOOSE added native page conflicts with an existing protocol, social, or page route");
