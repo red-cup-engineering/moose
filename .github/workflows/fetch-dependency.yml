@@ -91,5 +91,7 @@ jobs:
         run: |
           set -euo pipefail
           npm install --no-save --no-package-lock --ignore-scripts --no-audit --no-fund --fetch-retries=1 --fetch-timeout=30000 --registry=https://registry.561.group
+      - name: Report selected Fedify/vocabulary module graph
+        run: npm ls @fedify/fedify @fedify/vocab @fedify/vocab-runtime --all || true
       - name: Run all repository tests on the installed provider graph
         run: npm test
