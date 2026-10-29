@@ -45,7 +45,9 @@ export function exactPublicPageRoutes(pages, { basePath = "/" } = {}) {
       ...RESERVED_PREFIXES, basePath + "/people", basePath + "/actors",
       basePath + "/inbox", basePath + "/outbox", basePath + "/.well-known",
     ];
-    const reserved = match === "/" || match === basePath ||
+    // A nested social site must not seize /, but may advertise the original
+    // source-authorized publication homepage supplied in pages.
+    const reserved = (basePath === "/" && match === "/") || match === basePath ||
       claimed.some(prefix => match === prefix || match.startsWith(prefix + "/"));
     if (reserved || occupied.has(match)) {
       throw new TypeError("MOOSE added native page conflicts with an existing protocol, social, or page route");

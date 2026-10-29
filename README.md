@@ -163,6 +163,48 @@ capability. The authored source reconciliation preserves the Actor-home branch
 and current CAIRN/source-page contracts; it is not a native SignCraft fabrication
 receipt.
 
+## Source-qualified section homes and resource inventories
+
+The optional `publicSite` input to `createMooseSite` is the owning section's
+existing public `site.json` presentation, not a second source of identity,
+authority or URLs. Its canonical origin, bounded name/description and safe,
+unique navigation links are checked before source readers run. A supplied
+`tufteTheme` is forwarded through `createMooseApplication` to the original
+Living Web Server `document.theme`; it is not a new renderer or Brand registry.
+
+An optional `readPublicResources` reads the original `PublicResourceInventory`
+for the same section, **only after** an independent
+`authorizePublicRead({ context, resource: "public-resource-inventory" })`
+grant. The bounded projection distinguishes public GET, authorized repository
+GET and POST-only interfaces; POST endpoints are never advertised as clickable
+GET actions. MOOSE invents neither a `/resources.json` route nor a service
+health claim. Source inventory access can be refused without denying the
+already-authorized social page.
+
+When `basePath` is `/social`, the original publisher's separately authorized
+`/` page is projected as one exact native host resource alongside articles,
+feeds and search. `basePath: "/"` continues to reserve `/` for MOOSE's own
+home. Each projected page still runs through its source reader and Living Web
+Server authorization; native route advertisement alone grants no read rights.
+
+For installed Node hosts, MOOSE also selects matching optional/development
+`@fedify/fedify` and `@fedify/vocab` 2.3.14 peers. The original
+ActivityPub 0.11.2 actor dispatcher and its Fedify key dispatcher must share
+the same **physical vocabulary class** for public-key serialization. A graph
+which resolves two copies of version 2.3.14 can produce HTTP 500 despite
+correct key material; matching version text is not sufficient. The full
+installed-host test must verify actual interoperability, including the native
+Group actor endpoint. This selection does not make Fedify mandatory for a
+Fetch-only MOOSE consumer.
+
+Pure section/inventory/native-route suites run without external dependencies;
+the original source application tests exercise the integrated hosting contract.
+The upstream renderer's real theme receiving, installed private dependencies,
+browser accessibility and actual Causeway/FeltOS deployment remain distinct
+qualification steps. The implementation consolidates the source work of
+MOOSE #7, #8 and #10 onto current main without reintroducing their obsolete
+`createLivingWebServer` and `createMooseApplication` duplication.
+
 ## Required managed hosting supplier
 
 The receipt recovery requested by the Leader must retain FeltOS's existing,

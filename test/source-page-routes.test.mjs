@@ -27,7 +27,7 @@ test("the projection refuses unsafe, ambiguous, or claimed protocol/social space
     "/research/./paper", "/research/Paper", "/research/%2e%2e",
     "/actors/science", "/actors", "/.well-known/webfinger",
     "/people/science", "/inbox/private", "/outbox/science",
-    "/", "/social", "/social/people", "/social/people/science",
+    "/social", "/social/people", "/social/people/science",
     "/social/inbox", "/social/outbox", "/social/actors/science",
     "/science?draft=yes", "/#fragment",
   ]) {
@@ -41,8 +41,9 @@ test("the projection refuses unsafe, ambiguous, or claimed protocol/social space
   assert.deepEqual(exactPublicPageRoutes([], { basePath: "/" }), []);
   assert.throws(() => exactPublicPageRoutes([{ match: "/" }], { basePath: "/" }), /conflicts/,
     "the native MOOSE root must not be overwritten by a research application");
-  assert.throws(() => exactPublicPageRoutes([{ match: "/" }], { basePath: "/social" }),
-    /conflicts/, "a nested social site cannot take the FeltOS host root");
+  assert.deepEqual(exactPublicPageRoutes([{ match: "/" }], { basePath: "/social" }),
+    [{ id: "moose.page:/", match: "/" }],
+    "a nested social site may project the original authorized publication root");
   assert.deepEqual(exactPublicPageRoutes([{ match: "/research/" }], { basePath: "/social" }),
     [{ id: "moose.page:/research/", match: "/research/" }],
     "a TUFTE index route ending in / remains a valid finite source address");

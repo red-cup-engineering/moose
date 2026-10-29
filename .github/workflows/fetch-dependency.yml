@@ -5,6 +5,9 @@ on:
       - src/**
       - package.json
       - test/fetch-dependency.test.mjs
+      - test/section-site.test.mjs
+      - test/resource-readout.test.mjs
+      - test/source-page-routes.test.mjs
       - test/world-gateway.test.mjs
       - test/world-history.test.mjs
       - .github/workflows/fetch-dependency.yml
@@ -19,7 +22,13 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '24'
-      - run: node --check src/application.mjs && node --test test/fetch-dependency.test.mjs
+      - name: Verify portable source and source-owned projections without installed dependencies
+        run: |
+          node --check src/application.mjs
+          node --check src/fetch.mjs
+          node --check src/section-site.mjs
+          node --check src/resource-readout.mjs
+          node --test test/fetch-dependency.test.mjs test/section-site.test.mjs test/resource-readout.test.mjs test/source-page-routes.test.mjs
   world-gateway:
     runs-on: ubuntu-latest
     timeout-minutes: 3
@@ -68,3 +77,21 @@ jobs:
           NODE
           ln -s "$WORLD_DEPENDENCIES/node_modules" node_modules
       - run: node --test --test-reporter=tap test/world-history.test.mjs
+
+  installed-host:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Receive the exact declared host and public-view providers
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-save --no-package-lock --ignore-scripts --no-audit --no-fund --fetch-retries=1 --fetch-timeout=30000 --registry=https://registry.561.group
+      - name: Report selected Fedify/vocabulary module graph
+        run: npm ls @fedify/fedify @fedify/vocab @fedify/vocab-runtime --all || true
+      - name: Run all repository tests on the installed provider graph
+        run: npm test
