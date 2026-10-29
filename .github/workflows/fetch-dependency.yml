@@ -77,3 +77,19 @@ jobs:
           NODE
           ln -s "$WORLD_DEPENDENCIES/node_modules" node_modules
       - run: node --test --test-reporter=tap test/world-history.test.mjs
+
+  installed-host:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Receive the exact declared host and public-view providers
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-save --no-package-lock --ignore-scripts --no-audit --no-fund --fetch-retries=1 --fetch-timeout=30000 --registry=https://registry.561.group
+      - name: Run all repository tests on the installed provider graph
+        run: npm test
