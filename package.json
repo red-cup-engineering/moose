@@ -1,6 +1,6 @@
 {
   "name": "@red-cup-engineering/moose",
-  "version": "0.1.1-dev.0",
+  "version": "0.1.1-dev.127",
   "type": "module",
   "description": "MOOSE—Multi-User Dimension, Object Oriented, Socially Extended: source-owned World coordination and social/federation composition over CAIRN, Living Web Server and ActivityPub++.",
   "exports": {
