@@ -30,7 +30,7 @@ jobs:
           node --check src/fetch.mjs
           node --check src/section-site.mjs
           node --check src/resource-readout.mjs
-          node --test test/fetch-dependency.test.mjs test/section-site.test.mjs test/resource-readout.test.mjs test/source-page-routes.test.mjs
+          node --test test/fetch-dependency.test.mjs test/section-site.test.mjs test/resource-readout.test.mjs test/source-page-routes.test.mjs test/pack-contract.test.mjs
   world-gateway:
     runs-on: ubuntu-latest
     timeout-minutes: 3
