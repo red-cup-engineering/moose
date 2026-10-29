@@ -177,7 +177,7 @@ export function createMooseSite({
       ],
     };
   };
-  const sourcePageRoutes = exactPublicPageRoutes(pages, { basePath });
+  const sourcePageRoutes = exactPublicPageRoutes(pages, { basePath, sectionRoot: section !== null });
   const website = createMooseApplication({
     origin, authorizePublicRead,
     // Use the one source-authorized LWS/TUFTE renderer: no second app boundary.

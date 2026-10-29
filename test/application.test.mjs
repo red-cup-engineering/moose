@@ -354,8 +354,17 @@ test("FeltOS can actually see one accepted TUFTE house homepage, article, feed a
       reads++; return { title: "Search", tiles: [] };
     } },
   ];
-  const site = createMooseSite({
+  const house = { baseIri: ORIGIN + "/", name: "Lenticule Science",
+    description: "Public experiments and qualified research.", menu: [] };
+  assert.throws(() => createMooseSite({
     origin: ORIGIN, provider, basePath: "/social", pages,
+    readPublicTimeline: async () => ({ items: [], hasMore: false }),
+    readPublicActor: async () => null,
+    authorizePublicRead: async () => true,
+  }), /conflicts with an existing protocol/u,
+  "without the owning house's site, a nested MOOSE cannot take the host root");
+  const site = createMooseSite({
+    origin: ORIGIN, provider, basePath: "/social", pages, publicSite: house,
     readPublicTimeline: async () => ({ items: [], hasMore: false }),
     readPublicActor: async () => null,
     authorizePublicRead: async ({ resource }) =>
