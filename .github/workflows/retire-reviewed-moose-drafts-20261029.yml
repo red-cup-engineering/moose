@@ -1,0 +1,94 @@
+name: One-time MOOSE superseded-draft branch retirement
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/retire-reviewed-moose-drafts-20261029.yml'
+permissions:
+  contents: write
+  pull-requests: read
+concurrency:
+  group: moose-superseded-draft-retirement-20261029
+  cancel-in-progress: false
+jobs:
+  verify-and-retire:
+    if: github.repository == 'red-cup-engineering/moose' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Verify source replacement, archive, exact branch head and no open consumers
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs=require('node:fs'),os=require('node:os'),path=require('node:path'),cp=require('node:child_process');
+          const repo='red-cup-engineering/moose';
+          const accepted='1b37d22702ff2d50e51f1a54c1721c7b5d1459c7';
+          const entries=[
+            {branch:'feat/source-owned-tufte-theme-in-moose-20261023',sha:'af045dd4d79fc60f219fea3f10df587a933d6f71',pr:7},
+            {branch:'feat/section-sourced-public-moose-homes-20261023',sha:'8d7fce3270c1f2b7c85f1d616d900ee96279ead9',pr:8},
+            {branch:'feat/section-resource-inventory-moose-20261023',sha:'403ba19ecf25c730cc9bc87da93b5e0cbf816395',pr:10}
+          ];
+          if(process.env.GITHUB_REPOSITORY!==repo||process.env.GITHUB_REF!=='refs/heads/main'||!process.env.GH_TOKEN)throw Error('not the authorized source repository/ref');
+          const headers={authorization:'Bearer '+process.env.GH_TOKEN,accept:'application/vnd.github+json','x-github-api-version':'2022-11-28'};
+          async function get(resource){
+            const r=await fetch('https://api.github.com/'+resource,{headers});
+            if(!r.ok)throw Error('GitHub GET '+r.status+' at '+resource.split('?')[0]);
+            return r.json();
+          }
+          const tmp=fs.mkdtempSync(path.join(process.env.RUNNER_TEMP||os.tmpdir(),'retire-reviewed-moose-'));
+          const ask=path.join(tmp,'askpass.sh');
+          fs.writeFileSync(ask,'#!/bin/sh\ncase "$1" in\n *Username*) printf "x-access-token\\n";;\n *Password*) printf "%s\\n" "$GH_TOKEN";;\nesac\n',{mode:0o700});
+          const env={...process.env,GIT_ASKPASS:ask,GIT_TERMINAL_PROMPT:'0'};
+          const init=cp.spawnSync('git',['init','-q',tmp],{encoding:'utf8'});
+          if(init.status!==0)throw Error('cannot establish isolated Git directory');
+          const rows=[];let mainSha=null;
+          const record=(branch,state,why)=>{rows.push({branch,state,why});console.log(state,branch,why);};
+          (async()=>{
+            try{
+              const replacement=await get('repos/'+repo+'/pulls/23');
+              if(replacement.state!=='closed'||!replacement.merged||replacement.merge_commit_sha!==accepted)throw Error('source replacement #23 not confirmed merged at expected identity');
+              const main=await get('repos/'+repo+'/branches/main');mainSha=main.commit.sha;
+              const ancestor=await get('repos/'+repo+'/compare/'+accepted+'...'+mainSha);
+              if(!['ahead','identical'].includes(ancestor.status)||ancestor.behind_by!==0)throw Error('accepted replacement not current-main ancestor');
+              for(const {branch,sha,pr} of entries){
+                try {
+                  if(branch==='main'||!/^[a-f0-9]{40}$/.test(sha))throw Error('invalid candidate');
+                  const now=await get('repos/'+repo+'/branches/main');
+                  if(now.commit.sha!==mainSha){record(branch,'HELD','main advanced, review again');continue;}
+                  const prior=await get('repos/'+repo+'/pulls/'+pr);
+                  if(prior.state!=='closed'||prior.merged||prior.head.ref!==branch||prior.head.sha!==sha){record(branch,'HELD','old draft changed or was merged');continue;}
+                  const archived=await get('repos/'+repo+'/git/ref/pull/'+pr+'/head');
+                  if(archived.object?.sha!==sha){record(branch,'HELD','original PR commit no longer archived');continue;}
+                  const current=await get('repos/'+repo+'/branches/'+encodeURIComponent(branch));
+                  if(current.commit.sha!==sha||current.protected!==false){record(branch,'HELD','branch head changed or is protected');continue;}
+                  const open=await get('repos/'+repo+'/pulls?state=open&head='+encodeURIComponent('red-cup-engineering:'+branch)+'&per_page=100');
+                  if(!Array.isArray(open)||open.length){record(branch,'HELD','open PR references this branch');continue;}
+                  const args=['push','--porcelain','--force-with-lease=refs/heads/'+branch+':'+sha,'https://github.com/'+repo+'.git',':refs/heads/'+branch];
+                  const push=cp.spawnSync('git',args,{cwd:tmp,env,encoding:'utf8',timeout:45000,maxBuffer:131072});
+                  if(push.status!==0){record(branch,'UNCERTAIN','lease deletion declined; no retry');continue;}
+                  const readback=await fetch('https://api.github.com/repos/'+repo+'/git/ref/heads/'+branch,{headers});
+                  record(branch,readback.status===404?'DELETED':'UNCERTAIN','readback HTTP '+readback.status);
+                }catch(e){record(branch,'HELD',String(e.message).slice(0,160));}
+              }
+            }finally{
+              const tally={DELETED:0,HELD:0,UNCERTAIN:0};
+              for(const x of rows)tally[x.state]=(tally[x.state]||0)+1;
+              const summary=[
+                '# MOOSE reviewed draft retirement',
+                'Accepted replacement PR #23: '+accepted,
+                'Verified main: '+(mainSha||'unobserved'),
+                'Deleted: '+tally.DELETED+'; Held: '+tally.HELD+'; Uncertain: '+tally.UNCERTAIN,
+                'Preservation: original GitHub refs/pull/N/head and closed PR discussions',
+                '',
+                '| Branch | State | Evidence |',
+                '| --- | --- | --- |',
+                ...rows.map(x=>'| '+x.branch+' | '+x.state+' | '+x.why+' |')
+              ];
+              fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,summary.join('\n')+'\n');
+              fs.rmSync(tmp,{recursive:true,force:true});
+              if(tally.UNCERTAIN||tally.HELD||rows.length!==entries.length)process.exitCode=1;
+            }
+          })().catch(e=>{console.error('Root prerequisite refused:',e.message);process.exitCode=1;});
+          NODE
