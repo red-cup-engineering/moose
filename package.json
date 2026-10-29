@@ -41,7 +41,8 @@
     "test": "node --test test/*.test.mjs",
     "test:fetch": "node --test test/fetch-dependency.test.mjs test/source-application.test.mjs test/source-page-routes.test.mjs",
     "test:gateway": "node --test test/world-gateway.test.mjs",
-    "test:world": "node --test test/world-history.test.mjs"
+    "test:world": "node --test test/world-history.test.mjs",
+    "test:pack": "node --test test/pack-contract.test.mjs"
   },
   "dependencies": {
     "@red-cup-engineering/living-web-server": "0.1.0-dev.11",
