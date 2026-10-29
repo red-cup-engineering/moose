@@ -66,14 +66,18 @@
     "@red-cup-engineering/activitypub-services-section": "0.11.2",
     "@red-cup-engineering/javascript-file-services-section": "0.1.1",
     "@red-cup-engineering/json-services-section": "0.4.0",
-    "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0"
+    "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0",
+    "@fedify/fedify": "2.3.14",
+    "@fedify/vocab": "2.3.14"
   },
   "peerDependencies": {
     "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
     "@red-cup-engineering/activitypub-services-section": "0.11.2",
     "@red-cup-engineering/javascript-file-services-section": "0.1.1",
     "@red-cup-engineering/json-services-section": "0.4.0",
-    "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0"
+    "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0",
+    "@fedify/fedify": "2.3.14",
+    "@fedify/vocab": "2.3.14"
   },
   "peerDependenciesMeta": {
     "@red-cup-engineering/activitypub-server": {
@@ -89,6 +93,12 @@
       "optional": true
     },
     "@red-cup-engineering/computer-content-address-engineering-services-section": {
+      "optional": true
+    },
+    "@fedify/fedify": {
+      "optional": true
+    },
+    "@fedify/vocab": {
       "optional": true
     }
   },
