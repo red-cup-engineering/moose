@@ -2,7 +2,7 @@
   "name": "@red-cup-engineering/moose",
   "version": "0.1.1-dev.0",
   "type": "module",
-  "description": "MOOSE\u2014Multi-User Dimension, Object Oriented, Socially Extended: source-owned World coordination and social/federation composition over CAIRN, Living Web Server and ActivityPub++.",
+  "description": "MOOSE—Multi-User Dimension, Object Oriented, Socially Extended: source-owned World coordination and social/federation composition over CAIRN, Living Web Server and ActivityPub++.",
   "exports": {
     ".": "./src/application.mjs",
     "./fetch": "./src/fetch.mjs",
@@ -29,7 +29,10 @@
     "test/world-gateway.test.mjs",
     "test/world-history.test.mjs",
     "test/local-node.test.mjs",
-    "test/timeline.test.mjs"
+    "test/timeline.test.mjs",
+    "test/resource-readout.test.mjs",
+    "test/section-site.test.mjs",
+    "test/source-page-routes.test.mjs"
   ],
   "bin": {
     "serve-moose": "./bin/serve.mjs"
@@ -94,6 +97,9 @@
     "test/world-gateway.test.mjs",
     "test/world-history.test.mjs",
     "test/local-node.test.mjs",
-    "test/timeline.test.mjs"
+    "test/timeline.test.mjs",
+    "test/resource-readout.test.mjs",
+    "test/section-site.test.mjs",
+    "test/source-page-routes.test.mjs"
   ]
 }

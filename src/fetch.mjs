@@ -1,5 +1,7 @@
 import { exactPublicPageRoutes } from "./source-page-routes.mjs";
 import { createMooseApplication } from "./source-application.mjs";
+import { admitMoosePublicSite } from "./section-site.mjs";
+import { projectMooseResourceInventory } from "./resource-readout.mjs";
 
 const NAME = /^[a-z][a-z0-9._-]*$/u;
 const MAX_VISIBLE = 64;
@@ -44,7 +46,7 @@ function publicItems(readout, provider) {
 }
 
 /**
- * MOOSE — MUD, Object Oriented, Socially Extended.
+ * MOOSE — Multi-User Dimension, Object Oriented, Socially Extended.
  *
  * One actual social application composed from Living Web Server's live TUFTE
  * views and the house's native ActivityPub actor/follower/inbox/outbox engine.
@@ -55,7 +57,7 @@ function publicItems(readout, provider) {
 export function createMooseSite({
   origin, provider, readPublicTimeline, readPublicActor, readPublicActorTimeline,
   authorizePublicRead, pages = [], kv, queue, release, custodyRoot,
-  basePath = "/",
+  basePath = "/", publicSite, tufteTheme, readPublicResources,
 } = {}) {
   const address = new URL(origin);
   if (address.origin !== origin || address.pathname !== "/" ||
@@ -75,6 +77,11 @@ export function createMooseSite({
   }
   if (!Array.isArray(provider.identifiers) || provider.identifiers.some(id => !NAME.test(id))) {
     throw new TypeError("MOOSE site needs admitted original actor identifiers");
+  }
+  const section = admitMoosePublicSite(publicSite, origin);
+  if (readPublicResources !== undefined &&
+      (typeof readPublicResources !== "function" || !section)) {
+    throw new TypeError("MOOSE resource inventory reader needs a source-owned public section");
   }
   const profilePrefix = basePath === "/" ? "/people/" : basePath + "/people/";
   const profileMatch = new RegExp("^" + profilePrefix.replaceAll("/", "\\/") + "[a-z][a-z0-9._-]*$", "u");
@@ -106,7 +113,13 @@ export function createMooseSite({
     const actorPosts = readout == null ? [] : publicItems(readout, provider);
     return {
       title: label,
+      ...(section ? { subtitle: section.description, navigation: section.menu } : {}),
       tiles: [
+        ...(section ? [{
+          id: "section-return", title: "Section public home",
+          content: "Return to the original public section website.",
+          links: [{ href: section.baseIri, label: section.name }],
+        }] : []),
         { id: "public-profile", title: label, content: summary },
         { id: "activitypub-face", title: "ActivityPub", content: new URL(`/actors/${identifier}`, origin).href },
         { id: "source-outbox", title: "Public activity source",
@@ -124,11 +137,37 @@ export function createMooseSite({
       ],
     };
   };
-  const readHome = async () => {
+  const readHome = async context => {
     const activities = await readPublicTimeline({ maxItems: MAX_VISIBLE });
+    // The page grant does not imply inventory access; the owner must grant
+    // this distinct resource before the original inventory reader is called.
+    let resourceTiles = [];
+    if (readPublicResources !== undefined &&
+        await authorizePublicRead({ context, resource: "public-resource-inventory" }) === true) {
+      const observed = await readPublicResources({ context, origin, organization: section.name });
+      if (observed !== null && observed !== undefined) {
+        resourceTiles = projectMooseResourceInventory(observed, {
+          origin, organization: section.name,
+        });
+      }
+    }
     return {
-      title: "MOOSE — Semioverse",
+      title: section ? section.name + " · Social" : "MOOSE — Semioverse",
+      ...(section ? { subtitle: section.description, navigation: section.menu } : {}),
       tiles: [
+        ...(section ? [{
+          id: "section-entrance", title: "Public section",
+          content: section.description,
+          links: [{ href: section.baseIri, label: "Open " + section.name }],
+        }, {
+          id: "section-directory", title: "Source-owned public directory",
+          content: "These links are declared by the owning section; their destinations determine availability and access.",
+          links: section.menu,
+        }] : []),
+        ...(resourceTiles.length ? [{
+          id: "source-resource-inventory", title: "Public resource inventory",
+          content: "Source-declared access and transport; no implied uptime, permission or completed action.",
+        }, ...resourceTiles] : []),
         { id: "introduction", title: "Federated social world", content: "Public activities from source-owned actors" },
         ...publicItems(activities, provider),
         ...(activities.hasMore ? [{
@@ -141,6 +180,8 @@ export function createMooseSite({
   const sourcePageRoutes = exactPublicPageRoutes(pages, { basePath });
   const website = createMooseApplication({
     origin, authorizePublicRead,
+    // Use the one source-authorized LWS/TUFTE renderer: no second app boundary.
+    ...(tufteTheme === undefined ? {} : { document: { theme: tufteTheme } }),
     ...(basePath === "/" ? { home: readHome } : {}),
     pages: [
       ...(basePath === "/" ? [] : [{ match: basePath, name: "home", read: readHome }]),

@@ -218,3 +218,169 @@ test("same printable handle on two settlements never means one Actor", async () 
   assert.equal((await engine.fetch(new Request("https://third.example/@garden/"))).status, 421,
     "an unknown settlement must not borrow an authorized Actor from either house");
 });
+
+
+test("one original section site becomes a navigable living MOOSE social and Actor home", async () => {
+  const original = Object.freeze({
+    baseIri: ORIGIN + "/", name: "Lenticule Science",
+    description: "Public experiments, measurements and qualified research.",
+    menu: Object.freeze([
+      { href: "/research/", label: "Research" },
+      { href: "/resources.json", label: "Resource inventory" },
+      { href: "https://services.561.group/", label: "Public services" },
+    ]),
+  });
+  const provider = fixture().provider;
+  const instance = createMooseSite({
+    origin: ORIGIN, provider, basePath: "/social", publicSite: original,
+    tufteTheme: { name: "scientific-lab",
+      styles: "body[data-tufte-theme=scientific-lab]{--tufte-accent:#165D64;}" },
+    readPublicTimeline: async () => ({ items: [], hasMore: false }),
+    readPublicActor: async ({ identifier }) => ({
+      identifier, name: "Garden", summary: "Public research",
+    }),
+    readPublicActorTimeline: async () => ({ items: [], hasMore: false }),
+    authorizePublicRead: async () => true,
+  });
+  const get = async path => instance.website.fetch(new Request(ORIGIN + path, {
+    headers: { accept: "text/html" },
+  }));
+  const home = await (await get("/social")).text();
+  assert.match(home, /Lenticule Science/u);
+  assert.match(home, /scientific-lab/u);
+  assert.match(home, /Public experiments, measurements/u);
+  assert.match(home, /href="\/resources.json"/u);
+  assert.match(home, /href="\/research\/"/u);
+  assert.match(home, /https:\/\/services.561.group\//u);
+  const profile = await (await get("/@garden/")).text();
+  assert.match(profile, /Lenticule Science/u);
+  assert.match(profile, /href="https:\/\/social.example\/"/u);
+  assert.match(profile, /scientific-lab/u);
+  assert.equal(original.menu[0].href, "/research/", "MOOSE leaves the owning original untouched");
+  const json = await instance.website.fetch(new Request(ORIGIN + "/social", {
+    headers: { accept: "application/json" },
+  }));
+  assert.equal(json.status, 200);
+  const body = JSON.stringify(await json.json());
+  assert.match(body, /Lenticule Science/u);
+  assert.doesNotMatch(body, /--tufte-accent|scientific-lab/u);
+  assert.equal((await instance.website.fetch(new Request("https://elsewhere.test/social"))).status, 421);
+});
+
+test("MOOSE refuses impersonated sections and unsafe public navigation before reading source", () => {
+  const provider = fixture().provider;
+  let reads = 0;
+  const create = publicSite => createMooseSite({
+    origin: ORIGIN, provider, publicSite,
+    readPublicTimeline: async () => { reads++; return { items: [], hasMore: false }; },
+    readPublicActor: async () => null,
+    authorizePublicRead: async () => true,
+  });
+  const base = { baseIri: ORIGIN + "/", name: "Facility", description: "Test",
+    menu: [{ href: "/resources.json", label: "Resources" }] };
+  for (const invalid of [
+    { ...base, baseIri: "https://other.example/" },
+    { ...base, menu: [{ href: "javascript:alert(1)", label: "Bad" }] },
+    { ...base, menu: [{ href: "http://elsewhere.example", label: "Bad" }] },
+    { ...base, menu: [{ href: "/_private/keys", label: "Bad" }] },
+    { ...base, menu: [{ href: "/resources.json", label: "One" },
+      { href: "/resources.json", label: "Duplicate" }] },
+  ]) assert.throws(() => create(invalid), /MOOSE section/u);
+  assert.equal(reads, 0);
+});
+
+test("MOOSE projects the actual section resource inventory only after a separate grant", async () => {
+  const provider = fixture().provider;
+  const original = {
+    baseIri: ORIGIN + "/", name: "Engineering", description: "Real tools",
+    menu: [{ href: "/resources.json", label: "Resource inventory" }],
+  };
+  let allowed = false, calls = 0;
+  const site = createMooseSite({
+    origin: ORIGIN, provider, basePath: "/social", publicSite: original,
+    authorizePublicRead: async ({ resource }) =>
+      resource !== "public-resource-inventory" || allowed,
+    readPublicTimeline: async () => ({ items: [], hasMore: false }),
+    readPublicActor: async () => null,
+    readPublicResources: async () => {
+      calls++;
+      return { type: "PublicResourceInventory", version: 1,
+        origin: ORIGIN + "/", organization: "Engineering",
+        resources: [
+          { id: "instrument", title: "Machine-readable instrument",
+            url: ORIGIN + "/resources.json", access: { mode: "public-read" },
+            humanAction: "Examine its source evidence.",
+            agentAccess: { method: "GET", mediaType: "application/json" } },
+          { id: "action", title: "Read-only MCP operation",
+            url: ORIGIN + "/mcp", access: { mode: "public-read-only-tools" },
+            humanAction: "Use an MCP client.",
+            agentAccess: { method: "POST", mediaType: "application/json" } },
+        ] };
+    },
+  });
+  const get = () => site.website.fetch(new Request(ORIGIN + "/social", {
+    headers: { accept: "text/html" },
+  }));
+  const denied = await (await get()).text();
+  assert.doesNotMatch(denied, /Machine-readable instrument/u);
+  assert.equal(calls, 0);
+  allowed = true;
+  const granted = await (await get()).text();
+  assert.match(granted, /Machine-readable instrument/u);
+  assert.match(granted, /href="https:\/\/social.example\/resources.json"/u);
+  assert.match(granted, /Read-only MCP operation/u);
+  assert.doesNotMatch(granted, /href="https:\/\/social.example\/mcp"/u,
+    "MOOSE never presents a POST-only machine API as a navigable GET link");
+  assert.equal(calls, 1);
+  assert.match(granted, /Source-declared access/u);
+});
+
+test("FeltOS can actually see one accepted TUFTE house homepage, article, feed and search route", async () => {
+  const provider = fixture().provider;
+  let reads = 0, permitted = false;
+  const pages = [
+    { name: "published-home", match: "/", read: () => {
+      reads++; return { title: "Original TUFTE Science", tiles: [] };
+    } },
+    { name: "admitted-article", match: "/research/study/", read: () => {
+      reads++; return { title: "Source-accepted research", tiles: [] };
+    } },
+    { name: "feed", match: "/feed.json", read: () => {
+      reads++; return new Response('{"items":[]}', {
+        headers: { "content-type": "application/feed+json" },
+      });
+    } },
+    { name: "search", match: "/search/", read: () => {
+      reads++; return { title: "Search", tiles: [] };
+    } },
+  ];
+  const site = createMooseSite({
+    origin: ORIGIN, provider, basePath: "/social", pages,
+    readPublicTimeline: async () => ({ items: [], hasMore: false }),
+    readPublicActor: async () => null,
+    authorizePublicRead: async ({ resource }) =>
+      resource === "home" || (permitted && resource !== "actor-profile"),
+  });
+  for (const path of ["/", "/research/study/", "/feed.json", "/search/"]) {
+    const route = site.resources.find(x => x.match === path);
+    assert.ok(route, "native MOOSE route must expose the original publication " + path);
+    assert.equal(route.id, "moose.page:" + path);
+    assert.equal((await route.handler({ request: new Request(ORIGIN + path) })).status, 404);
+  }
+  assert.equal(reads, 0, "private or not-yet-admitted source is not read");
+  permitted = true;
+  for (const path of ["/", "/research/study/", "/feed.json", "/search/"]) {
+    const route = site.resources.find(x => x.match === path);
+    assert.equal((await route.handler({ request: new Request(ORIGIN + path) })).status, 200);
+  }
+  assert.equal(reads, 4, "accepted page readers are original LWS paths, not a second CMS");
+  assert.equal(site.resources.filter(x => x.match === "/").length, 1);
+  assert.equal(site.resources.filter(x => x.match === "/@garden/").length, 1);
+  assert.throws(() => createMooseSite({
+    origin: ORIGIN, provider, basePath: "/social",
+    readPublicTimeline: async () => ({ items: [], hasMore: false }),
+    readPublicActor: async () => null,
+    authorizePublicRead: async () => true,
+    pages: [{ match: "/@garden/", read: () => ({ title: "Impostor" }) }],
+  }), /conflicts with an existing protocol/u);
+});
