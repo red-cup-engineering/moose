@@ -382,5 +382,5 @@ test("FeltOS can actually see one accepted TUFTE house homepage, article, feed a
     readPublicActor: async () => null,
     authorizePublicRead: async () => true,
     pages: [{ match: "/@garden/", read: () => ({ title: "Impostor" }) }],
-  }), /conflicts with an existing protocol/u);
+  }), /MOOSE added native page needs one exact, safe path/u);
 });
