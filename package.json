@@ -1,8 +1,8 @@
 {
   "name": "@red-cup-engineering/moose",
-  "version": "0.1.1-dev.127",
+  "version": "0.1.2-dev.0",
   "type": "module",
-  "description": "MOOSE—Multi-User Dimension, Object Oriented, Socially Extended: source-owned World coordination and social/federation composition over CAIRN, Living Web Server and ActivityPub++.",
+  "description": "MOOSE\u2014Multi-User Dimension, Object Oriented, Socially Extended: source-owned World coordination and social/federation composition over CAIRN, Living Web Server and ActivityPub++.",
   "exports": {
     ".": "./src/application.mjs",
     "./fetch": "./src/fetch.mjs",
@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "@red-cup-engineering/computer-data-engineering-services-section": "0.2.0",
-    "@red-cup-engineering/knowledge-system-server": "0.2.5-dev.356",
+    "@red-cup-engineering/knowledge-system-server": "0.2.6-dev.0",
     "@red-cup-engineering/living-web-server": "0.1.0-dev.11"
   },
   "engines": {
@@ -69,7 +69,7 @@
     "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0",
     "@red-cup-engineering/javascript-file-services-section": "0.1.1",
     "@red-cup-engineering/json-services-section": "0.4.0",
-    "@red-cup-engineering/signcraft": "0.5.7-dev.395"
+    "@red-cup-engineering/signcraft": "0.6.7-dev.0"
   },
   "peerDependencies": {
     "@fedify/fedify": "2.3.14",
