@@ -38,8 +38,9 @@ still runs through its source reader and the host's `authorizePublicRead`.
 
 Everything MOOSE needs is in GitHub repositories under
 [`red-cup-engineering`](https://github.com/red-cup-engineering) and packages on
-`https://registry.561.group`. This repository is public; the others are private
-and need organization access.
+`https://registry.561.group`. MOOSE and Living Web Server are public; the other listed repositories
+currently require organization access. GitHub visibility is distinct from
+package-registry read permission.
 
 | Repository | Package | What it owns | How MOOSE uses it |
 | --- | --- | --- | --- |
