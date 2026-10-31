@@ -34,6 +34,71 @@ MOOSE keeps no second journal, scheduler, Actor registry, archive, renderer or
 authorization database. A route it declares grants no read right: every page
 still runs through its source reader and the host's `authorizePublicRead`.
 
+## The MOOSE stack
+
+Everything MOOSE needs is in GitHub repositories under
+[`red-cup-engineering`](https://github.com/red-cup-engineering) and packages on
+`https://registry.561.group`. This repository is public; the others are private
+and need organization access.
+
+| Repository | Package | What it owns | How MOOSE uses it |
+| --- | --- | --- | --- |
+| [`moose`](https://github.com/red-cup-engineering/moose) | `@red-cup-engineering/moose` | This package. | — |
+| [`living-web-server`](https://github.com/red-cup-engineering/living-web-server) | `@red-cup-engineering/living-web-server` | Live TUFTE pages over the house HTTP listener: authority check before each read, Fetch application. | Runtime dependency (`./fetch`). |
+| [`web-page-tiling-engine`](https://github.com/red-cup-engineering/web-page-tiling-engine) | `@red-cup-engineering/web-page-tiling-engine` | TUFTE, the Tiling User Form Topology Engine: page tiling and rendering. | Indirect, through Living Web Server's runtime dependency. |
+| [`computer-web-server`](https://github.com/red-cup-engineering/computer-web-server) | `@red-cup-engineering/computer-web-server` | The house HTTP listener. | Indirect: an optional peer of Living Web Server and a dependency of ActivityPub Server. MOOSE must not depend on it directly (`test/fetch-dependency.test.mjs`). |
+| [`knowledge-system-server`](https://github.com/red-cup-engineering/knowledge-system-server) | `@red-cup-engineering/knowledge-system-server` | CAIRN: source custody, authorized reads, codecs, and the `./history`, `./thing`, `./signcell`, `./fars` and `./finite-file-claims` ports. | Runtime dependency. |
+| [`signcraft`](https://github.com/red-cup-engineering/signcraft) | `@red-cup-engineering/signcraft` | SignCraft: Thing identity, witnessed relations, causal history, Cells. | Not a runtime dependency. MOOSE reaches SignCraft only through CAIRN, which depends on it and exposes its history, Thing and Cell modules through `./history`, `./thing` and `./signcell`. MOOSE lists it as a devDependency, used directly only by `test/cairn-pages.test.mjs`; `test/world-history.test.mjs` resolves it from CAIRN's copy. |
+| [`activitypub-server`](https://github.com/red-cup-engineering/activitypub-server) | `@red-cup-engineering/activitypub-server` | The managed ActivityPub multi-site host. | Optional peer, for `.` and `serve-moose`. |
+| [`activitypub-engineering-services-section`](https://github.com/red-cup-engineering/activitypub-engineering-services-section) | `@red-cup-engineering/activitypub-services-section` | The ActivityPub services section: AS2, signed federation, journal custody, public posts. | Optional peer, for `./public-readers`, `./local-node` and `.`. |
+| [`computer-data-engineering-services-section`](https://github.com/red-cup-engineering/computer-data-engineering-services-section) | `@red-cup-engineering/computer-data-engineering-services-section` | The data services section. | Runtime dependency (`./four`). |
+
+The runtime `dependencies` are Living Web Server, CAIRN and Computer Data. The
+optional peers (also devDependencies) are ActivityPub Server, ActivityPub
+Services, JSON Services, Content Address Services, JavaScript File Services, and
+`@fedify/fedify` and `@fedify/vocab`. [`package.json`](package.json) has the
+exact versions.
+
+Where each is mounted in the Group's repository tree:
+
+| Repository | Mount |
+| --- | --- |
+| `moose` | [`computer-mud-engineering-services-section`](https://github.com/red-cup-engineering/computer-mud-engineering-services-section) `apps/moose` |
+| `living-web-server` | [`web-system-engineering-services-section`](https://github.com/red-cup-engineering/web-system-engineering-services-section) `apps/living-web-server` |
+| `web-page-tiling-engine` (TUFTE) | [`web-tufte-gui-engineering-services-section`](https://github.com/red-cup-engineering/web-tufte-gui-engineering-services-section) `apps/web-page-tiling-engine` |
+
+### Installing from registry.561.group
+
+All Group packages are installed from the house registry. Point the
+`@red-cup-engineering` scope at it, in a project `.npmrc` or on the command line:
+
+```ini
+@red-cup-engineering:registry=https://registry.561.group
+```
+
+```sh
+npm install @red-cup-engineering/moose --registry=https://registry.561.group
+```
+
+CI installs this way with no credentials. If your install is refused, ask a
+maintainer for read access. Never commit a registry `_auth` or `_authToken`.
+
+### Known consumers
+
+Consumer tests for MOOSE live in the consumer's repository, not here.
+
+- [FeltOS](https://github.com/red-cup-engineering/feltos) (the MUD driver) hosts
+  Worlds, the World gateway and social sites. Tests:
+  `test/moose-world-gateway.test.mjs`, `test/moose-world-history.test.mjs`,
+  `test/moose-social-lifecycle.test.mjs`.
+- [ASSIST](https://github.com/red-cup-engineering/assist) uses the Fetch-only
+  application. Test: `test/moose-application.test.mjs`.
+- Causeway's public web sites
+  ([`causeway-services/public-web-services-section`](https://github.com/causeway-services/public-web-services-section))
+  are the intended users of section homes (`publicSite`, `tufteTheme`,
+  `readPublicResources`). On 2026-10-31 none of their manifests imported the
+  package.
+
 ## Entries
 
 | Entry | Exports | Needs from the host |
