@@ -1,4 +1,4 @@
-import { cell, certainObject, knowledgeReading } from "@red-cup-engineering/knowledge-system-server/signcell";
+import { cell, certainObject, coincidenceKey, knowledgeReading } from "@red-cup-engineering/knowledge-system-server/signcell";
 import { isReading, sidesOfReading } from "@red-cup-engineering/computer-data-engineering-services-section/four";
 import { captureHistoryReads, createHistory, validateHistory, observeHistory, replayHistory, continueHistory, historySection, historySubjects, historyHeads, queryHistory, withFunctionalPredicates } from "@red-cup-engineering/knowledge-system-server/history";
 import { deriveWorldReading, isWorldReading, rebindWorldReading } from "./world-reading.mjs";
@@ -130,11 +130,19 @@ export function regionOf(world, place) {
 
 /** Every place with an extent, as a cover {place: region}; empty in a world of rooms alone. */
 export const regionsOf = deriveWorldReading((world) => {
-  const regions = {};
+  // An admitted World subject is not a JavaScript prototype property.
+  // The original SignCell coincidence relation determines whether two
+  // occurrences name one region; Object.fromEntries preserves source keys,
+  // including "__proto__", without invoking its inherited setter.
+  const seen = new Set(), entries = [];
   for (const at of queryWorld(world, { predicate: REGION })) {
-    if (!(at.subject in regions) && regionOf(world, at.subject) !== null) regions[at.subject] = regionOf(world, at.subject);
+    const key = coincidenceKey(at.subject);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const region = regionOf(world, at.subject);
+    if (region !== null) entries.push([at.subject, region]);
   }
-  return Object.freeze(regions);
+  return Object.freeze(Object.fromEntries(entries));
 });
 
 const containerOf = (world, subject) => {
