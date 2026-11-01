@@ -32,7 +32,8 @@
     "test/timeline.test.mjs",
     "test/resource-readout.test.mjs",
     "test/section-site.test.mjs",
-    "test/source-page-routes.test.mjs"
+    "test/source-page-routes.test.mjs",
+    "test/world-region-identity.test.mjs"
   ],
   "bin": {
     "serve-moose": "./bin/serve.mjs"
@@ -111,6 +112,7 @@
     "test/timeline.test.mjs",
     "test/resource-readout.test.mjs",
     "test/section-site.test.mjs",
-    "test/source-page-routes.test.mjs"
+    "test/source-page-routes.test.mjs",
+    "test/world-region-identity.test.mjs"
   ]
 }
