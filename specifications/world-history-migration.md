@@ -333,6 +333,36 @@ Reuse FeltOS's `world`, `world-reading`, `world-reading-binding-version`,
 The combined installed case supplies the missing cross-owner identity evidence;
 mock ports and source-only tests cannot substitute for it.
 
+## Native World region-cover projection: source identity is not prototype membership
+
+`regionsOf(world)` is an **index/projection**, not a second observed Cell
+store. Its regions are derived by the original `queryWorld` and `regionOf`
+readers, which receive SignCraft history and SignCell source evidence through
+CAIRN. The result remains a frozen ordinary JavaScript record whose own
+string keys are the source names of places with currently positively supported
+region bodies; it serializes as ordinary JSON without acquiring execution,
+movement, truth-maintenance or source-authentication authority.
+
+An admitted string such as `constructor`, `toString` or `__proto__` is
+an ordinary source term, not evidence of JavaScript object inheritance.
+Deduplication SHALL use the **original SignCell coincidence relation**, not
+`in` or a home-grown case-folded address. An output key SHALL be an
+**own data property** even if it shares the spelling of an inherited name;
+constructing the output SHALL NOT invoke the inherited `__proto__` setter.
+Canonically coincident source terms SHALL select one region; first admitted
+source representation is retained at this projection boundary. Missing,
+against-only or multiply ambiguous functional reads remain absent, not
+fabricated as successful geometry. The immutable history and both evidence
+lanes are unchanged by taking the projection.
+
+The original `test/world-region-identity.test.mjs` is a declared package
+receiving test, invoked by the native source test command and retained in the
+npm artifact. This is a source/API compatibility repair: ordinary keys and
+the public record shape are preserved. The exact new MOOSE revision must
+still be independently installed and tested through existing FeltOS World
+forwarding and MetroPlat World.Vista before a deployed-regions success claim.
+It does not close the separate SignCraft history-settlement cutover.
+
 ## 7. Completion and evidence stages
 
 The bounded source change consists of the original three-file MOOSE family,
