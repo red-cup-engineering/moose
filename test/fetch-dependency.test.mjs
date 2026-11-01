@@ -53,7 +53,7 @@ test("Fetch installation has no mandatory social or managed hosting supplier", (
   const pkg = JSON.parse(file("package.json"));
   const qualifiedSuppliers = Object.freeze({
     "@red-cup-engineering/living-web-server": "0.1.0-dev.11",
-    "@red-cup-engineering/knowledge-system-server": "0.2.5-dev.356",
+    "@red-cup-engineering/knowledge-system-server": "0.2.6-dev.0",
     "@red-cup-engineering/computer-data-engineering-services-section": "0.2.0",
   });
   const qualify = suppliers => assert.deepEqual(suppliers, qualifiedSuppliers);

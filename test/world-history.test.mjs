@@ -54,9 +54,9 @@ const occurrencePolicy = MooseReading.defineWorldReadingPolicy({
 
 test('MOOSE World and history retain the actual selected CAIRN original supplier', t => {
   assert.equal(selectedManifest.name, '@red-cup-engineering/signcraft');
-  assert.equal(selectedManifest.version, '0.6.1-dev.495');
-  assert.equal(blobOf(historyPath), 'e7f0a1ff039b50662c11b3018881b20a63c3fd0b');
-  assert.equal(blobOf(thingPath), '2bcea3ab88f077829608f6621b19c76135a49082');
+  assert.equal(selectedManifest.version, '0.8.1-dev.0');
+  assert.equal(blobOf(historyPath), '6d7f47d4340cbffbacad02dfb2297a279e0ba29a');
+  assert.equal(blobOf(thingPath), 'a56f69cbbe5ab5087caee09271816f2a47123bac');
   assert.equal(blobOf(signcraftCellPath), '40d7d947430ad944f9baa2172c34cfceb1abdd41');
   t.diagnostic(JSON.stringify({ version: selectedManifest.version, gitHead: selectedManifest.gitHead,
     historyPath, historyBlob: blobOf(historyPath), thingPath, thingBlob: blobOf(thingPath),
@@ -119,6 +119,7 @@ function composedDimension() {
 
 test('original Thing composition, native archive and occurrence reading compose without another history owner', async () => {
   const f = composedDimension();
+  assert.equal(f.composed.kind, 'signcraft.composed-things.v2');
   const statementIds = f.composed.relationalField.statements.map(statement => statement.id);
   const original = MooseWorld.createWorld();
   const source = 'original CAIRN Thing projection';
@@ -224,6 +225,46 @@ test('original Thing composition, native archive and occurrence reading compose 
   assert.deepEqual(MooseHistory.captureHistoryOccurrences(joined, { archive: true }).rows, originalFrame.rows);
   assert.throws(() => MooseWorld.continueWorld(restored, structuredClone(restored.revisions)), /Duplicate history revision/);
   assert.deepEqual(restored.revisions, snapshot.revisions, 'refused duplicate append preserves the received carrier');
+});
+
+test('World projection refuses the retired Thing dialect without recording an observation', async () => {
+  const source = structuredClone(composedDimension().composed);
+  source.kind = 'signcraft.composed-things.v1';
+  const world = MooseWorld.createWorld();
+  const refused = await MooseWorld.receiveComposedThingWorld(world, source, { source: 'retired source' });
+  assert.equal(refused.ok, false);
+  assert.equal(refused.refusal.kind, 'invalid-thing-world-source');
+  assert.deepEqual(CairnHistory.historyHeads(world), []);
+});
+
+for (const [name, forge] of [
+  ['Thing attributes', source => { source.things[0].thing.attributes.name = 'borrowed identity'; }],
+  ['relation Cell witnesses', source => { source.relationPresentations[0].relationCell.for = ['forged witness']; }],
+  ['relation statements', source => { source.relationalField.statements[0].statement.object = 'forged target'; }],
+]) {
+  test(`World projection retains native refusal of forged ${name}`, async () => {
+    const source = structuredClone(composedDimension().composed);
+    forge(source);
+    assert.equal(CairnThing.readThingSpatialProjection(source).ok, false,
+      'the original producer rejects this presentation despite its borrowed IDs');
+    const world = MooseWorld.createWorld();
+    const refused = await MooseWorld.receiveComposedThingWorld(world, source, { source: 'forged source' });
+    assert.equal(refused.ok, false);
+    assert.equal(refused.refusal.kind, 'unqualified-thing-spatial-projection');
+    assert.deepEqual(CairnHistory.historyHeads(world), []);
+  });
+}
+
+test('World projection retains the original carrier before inspecting source fields', async () => {
+  const source = structuredClone(composedDimension().composed);
+  let accessed = false;
+  Object.defineProperty(source, 'things', { get() { accessed = true; return []; } });
+  const world = MooseWorld.createWorld();
+  const refused = await MooseWorld.receiveComposedThingWorld(world, source, { source: 'accessor source' });
+  assert.equal(refused.ok, false);
+  assert.equal(refused.refusal.kind, 'invalid-thing-world-source');
+  assert.equal(accessed, false);
+  assert.deepEqual(CairnHistory.historyHeads(world), []);
 });
 
 test('incomplete and forged archives refuse ancestry while same-carrier visibility changes invalidate the reading', () => {
