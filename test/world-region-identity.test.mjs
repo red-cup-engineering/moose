@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
-  REGION, createWorld, tell, queryWorld, regionOf, regionsOf,
+  LOCATED_IN, POSE, REGION, createWorld, tell, queryWorld, regionOf, regionsOf, sightOf, perceivedOf,
 } from "../src/world.mjs";
 
 const region = (label) => ({
@@ -58,4 +58,29 @@ test("negative-only or missing regions do not become positive geometry", () => {
   assert.deepEqual(Object.keys(cover), ["observed"]);
   assert.equal(Object.hasOwn(cover, "unwitnessed"), false);
   assert.equal(Object.hasOwn(cover, "nonexistent"), false);
+});
+
+test("actual World sight and actor perception receive geometry named by a source carrier", () => {
+  const prism = (from, to) => ({
+    body: { footprint: [[from, 0], [to, 0], [to, 10], [from, 10]], z: [0, 3] },
+  });
+  const pose = x => ({ position: [x, 5, 1], heading: 0 });
+  const world = tell(createWorld(), [
+    { subject: "world-one", predicate: "kind", object: "world" },
+    { subject: "lookout", predicate: "kind", object: "room" },
+    { subject: "constructor", predicate: "kind", object: "room" },
+    { subject: "lookout", predicate: LOCATED_IN, object: "world-one" },
+    { subject: "constructor", predicate: LOCATED_IN, object: "world-one" },
+    { subject: "lookout", predicate: REGION, object: prism(0, 10) },
+    { subject: "constructor", predicate: REGION, object: prism(10, 20) },
+    { subject: "observer", predicate: LOCATED_IN, object: "lookout" },
+    { subject: "observer", predicate: POSE, object: pose(5) },
+    { subject: "target", predicate: LOCATED_IN, object: "constructor" },
+    { subject: "target", predicate: POSE, object: pose(15) },
+  ], { source: "original World perception receiving" });
+  assert.deepEqual(Object.keys(regionsOf(world)).sort(), ["constructor", "lookout"]);
+  assert.ok(sightOf(world, "observer").includes("target"),
+    "a real distant source-named region must participate in the World sight cover");
+  assert.ok(perceivedOf(world, "observer").subjects.includes("target"),
+    "the original actor perception must receive the same visible subject");
 });
