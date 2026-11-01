@@ -1,4 +1,4 @@
-import { cell, certainObject, knowledgeReading } from "@red-cup-engineering/knowledge-system-server/signcell";
+import { cell, certainObject, knowledgeReading, retainedCarrier } from "@red-cup-engineering/knowledge-system-server/signcell";
 import { isReading, sidesOfReading } from "@red-cup-engineering/computer-data-engineering-services-section/four";
 import { captureHistoryReads, createHistory, validateHistory, observeHistory, replayHistory, continueHistory, historySection, historySubjects, historyHeads, queryHistory, withFunctionalPredicates } from "@red-cup-engineering/knowledge-system-server/history";
 import { deriveWorldReading, isWorldReading, rebindWorldReading } from "./world-reading.mjs";
@@ -410,33 +410,22 @@ export async function receiveComposedThingWorld(world, composed, { source, thing
     try { ops = await import("@red-cup-engineering/knowledge-system-server/thing"); }
     catch { return denied("thing-supplier-unavailable", "The selected CAIRN SignCraft dependency does not expose an admissible Thing consumer"); }
   }
-  const names = ["composeThings", "readThingSpatialProjection"];
-  if (!ops || names.some(name => typeof ops[name] !== "function"))
-    return denied("thing-supplier-unavailable", "The original SignCraft Thing composition and spatial readers must all be installed");
-  if (composed?.kind !== "signcraft.composed-things.v1"
-      || !Array.isArray(composed.things) || !Array.isArray(composed.relationPresentations)
-      || !composed.relationalField || composed.things.length < 1 || composed.things.length > 256
-      || composed.relationPresentations.length > 4096)
+  if (!ops || typeof ops.readThingSpatialProjection !== "function")
+    return denied("thing-supplier-unavailable", "The original SignCraft Thing spatial reader must be installed");
+  // Retain one source reading before inspecting it. Caller accessors and
+  // mutable presentations cannot change between native admission and mapping.
+  let held;
+  try { held = retainedCarrier(composed); }
+  catch { return denied("invalid-thing-world-source", "A retained original Thing composition is required"); }
+  if (held?.kind !== "signcraft.composed-things.v2"
+      || !Array.isArray(held.things) || !Array.isArray(held.relationPresentations)
+      || !held.relationalField || held.things.length < 1 || held.things.length > 256
+      || held.relationPresentations.length > 4096)
     return denied("invalid-thing-world-source", "A bounded original SignCraft Thing composition is required");
-  // Recompose using the exact original source Utterances and type document;
-  // neither a copied output's badge nor a hash-shaped URI grants admission.
-  const restored = ops.composeThings({
-    typeSystem: composed.typeSystem,
-    things: composed.things.map(x => ({ typeId: x?.typeId, source: x?.source })),
-    relationSources: composed.relationPresentations.map(x => x?.source),
-  });
-  if (!restored?.ok) return denied("invalid-thing-world-source", "Source Thing/relational-field re-admission failed");
-  const held = restored.value;
-  const oldIds = composed.relationalField?.statements?.map(x => x.id);
-  const newIds = held.relationalField?.statements?.map(x => x.id);
-  if (held.typeSystem.identity !== composed.typeSystem?.identity
-      || !Array.isArray(oldIds) || oldIds.length !== newIds.length
-      || oldIds.some((id, i) => id !== newIds[i])
-      || composed.things.length !== held.things.length
-      || held.things.some((x, i) => x.thing.id !== composed.things[i]?.thing?.id))
-    return denied("thing-world-source-drift", "Portable original Thing and EAVT identities disagree");
-  // One original SignCraft type/area/territory read for the entire World.
-  // These are content-version Thing addresses, not independent Actor/Work IDs.
+  // SignCraft re-admits the complete original type document, Utterances,
+  // Thing/Cell presentations and relation field before reading space. Give
+  // that owner the held source itself: recomposing locally could discard a
+  // forged presentation while retaining its borrowed content address.
   const spatial = ops.readThingSpatialProjection(held);
   if (!spatial?.ok) return denied("unqualified-thing-spatial-projection",
     "Original location, Thing kind or authored Area exits are ambiguous or unavailable");
