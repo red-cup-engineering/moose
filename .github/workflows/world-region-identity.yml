@@ -1,0 +1,68 @@
+# Source-qualified World receiving, using the EXISTING MOOSE world-history
+# CI supplier-selection method. Registry release and live FeltOS/MetroPlat
+# installation remain independent outcomes.
+name: MOOSE World region identity receiving
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/world-region-identity.yml'
+      - 'src/world.mjs'
+      - 'test/world-region-identity.test.mjs'
+      - 'package.json'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/world-region-identity.yml'
+      - 'src/world.mjs'
+      - 'test/world-region-identity.test.mjs'
+      - 'package.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: moose-world-region-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  source-receiving:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Check original World source and regression syntax
+        run: |
+          node --check src/world.mjs
+          node --check test/world-region-identity.test.mjs
+      - name: Receive exact original World/history supplier composition
+        shell: bash
+        run: |
+          set -euo pipefail
+          supplier_root="$(mktemp -d)"
+          export WORLD_DEPENDENCIES="$supplier_root"
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+          import { spawnSync } from 'node:child_process';
+          const { dependencies } = JSON.parse(readFileSync('package.json','utf8'));
+          const suppliers = [
+            '@red-cup-engineering/knowledge-system-server',
+            '@red-cup-engineering/computer-data-engineering-services-section',
+          ].map(name => name + '@' + dependencies[name]);
+          const result = spawnSync('npm', [
+            'install','--prefix',process.env.WORLD_DEPENDENCIES,
+            '--no-save','--no-package-lock','--ignore-scripts','--no-audit',
+            '--no-fund','--fetch-retries=1','--fetch-timeout=30000',
+            '--registry=https://registry.561.group',...suppliers,
+          ], {stdio:'inherit'});
+          process.exit(result.status ?? 1);
+          NODE
+          ln -s "$supplier_root/node_modules" node_modules
+      - name: Run source-qualified World identity, perception and original history
+        run: node --test --test-reporter=tap test/world-region-identity.test.mjs test/world-history.test.mjs
+      - name: Verify original npm artifact includes the new receiving program
+        run: |
+          npm pack --dry-run --json > /tmp/moose-world-region-package.json
+          node -e 'const assert=require("node:assert/strict");const [pkg]=require("/tmp/moose-world-region-package.json");assert(pkg.files.some(f=>f.path==="test/world-region-identity.test.mjs"))'
