@@ -16,7 +16,7 @@ FeltOS hosts.
 Package: `@red-cup-engineering/moose` on `https://registry.561.group`. Source:
 [`red-cup-engineering/moose`](https://github.com/red-cup-engineering/moose),
 mounted once in the forest at
-`computer-mud-engineering-services-section/apps/moose`.
+`computer-mud-systems-engineering-services-section/apps/moose`.
 
 ## What MOOSE owns, and what it does not
 
@@ -64,7 +64,7 @@ Where each is mounted in the Group's repository tree:
 
 | Repository | Mount |
 | --- | --- |
-| `moose` | [`computer-mud-engineering-services-section`](https://github.com/red-cup-engineering/computer-mud-engineering-services-section) `apps/moose` |
+| `moose` | [`computer-mud-systems-engineering-services-section`](https://github.com/red-cup-engineering/computer-mud-systems-engineering-services-section) `apps/moose` |
 | `living-web-server` | [`web-system-engineering-services-section`](https://github.com/red-cup-engineering/web-system-engineering-services-section) `apps/living-web-server` |
 | `web-page-tiling-engine` (TUFTE) | [`web-tufte-gui-engineering-services-section`](https://github.com/red-cup-engineering/web-tufte-gui-engineering-services-section) `apps/web-page-tiling-engine` |
 
