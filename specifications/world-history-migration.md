@@ -227,8 +227,16 @@ query behavior, geometry behavior, occurrence currentness and read-only interpre
 
 World already supplies `receiveComposedThingWorld(world, composed, options)`.
 Its default dynamic supplier must resolve CAIRN's actual `./thing` entry.
-Retain its existing `composeThings` re-admission and `readThingSpatialProjection` use,
-source-identity checks, conflict refusal and no-change replay result.
+Receive the current `signcraft.composed-things.v2` source through SignCell's
+`retainedCarrier` before inspecting its fields. Pass that held source directly
+to the original `readThingSpatialProjection`, which re-admits its complete
+type document, Utterances, Thing/Cell presentations and relational field.
+MOOSE must not recompose and compare only advertised IDs: doing so can discard
+altered presentation fields before the owning supplier receives them. Refuse
+the retired v1 dialect and caller accessors; retain conflict refusal and the
+no-change replay result. Native receiving must include altered Thing attributes,
+relation Cell witnesses and relational statements with their original borrowed
+IDs. Those sources must refuse before any World observation is recorded.
 Do not invent another Thing registry, World schema or projection adapter.
 Its result confers neither Actor authority, Work appointment nor movement.
 

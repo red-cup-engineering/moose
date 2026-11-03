@@ -133,8 +133,11 @@ forwards SignCraft's selected Cell implementation. A host must resolve that same
 CAIRN instance for a World's history: equal version text across two installed
 copies does not share private carriers.
 
-`receiveComposedThingWorld` re-admits a SignCraft Thing composition through
-CAIRN's `./thing` operations and projects containment and exits as World
+`receiveComposedThingWorld` retains the native `signcraft.composed-things.v2`
+carrier and asks CAIRN's selected SignCraft spatial reader to re-admit its
+complete original Thing, Cell, relation and Utterance presentations. A borrowed
+content address does not admit altered source evidence. The retired v1 dialect
+is refused. The operation projects admitted containment and exits as World
 observations with their source, causal parents and batch positions. Replaying
 the same composition changes nothing. The result grants no authority and
 performs no movement.

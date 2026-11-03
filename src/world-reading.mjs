@@ -51,7 +51,7 @@ export function defineWorldReadingPolicy({id, version, read} = {}) {
     });
     const result = read(Object.freeze({source, edition, ...(occurrenceFrame ? {occurrenceVersion:occurrenceFrame.id} : {})}));
     if (!result || !Array.isArray(result.cells)) throw new TypeError('reading policy must return raw cells');
-    const raw = result.cells.map(admitCell);
+    const raw = result.cells.map(cell => admitCell(cell));
     const grouped = new Map();
     for (const cell of raw) {
       const key = historySubjectKey(cell.subject);
