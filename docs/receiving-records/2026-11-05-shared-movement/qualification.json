@@ -1,0 +1,111 @@
+{
+  "sourceOwner": "red-cup-engineering/moose",
+  "baseCommit": "65fb4f5a7893f47c111ac4b51baae8754b48ba8e",
+  "baseTree": "e7c60704edce35b6ae8155f5322021a830768701",
+  "date": "2026-11-05",
+  "runtime": "Node 24.22.1",
+  "sourceModule": {
+    "path": "src/geometry.mjs",
+    "sha256": "fd2e8d803853b02e1f0dbd18b66741c569fabf8182c3379c5842d147d7284e21"
+  },
+  "tests": {
+    "nativeSourceContract": {
+      "passed": 19,
+      "failed": 0,
+      "command": "node --test test/fetch-dependency.test.mjs test/section-site.test.mjs test/resource-readout.test.mjs test/source-page-routes.test.mjs test/pack-contract.test.mjs test/geometry-motion.test.mjs",
+      "npmCache": "Writable temporary cache selected; original command first failed because default cache directory was unavailable."
+    },
+    "newNativeRegressions": {
+      "basePassed": 3,
+      "baseFailed": 6,
+      "candidatePassed": 9,
+      "candidateFailed": 0,
+      "movementCombinations": 120
+    },
+    "generatedContracts": {
+      "passed": 12,
+      "failed": 0
+    },
+    "feltosSpace": {
+      "passed": 7,
+      "failed": 0
+    },
+    "farstoneMotion": {
+      "originalPassed": 3,
+      "additionalRegressionPassed": 3,
+      "failed": 0
+    }
+  },
+  "fabrication": {
+    "designRepository": "red-cup-engineering/engineering-content-engineering-services-section",
+    "designCommit": "4ba3eb5d9e759af4f9162945fe6fe18e1e6b263d",
+    "designModuleBlob": "1fbdd11edfd9b1a1756ecb037c63261c27c34165",
+    "codeRepository": "red-cup-engineering/javascript-node-code-fabrication-engineering-services-section",
+    "codeCommit": "6eadf8ea6d98ba1a590f1e17e5287d21d52ef721",
+    "codeModuleBlob": "9515cd3776132a31fc22c154bd9c0c5b1a6ded88",
+    "route": [
+      "deriveSpecificationFromRequirementReview",
+      "planEngineeringDesign",
+      "receiveEngineeringDesign",
+      "readEngineeringCodeWork",
+      "projectEngineeringDesignCode"
+    ],
+    "sourceAlgorithm": "Authored from the behavioral contract; not generated.",
+    "factoryOutput": "Source-hash-bound argument contracts and executable acceptance cases.",
+    "designProof": "unreceived",
+    "review": "Author review only; no independent review claimed."
+  },
+  "consumers": {
+    "feltos": {
+      "sourceCommit": "01f34f120eb22ffec2b48e1e7469ece10425b69f",
+      "spaceModuleBlob": "5c391afde1a434fff873abd9d9a1daf8f609b52f",
+      "nativeSuite": "test/space.test.mjs",
+      "composition": "Current space module and tests against copied FeltOS 0.21.8-dev.6 source graph, replacing geometry only with candidate; not a current full-host installation."
+    },
+    "farstone": {
+      "sourceCommit": "b5e1b861e854a56d9c0b37fea9015bf056ba95ca",
+      "sourceTree": "61dd022fa449e37a14623d234fb64cacddbf23eb",
+      "motionModuleBlob": "4eaf6e62aa0a3ed2d2b6945ed2357b741054d2cd",
+      "motionTestBlob": "504f14a5c3aa2761113580e3932f7d38dd351fe8",
+      "nativeSuite": "src/web/farstone-motion.test.mjs",
+      "selectedFeltos": "0.20.2",
+      "selectedQwzspace": "0.9.1",
+      "composition": "Copy of verified Farstone main and its declared dependency graph. A private copy of FeltOS retains its source/dependencies except geometry, replaced by the exact current forwarding module (blob 2950e52980ef368d72d92e43043403d382531510) pointing at candidate MOOSE. Original sources and dependency graph remain unchanged. Function identity verified.",
+      "scope": "Actual held-key walking, boat steering, prediction/authoritative convergence, malformed-command refusal and zero-pace agreement. No browser rendering or full Farstone aggregate claim."
+    }
+  },
+  "aggregateBlocker": {
+    "action": "npm install --no-save --no-package-lock --ignore-scripts --no-audit --no-fund --fetch-retries=0 --fetch-timeout=30000 --registry=https://registry.561.group",
+    "outcome": "ETARGET: no matching @red-cup-engineering/knowledge-system-server@0.2.6-dev.0",
+    "scope": "Declared dependency already selected by base main; not modified in candidate. Full installed-host, world/history and federation suites were not run.",
+    "baseHostedRun": "https://github.com/red-cup-engineering/moose/actions/runs/41684666341",
+    "baseHostedEvidence": "Both installed-host job 126087151674 and world-history job 126087151767 fail npm install with ETARGET for the same CAIRN version; source-contract and world-gateway pass on unchanged base."
+  },
+  "boundaries": [
+    "No package dependency/version changes, live deployment, spending, credentials, security changes or fabricated independent approval.",
+    "Existing exact function bindings and result shape retained; explicit invalid-input refusal and zero-distance orientation behavior documented."
+  ],
+  "evidence": {
+    "farstone-motion.tap": {
+      "sha256": "45bcb9c6cf444282c27e095a13df62ec86a64472483d1a9e33e4b50429b34a48"
+    },
+    "feltos-space.tap": {
+      "sha256": "28a9ed2855b743e749e2915d788310afdeb6f6426055a53e6981fd4c13f672e8"
+    },
+    "farstone-regression.mjs": {
+      "sha256": "12bad0bd30a6960878f2037932a515f0ce0391ce9e1c3d183baee1e28ee4ff6a"
+    },
+    "fabrication.tap": {
+      "sha256": "506030235403c56286c24eca588a19ce80a4c980ae060fd0d969dee6c18755f6"
+    },
+    "source-contract.tap": {
+      "sha256": "b56a8a4e9d14c74d1aedab590fceb551ad2728bce7fa30d69348cc4ca4a96956"
+    },
+    "regression-before.tap": {
+      "sha256": "6200014dc7c61ed8cefe55a25ab488398ed73f5b6925d8012729b5abb95fed67"
+    },
+    "source-design.json": {
+      "sha256": "2adf6faf47dee6603e3fa974179fc2fd5e5fbb08e955e9895ac1a89434a9af40"
+    }
+  }
+}

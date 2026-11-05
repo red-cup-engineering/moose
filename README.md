@@ -142,6 +142,20 @@ observations with their source, causal parents and batch positions. Replaying
 the same composition changes nothing. The result grants no authority and
 performs no movement.
 
+## Shared movement geometry
+
+MOOSE's `./geometry` entry owns the pure planar movement used by FeltOS's
+authoritative movement commands and Farstone's client prediction. A movement
+limit is a distance in metres per command, not a speed in metres per second.
+`parseTarget` returns finite coordinates or `null`; `stepInPlane` advances by
+at most a finite, nonnegative distance and preserves heading when stationary.
+FeltOS retains responsibility for terrain, collisions and admission into a
+region. The [movement contract](specifications/shared-planar-movement.md)
+documents the public bindings, numeric boundaries and consumer evidence.
+
+`npm run test:geometry` runs without installing any dependencies and is also
+part of the source-contract CI job.
+
 ## The World gateway
 
 `./world-gateway` binds a logical World, its state authority, operation
