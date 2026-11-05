@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: Farstone and FeltOS share the exact MOOSE geometry function objects
+ok 1 - Farstone and FeltOS share the exact MOOSE geometry function objects
+  ---
+  duration_ms: 0.736422
+  type: 'test'
+  ...
+# Subtest: malformed inherited-property movement neither corrupts Farstone prediction nor moves its authoritative actor
+ok 2 - malformed inherited-property movement neither corrupts Farstone prediction nor moves its authoritative actor
+  ---
+  duration_ms: 1845.62924
+  type: 'test'
+  ...
+# Subtest: zero pace preserves the same position and heading in authoritative movement and prediction
+ok 3 - zero pace preserves the same position and heading in authoritative movement and prediction
+  ---
+  duration_ms: 1594.653151
+  type: 'test'
+  ...
+# Subtest: held keys walk the actor with no teleport, and the drawn pose converges on the settled one
+ok 4 - held keys walk the actor with no teleport, and the drawn pose converges on the settled one
+  ---
+  duration_ms: 7168.927513
+  type: 'test'
+  ...
+# Subtest: a boat is steered by held keys the same way, at the boat's pace
+ok 5 - a boat is steered by held keys the same way, at the boat's pace
+  ---
+  duration_ms: 11097.926148
+  type: 'test'
+  ...
+# Subtest: held keys type the same commands a player can type
+ok 6 - held keys type the same commands a player can type
+  ---
+  duration_ms: 0.619385
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 19743.830056

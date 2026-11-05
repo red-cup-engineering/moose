@@ -1,0 +1,83 @@
+TAP version 13
+# Subtest: advance-planar-movement: moose-shared-planar-movement:bounded-motion: bounded-step
+ok 1 - advance-planar-movement: moose-shared-planar-movement:bounded-motion: bounded-step
+  ---
+  duration_ms: 8.297113
+  type: 'test'
+  ...
+# Subtest: advance-planar-movement: moose-shared-planar-movement:bounded-motion: invalid-coordinates
+ok 2 - advance-planar-movement: moose-shared-planar-movement:bounded-motion: invalid-coordinates
+  ---
+  duration_ms: 1.254174
+  type: 'test'
+  ...
+# Subtest: advance-planar-movement: moose-shared-planar-movement:bounded-motion: negative-distance
+ok 3 - advance-planar-movement: moose-shared-planar-movement:bounded-motion: negative-distance
+  ---
+  duration_ms: 0.759958
+  type: 'test'
+  ...
+# Subtest: advance-planar-movement: moose-shared-planar-movement:bounded-motion: overflow-safe-step
+ok 4 - advance-planar-movement: moose-shared-planar-movement:bounded-motion: overflow-safe-step
+  ---
+  duration_ms: 0.982514
+  type: 'test'
+  ...
+# Subtest: advance-planar-movement: moose-shared-planar-movement:bounded-motion: zero-distance
+ok 5 - advance-planar-movement: moose-shared-planar-movement:bounded-motion: zero-distance
+  ---
+  duration_ms: 0.762792
+  type: 'test'
+  ...
+# Subtest: parse-target: moose-shared-planar-movement:target-admission: absolute-coordinates
+ok 6 - parse-target: moose-shared-planar-movement:target-admission: absolute-coordinates
+  ---
+  duration_ms: 0.858776
+  type: 'test'
+  ...
+# Subtest: parse-target: moose-shared-planar-movement:target-admission: computed-overflow
+ok 7 - parse-target: moose-shared-planar-movement:target-admission: computed-overflow
+  ---
+  duration_ms: 0.683281
+  type: 'test'
+  ...
+# Subtest: parse-target: moose-shared-planar-movement:target-admission: inherited-property
+ok 8 - parse-target: moose-shared-planar-movement:target-admission: inherited-property
+  ---
+  duration_ms: 1.177248
+  type: 'test'
+  ...
+# Subtest: parse-target: moose-shared-planar-movement:target-admission: nonstring-input
+ok 9 - parse-target: moose-shared-planar-movement:target-admission: nonstring-input
+  ---
+  duration_ms: 1.754469
+  type: 'test'
+  ...
+# Subtest: parse-target: moose-shared-planar-movement:target-admission: signed-compass
+ok 10 - parse-target: moose-shared-planar-movement:target-admission: signed-compass
+  ---
+  duration_ms: 1.149195
+  type: 'test'
+  ...
+# Subtest: read-compass-heading: moose-shared-planar-movement:bounded-motion: negative-rotation
+ok 11 - read-compass-heading: moose-shared-planar-movement:bounded-motion: negative-rotation
+  ---
+  duration_ms: 0.898606
+  type: 'test'
+  ...
+# Subtest: read-compass-heading: moose-shared-planar-movement:bounded-motion: positive-rotation
+ok 12 - read-compass-heading: moose-shared-planar-movement:bounded-motion: positive-rotation
+  ---
+  duration_ms: 1.013601
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 146.815417
+

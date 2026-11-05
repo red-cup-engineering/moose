@@ -1,0 +1,205 @@
+TAP version 13
+# Subtest: movement targets retain absolute coordinates and signed compass distances
+ok 1 - movement targets retain absolute coordinates and signed compass distances
+  ---
+  duration_ms: 1.591994
+  type: 'test'
+  ...
+# Subtest: only own compass directions can produce movement targets
+not ok 2 - only own compass directions can produce movement targets
+  ---
+  duration_ms: 1.067642
+  type: 'test'
+  location: '/workspace/scratch/2105a8df2fac/moose-world-coherence-20261105/test/geometry-motion.test.mjs:14:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    constructor
+    + actual - expected
+    
+    + [
+    +   NaN,
+    +   NaN
+    + ]
+    - null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual:
+    0: NaN
+    1: NaN
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/scratch/2105a8df2fac/moose-world-coherence-20261105/test/geometry-motion.test.mjs:16:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Subtest: invalid or overflowing target input is refused without nonfinite coordinates
+not ok 3 - invalid or overflowing target input is refused without nonfinite coordinates
+  ---
+  duration_ms: 0.176977
+  type: 'test'
+  location: '/workspace/scratch/2105a8df2fac/moose-world-coherence-20261105/test/geometry-motion.test.mjs:20:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of null (reading 'trim')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    parseTarget (file:///workspace/scratch/2105a8df2fac/moose-world-coherence-20261105/src/geometry.mjs:215:26)
+    TestContext.<anonymous> (file:///workspace/scratch/2105a8df2fac/moose-world-coherence-20261105/test/geometry-motion.test.mjs:22:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: a bounded step advances toward its target and preserves input values
+ok 4 - a bounded step advances toward its target and preserves input values
+  ---
+  duration_ms: 0.658945
+  type: 'test'
+  ...
+# Subtest: zero movement preserves orientation and reports whether the target is reached
+not ok 5 - zero movement preserves orientation and reports whether the target is reached
+  ---
+  duration_ms: 0.406614
+  type: 'test'
+  location: '/workspace/scratch/2105a8df2fac/moose-world-coherence-20261105/test/geometry-motion.test.mjs:40:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      {
+    +   heading: 90,
+    -   heading: 45,
+        t: 0,
+        xy: [
+          10,
+          20
+        ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    xy:
+      0: 10
+      1: 20
+    t: 0
+    heading: 45
+  actual:
+    xy:
+      0: 10
+      1: 20
+    t: 0
+    heading: 90
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/scratch/2105a8df2fac/moose-world-coherence-20261105/test/geometry-motion.test.mjs:42:10)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: invalid movement bounds and coordinates cannot reverse or poison a step
+not ok 6 - invalid movement bounds and coordinates cannot reverse or poison a step
+  ---
+  duration_ms: 0.432473
+  type: 'test'
+  location: '/workspace/scratch/2105a8df2fac/moose-world-coherence-20261105/test/geometry-motion.test.mjs:45:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception (RangeError).'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/scratch/2105a8df2fac/moose-world-coherence-20261105/test/geometry-motion.test.mjs:47:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: finite extreme coordinates still produce bounded finite movement
+not ok 7 - finite extreme coordinates still produce bounded finite movement
+  ---
+  duration_ms: 0.646245
+  type: 'test'
+  location: '/workspace/scratch/2105a8df2fac/moose-world-coherence-20261105/test/geometry-motion.test.mjs:57:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   NaN,
+        0,
+    -   0
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 0
+    1: 0
+  actual:
+    0: NaN
+    1: 0
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/scratch/2105a8df2fac/moose-world-coherence-20261105/test/geometry-motion.test.mjs:59:10)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: planar movement conserves the requested bound across directions and distances
+ok 8 - planar movement conserves the requested bound across directions and distances
+  ---
+  duration_ms: 0.61594
+  type: 'test'
+  ...
+# Subtest: compass headings are invariant under complete positive and negative rotations
+not ok 9 - compass headings are invariant under complete positive and negative rotations
+  ---
+  duration_ms: 0.525053
+  type: 'test'
+  location: '/workspace/scratch/2105a8df2fac/moose-world-coherence-20261105/test/geometry-motion.test.mjs:76:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    'south' !== 'north'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'north'
+  actual: 'south'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/scratch/2105a8df2fac/moose-world-coherence-20261105/test/geometry-motion.test.mjs:78:66)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 3
+# fail 6
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 108.44284

@@ -195,9 +195,11 @@ export function heightAt(samples, layout, x, y) {
 export const COMPASS = Object.freeze({ north: 0, northeast: 45, east: 90, southeast: 135, south: 180, southwest: 225, west: 270, northwest: 315 });
 
 export function nearestCompass(degrees) {
+  if (!Number.isFinite(degrees)) throw new TypeError("A compass heading must be finite");
+  const heading = ((degrees % 360) + 360) % 360;
   let best = null;
   for (const [name, at] of Object.entries(COMPASS)) {
-    const off = Math.abs(((degrees - at + 540) % 360) - 180);
+    const off = Math.abs(((heading - at + 540) % 360) - 180);
     if (!best || off < best.off) best = { name, off };
   }
   return best.name;
@@ -212,22 +214,48 @@ export const VEHICLE_PACE = 20;
 
 /** Parse "x y [z]" in metres, or "<compass point> <metres>" relative to a pose. */
 export function parseTarget(argument, pose) {
+  if (typeof argument !== "string") return null;
   const words = argument.trim().toLowerCase().split(/\s+/u);
-  if (words[0] in COMPASS && words.length === 2 && Number.isFinite(Number(words[1]))) {
-    const radians = COMPASS[words[0]] * Math.PI / 180, metres = Number(words[1]);
-    return [pose.position[0] + Math.sin(radians) * metres, pose.position[1] + Math.cos(radians) * metres];
+  if (Object.hasOwn(COMPASS, words[0]) && words.length === 2 && Number.isFinite(Number(words[1]))) {
+    if (!Array.isArray(pose?.position) || !Number.isFinite(pose.position[0]) || !Number.isFinite(pose.position[1])) return null;
+    const radians = COMPASS[words[0]] * Math.PI / 180, distance = Number(words[1]);
+    const target = [pose.position[0] + Math.sin(radians) * distance, pose.position[1] + Math.cos(radians) * distance];
+    return target.every(Number.isFinite) ? target : null;
   }
   const numbers = words.map(Number);
   if ((numbers.length === 2 || numbers.length === 3) && numbers.every(Number.isFinite)) return numbers;
   return null;
 }
 
-/** One step from a pose toward a target, at most `pace` metres across the plane: the point reached
+/** One step from a pose toward a target, at most `maxDistance` metres across the plane: the point reached
  *  in the plane, the fraction `t` of the way taken, and the heading along the step (the pose's own
- *  when the target is where it stands). */
-export function stepInPlane(pose, target, pace) {
+ *  when no movement occurs). Invalid coordinates throw TypeError; an invalid distance bound
+ *  throws RangeError. Height remains the host's responsibility. */
+export function stepInPlane(pose, target, maxDistance) {
+  if (!Array.isArray(pose?.position) || pose.position.length !== 3 || ![0, 1, 2].every(index => Number.isFinite(pose.position[index])) || !Number.isFinite(pose.heading)) {
+    throw new TypeError("A movement pose needs a finite [x, y, z] position and heading");
+  }
+  if (!Array.isArray(target) || (target.length !== 2 && target.length !== 3) || !Array.from(target).every(Number.isFinite)) {
+    throw new TypeError("A movement target needs two or three finite coordinates");
+  }
+  if (!Number.isFinite(maxDistance) || maxDistance < 0) throw new RangeError("Movement distance must be finite and nonnegative");
   const [x0, y0] = pose.position;
-  const span = Math.hypot(target[0] - x0, target[1] - y0);
-  const t = span <= pace ? 1 : pace / span;
-  return { xy: [x0 + (target[0] - x0) * t, y0 + (target[1] - y0) * t], t, heading: span === 0 ? pose.heading : bearing(pose.position, target) };
+  let dx = target[0] - x0, dy = target[1] - y0;
+  const distanceToTarget = Math.hypot(dx, dy);
+  if (distanceToTarget === 0 || maxDistance === 0) return { xy: [x0, y0], t: distanceToTarget === 0 ? 1 : 0, heading: pose.heading };
+  let fraction, xy;
+  if (Number.isFinite(distanceToTarget)) {
+    fraction = Math.min(1, maxDistance / distanceToTarget);
+    xy = fraction === 1 ? target.slice(0, 2) : [x0 + dx * fraction, y0 + dy * fraction];
+  } else {
+    // Finite endpoints can have an unrepresentable difference or length. Scale before
+    // subtracting, then interpolate the endpoints without constructing that difference.
+    const scale = Math.max(Math.abs(x0), Math.abs(y0), Math.abs(target[0]), Math.abs(target[1]));
+    dx = target[0] / scale - x0 / scale;
+    dy = target[1] / scale - y0 / scale;
+    fraction = Math.min(1, (maxDistance / scale) / Math.hypot(dx, dy));
+    xy = [x0 * (1 - fraction) + target[0] * fraction, y0 * (1 - fraction) + target[1] * fraction];
+  }
+  const heading = (Math.atan2(dx, dy) * 180 / Math.PI + 360) % 360;
+  return { xy, t: fraction, heading };
 }
