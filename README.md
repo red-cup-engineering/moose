@@ -156,6 +156,13 @@ documents the public bindings, numeric boundaries and consumer evidence.
 `npm run test:geometry` runs without installing any dependencies and is also
 part of the source-contract CI job.
 
+Polygon area and area centroid use vertex-relative shoelace products, so a
+small room far from the coordinate origin retains its area, shared thresholds
+and arrival point. Signed area, counter-clockwise prism footprints and the
+positive-volume adjacency rule are unchanged. Geometry still uses JavaScript
+numbers: offsets or dimensions already lost when coordinates are represented
+cannot be recovered by this calculation.
+
 ## The World gateway
 
 `./world-gateway` binds a logical World, its state authority, operation
