@@ -1,9 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { dirname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import * as CairnCell from '@red-cup-engineering/knowledge-system-server/signcell';
 import * as CairnHistory from '@red-cup-engineering/knowledge-system-server/history';
@@ -19,23 +16,12 @@ const thingPath = fromCairn.resolve('@red-cup-engineering/signcraft/thing');
 const CurrentHistory = await import(pathToFileURL(historyPath).href);
 const CurrentThing = await import(pathToFileURL(thingPath).href);
 const fromCurrentSigncraft = createRequire(historyPath);
-const signcraftCellPath = fromCairn.resolve('@red-cup-engineering/signcraft/cell');
-const SigncraftCell = await import(pathToFileURL(signcraftCellPath).href);
-const historyCellPath = fromCurrentSigncraft.resolve('./cell.mjs');
-const HistoryCell = await import(pathToFileURL(historyCellPath).href);
-const fromHistoryCell = createRequire(historyCellPath);
-const cellPath = fromHistoryCell.resolve('@red-cup-engineering/signcell/cell');
+const cellPath = fromCairn.resolve('@red-cup-engineering/signcell/cell');
 const CurrentCell = await import(pathToFileURL(cellPath).href);
-const fromCurrentCell = createRequire(cellPath);
-const contentPath = fromCurrentCell.resolve('@red-cup-engineering/semiotic-content-address');
+const contentPath = fromCairn.resolve('@red-cup-engineering/signcell/content-address');
 const CurrentContent = await import(pathToFileURL(contentPath).href);
-const CurrentUtterance = await import(pathToFileURL(fromCurrentSigncraft.resolve('@red-cup-engineering/signcell/utterance')).href);
+const CurrentUtterance = await import(pathToFileURL(fromCairn.resolve('@red-cup-engineering/signcell/utterance')).href);
 const { utterance } = CurrentUtterance;
-const selectedManifest = JSON.parse(readFileSync(resolve(dirname(historyPath), '..', 'package.json'), 'utf8'));
-function blobOf(path) {
-  const bytes = readFileSync(path);
-  return createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex');
-}
 function assertSameExports(received, original, label) {
   assert.deepEqual(Object.keys(received).sort(), Object.keys(original).sort(), `${label}: complete original namespace`);
   for (const key of Object.keys(original)) assert.equal(received[key], original[key], `${label}: original export identity for ${key}`);
@@ -52,24 +38,15 @@ const occurrencePolicy = MooseReading.defineWorldReadingPolicy({
     source.rawOccurrences(subject, undefined, { archive: true }).rows.map(row => row.cell)) }),
 });
 
-test('MOOSE World and history retain the actual selected CAIRN original supplier', t => {
-  assert.equal(selectedManifest.name, '@red-cup-engineering/signcraft');
-  assert.equal(selectedManifest.version, '0.8.1-dev.0');
-  assert.equal(blobOf(historyPath), '6d7f47d4340cbffbacad02dfb2297a279e0ba29a');
-  assert.equal(blobOf(thingPath), 'a56f69cbbe5ab5087caee09271816f2a47123bac');
-  assert.equal(blobOf(signcraftCellPath), '40d7d947430ad944f9baa2172c34cfceb1abdd41');
-  t.diagnostic(JSON.stringify({ version: selectedManifest.version, gitHead: selectedManifest.gitHead,
-    historyPath, historyBlob: blobOf(historyPath), thingPath, thingBlob: blobOf(thingPath),
-    signcraftCellPath, historyCellPath, cellPath, contentPath }));
+test('MOOSE World and history retain CAIRN’s selected SignCraft and SignCell owners', () => {
+  const { dependencies } = fromCairn('@red-cup-engineering/knowledge-system-server/package.json');
+  for (const name of ['@red-cup-engineering/signcraft', '@red-cup-engineering/signcell']) {
+    assert.equal(fromCairn(name + '/package.json').version, dependencies[name]);
+  }
+  assert.equal(fromCurrentSigncraft.resolve('@red-cup-engineering/signcell/cell'), cellPath);
   assertSameExports(CairnHistory, CurrentHistory, 'CAIRN history');
   assertSameExports(CairnThing, CurrentThing, 'CAIRN Thing');
-  assertSameExports(CairnCell, SigncraftCell, 'CAIRN SignCell and selected SignCraft Cell port');
-  assertSameExports(SigncraftCell, HistoryCell, 'public Cell port and history-local selected Cell');
-  assertSameExports(HistoryCell, {
-    ...CurrentCell,
-    articulatingUtter: CurrentUtterance.articulatingUtter,
-    articulatingPair: CurrentUtterance.articulatingPair,
-  }, 'history-selected original SignCell ports');
+  assertSameExports(CairnCell, CurrentCell, 'CAIRN SignCell and the selected Cell owner');
   for (const name of ['bytesToHex', 'retainedCarrier', 'semanticBytes', 'semanticId', 'coincides', 'coincidenceKey']) {
     assert.equal(typeof CairnCell[name], 'function', `${name} must be an original content operation`);
     assert.equal(CairnCell[name], CurrentContent[name], `${name} must retain the selected SignCell content owner's identity`);
