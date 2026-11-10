@@ -12,24 +12,31 @@ const AREA_FLOOR = 1e-6;
 const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
 
 export function polygonArea(polygon) {
+  // Evaluate the shoelace products relative to one vertex. World coordinates
+  // can be much larger than a room: multiplying absolute coordinates and then
+  // subtracting loses the room's area to cancellation.
+  const [originX, originY] = polygon[0] ?? [0, 0];
   let twice = 0;
   for (let i = 0; i < polygon.length; i++) {
-    const [x0, y0] = polygon[i], [x1, y1] = polygon[(i + 1) % polygon.length];
+    const x0 = polygon[i][0] - originX, y0 = polygon[i][1] - originY;
+    const x1 = polygon[(i + 1) % polygon.length][0] - originX, y1 = polygon[(i + 1) % polygon.length][1] - originY;
     twice += x0 * y1 - x1 * y0;
   }
   return twice / 2;
 }
 
 export function polygonCentroid(polygon) {
+  const [originX, originY] = polygon[0] ?? [0, 0];
   const area = polygonArea(polygon);
   let cx = 0, cy = 0;
   for (let i = 0; i < polygon.length; i++) {
-    const [x0, y0] = polygon[i], [x1, y1] = polygon[(i + 1) % polygon.length];
+    const x0 = polygon[i][0] - originX, y0 = polygon[i][1] - originY;
+    const x1 = polygon[(i + 1) % polygon.length][0] - originX, y1 = polygon[(i + 1) % polygon.length][1] - originY;
     const k = x0 * y1 - x1 * y0;
     cx += (x0 + x1) * k;
     cy += (y0 + y1) * k;
   }
-  return [cx / (6 * area), cy / (6 * area)];
+  return [originX + cx / (6 * area), originY + cy / (6 * area)];
 }
 
 /** The intersection of two convex, counter-clockwise polygons (Sutherland–Hodgman). */

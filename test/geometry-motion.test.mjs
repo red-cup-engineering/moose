@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { nearestCompass, parseTarget, stepInPlane } from "../src/geometry.mjs";
+import { nearestCompass, parseTarget, stepInPlane, polygonArea, polygonCentroid, prismOverlap, prismContains, bodyCentroid, nerve } from "../src/geometry.mjs";
 
 const pose = { position: [10, 20, 3], heading: 45 };
 
@@ -78,4 +78,53 @@ test("compass headings are invariant under complete positive and negative rotati
     for (const turns of [-100, -3, -2, -1, 0, 1, 2, 100]) assert.equal(nearestCompass(degrees + turns * 360), expected);
   }
   for (const degrees of [NaN, Infinity, -Infinity, "90", null]) assert.throws(() => nearestCompass(degrees), TypeError);
+});
+
+const rectangle = (x, y, width, height) => [[x, y], [x + width, y], [x + width, y + height], [x, y + height]];
+
+test("polygon area and centroid do not depend on the World's coordinate origin", () => {
+  for (const [x, y] of [[0, 0], [1e9, 1e9], [-1e9, 1e9], [1e12, -1e12]]) {
+    for (const [width, height] of [[1, 1], [10, 10], [0.25, 0.5]]) {
+      const polygon = rectangle(x, y, width, height);
+      for (let start = 0; start < polygon.length; start++) {
+        const rotated = [...polygon.slice(start), ...polygon.slice(0, start)];
+        assert.equal(polygonArea(rotated), width * height);
+        assert.deepEqual(polygonCentroid(rotated), [x + width / 2, y + height / 2]);
+        assert.equal(polygonArea(rotated.toReversed()), -width * height);
+        assert.deepEqual(polygonCentroid(rotated.toReversed()), [x + width / 2, y + height / 2]);
+      }
+    }
+  }
+});
+
+test("polygon centroid remains the area centroid, rather than the average of vertices", () => {
+  for (const offset of [0, 1e9, -1e9]) {
+    // A rectangle with an extra collinear vertex has the same area and centroid.
+    const polygon = [[0, 0], [1, 0], [6, 0], [6, 4], [0, 4]].map(([x, y]) => [x + offset, y + offset]);
+    assert.equal(polygonArea(polygon), 24);
+    assert.deepEqual(polygonCentroid(polygon), [offset + 3, offset + 2]);
+    const triangle = [[0, 0], [6, 0], [0, 3]].map(([x, y]) => [x + offset, y + offset]);
+    assert.equal(polygonArea(triangle), 9);
+    assert.deepEqual(polygonCentroid(triangle), [offset + 2, offset + 1]);
+  }
+  assert.equal(polygonArea([]), 0);
+  assert.ok(polygonCentroid([]).every(Number.isNaN));
+});
+
+test("translated adjacent rooms retain their threshold and an arrival inside both regions", () => {
+  for (const offset of [0, 1e9, -1e9, 1e12]) {
+    const a = { body: { footprint: rectangle(offset, offset, 1, 1), z: [0, 3] } };
+    const b = { body: { footprint: rectangle(offset + 0.5, offset, 1, 1), z: [0, 3] } };
+    const overlap = prismOverlap(a.body, b.body);
+    assert.ok(overlap, "translation must not remove an existing shared doorway");
+    assert.equal(overlap.area, 0.5);
+    assert.equal(overlap.volume, 1.5);
+    assert.deepEqual(overlap.centroid, [offset + 0.75, offset + 0.5, 1.5]);
+    assert.equal(prismContains(a.body, overlap.centroid), true);
+    assert.equal(prismContains(b.body, overlap.centroid), true);
+    assert.deepEqual(bodyCentroid(a), [offset + 0.5, offset + 0.5, 1.5]);
+    assert.equal(nerve({ a, b }).length, 1);
+    const touching = { footprint: rectangle(offset + 1, offset, 1, 1), z: [0, 3] };
+    assert.equal(prismOverlap(a.body, touching), null, "touching faces still have no open volume");
+  }
 });

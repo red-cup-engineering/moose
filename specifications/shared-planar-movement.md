@@ -52,3 +52,18 @@ movement combinations. Generated cases bind the exact geometry source hash.
 Actual FeltOS movement and Farstone prediction are received separately.
 Passing geometry does not establish federation, the entire host dependency
 closure, a new package release or a deployed game.
+
+## Region placement away from the coordinate origin
+
+The same geometry owner supplies polygon area, area centroid, prism overlap,
+region adjacency and the arrival positions selected by `World.move`. A finite
+translation of a representable small room must not remove its doorway or move
+its centroid outside the room through cancellation of absolute-coordinate
+products. Evaluate the existing signed shoelace area and centroid relative to
+one vertex, then translate the centroid back. Keep counter-clockwise prism
+admission and the existing minimum positive area unchanged.
+
+Authored regressions cover vertex rotation, reversed winding, nonuniform vertex
+spacing, triangles, translated room overlap, face-only contact and adjacency.
+This is numeric stability for represented coordinates, not arbitrary precision,
+new region authority or a change to authored World coordinates.
