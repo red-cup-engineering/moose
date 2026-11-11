@@ -7,7 +7,7 @@ const file = path => readFileSync(new URL("../" + path, import.meta.url), "utf8"
 
 test("MOOSE Fetch entry owns live TUFTE pages without eager managed hosting imports", () => {
   const live = file("src/fetch.mjs");
-  const host = file("src/host.mjs");
+  const host = file("src/application.mjs");
   const pkg = JSON.parse(file("package.json"));
   const application = file("src/source-application.mjs");
   assert.ok(application.includes('from "@red-cup-engineering/living-web-server/fetch"'));
@@ -19,13 +19,8 @@ test("MOOSE Fetch entry owns live TUFTE pages without eager managed hosting impo
     "a site-only Worker must not eagerly import a Node-managed listener");
   assert.doesNotMatch(live, /from ["']node:/u);
   assert.ok(host.includes("serveManagedActivityPubSites"),
-    "the original federation lifecycle must remain available to Node deployments");
-  assert.ok(file("src/application.mjs").includes('from "./fetch.mjs"'));
-  assert.ok(file("src/application.mjs").includes('from "./host.mjs"'));
-  assert.ok(host.includes('from "@red-cup-engineering/living-web-server/host"'));
-  assert.doesNotMatch(host, /createActivityPubMultiSiteServerEngine|serveActivityPubSites|computer-web-server|http-services-section|from ["']node:/u,
-    "MOOSE hosting must use Living Web rather than another origin router or listener");
-  assert.equal(pkg.exports["./host"], "./src/host.mjs");
+    "the original managed hosting supplier must remain available to Node deployments");
+  assert.ok(host.includes('from "./fetch.mjs"'));
   assert.equal(pkg.exports["./fetch"], "./src/fetch.mjs");
   assert.ok(pkg.dependencies["@red-cup-engineering/living-web-server"]);
   assert.equal(pkg.dependencies["@red-cup-engineering/computer-web-server"], undefined);
@@ -34,7 +29,6 @@ test("MOOSE Fetch entry owns live TUFTE pages without eager managed hosting impo
 test("source qualification parses the actual MOOSE Fetch, Actor outbox and application tests", () => {
   const paths = [
     "src/application.mjs",
-    "src/host.mjs",
     "src/fetch.mjs",
     "src/source-application.mjs",
     "src/timeline.mjs",
@@ -58,9 +52,15 @@ test("source qualification parses the actual MOOSE Fetch, Actor outbox and appli
 test("Fetch installation has no mandatory social or managed hosting supplier", () => {
   const pkg = JSON.parse(file("package.json"));
   const qualifiedSuppliers = Object.freeze({
-    "@red-cup-engineering/living-web-server": "0.1.2-dev.1",
+    "@red-cup-engineering/living-web-server": "0.1.0-dev.11",
     "@red-cup-engineering/knowledge-system-server": "0.2.6-dev.0",
     "@red-cup-engineering/computer-data-engineering-services-section": "0.2.0",
+    "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0",
+    "@red-cup-engineering/cryptographic-computer-data-engineering-services-section": "0.3.1",
+    "@red-cup-engineering/gaming": "0.1.10",
+    "@red-cup-engineering/json-services-section": "0.4.0",
+    "@red-cup-engineering/signcraft": "0.9.3",
+    "@red-cup-engineering/uri-services-section": "0.1.1",
   });
   const qualify = suppliers => assert.deepEqual(suppliers, qualifiedSuppliers);
   qualify(pkg.dependencies);
@@ -70,13 +70,13 @@ test("Fetch installation has no mandatory social or managed hosting supplier", (
   const [, ...remaining] = Object.entries(pkg.dependencies);
   assert.throws(() => qualify(Object.fromEntries(remaining)), { code: "ERR_ASSERTION" });
   assert.throws(() => qualify({
-    ...pkg.dependencies, "@red-cup-engineering/activitypub-server": "0.2.2",
+    ...pkg.dependencies, "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
   }), { code: "ERR_ASSERTION" });
   assert.throws(() => qualify({
     ...pkg.dependencies, [Object.keys(pkg.dependencies)[0]]: "0.0.0",
   }), { code: "ERR_ASSERTION" });
   for (const [name, version] of Object.entries({
-    "@red-cup-engineering/activitypub-server": "0.2.2",
+    "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
     "@red-cup-engineering/activitypub-services-section": "0.11.4",
     "@red-cup-engineering/javascript-file-services-section": "0.1.1",
     "@fedify/fedify": "2.3.14",
@@ -108,9 +108,7 @@ test("Fetch installation has no mandatory social or managed hosting supplier", (
     "@red-cup-engineering/json-services-section": "0.4.0",
     "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0",
   })) {
-    assert.equal(pkg.peerDependencies[name], version);
-    assert.equal(pkg.peerDependenciesMeta[name].optional, true);
-    assert.equal(pkg.devDependencies[name], version);
-    assert.equal(pkg.dependencies[name], undefined);
+    assert.equal(pkg.dependencies[name], version);
+    assert.equal(pkg.peerDependencies[name], undefined);
   }
 });

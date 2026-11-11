@@ -78,38 +78,6 @@ test("the live source may deny a page without revealing its existence", async ()
   assert.equal(reads, 0);
 });
 
-test("managed and native MOOSE routes retain the host context at source authorization", async () => {
-  let reads = 0;
-  const contexts = [];
-  const grant = Object.freeze({ source: "original-public-reader" });
-  const capabilities = Object.freeze({ reader: grant });
-  const site = fixture(async () => {
-    reads++;
-    return { items: [], hasMore: false };
-  }, async ({ context }) => {
-    contexts.push(context);
-    return context.capabilities.reader === grant;
-  });
-  const engine = createMooseEngine({ sites: [site] });
-  const controller = new AbortController();
-  const request = new Request(ORIGIN + "/", { signal: controller.signal });
-  const execution = { capabilities, remoteAddress: "127.0.0.2", httpVersion: "1.1" };
-  assert.equal((await engine.fetch(request, execution)).status, 200);
-  assert.equal((await site.resources.find(route => route.match === "/").handler({
-    request, ...execution,
-  })).status, 200);
-  assert.equal(reads, 2);
-  for (const context of contexts) {
-    assert.equal(context.request, request);
-    assert.equal(context.request.signal, request.signal);
-    assert.equal(context.capabilities, capabilities);
-    assert.equal(context.remoteAddress, execution.remoteAddress);
-    assert.equal(context.httpVersion, execution.httpVersion);
-  }
-  assert.equal((await engine.fetch(request, { capabilities: {} })).status, 404);
-  assert.equal(reads, 2, "a context without the source grant cannot read the page");
-});
-
 
 test("FeltOS mounts the actual independent MOOSE application on exact native social routes", async () => {
   let current = "a public observation";

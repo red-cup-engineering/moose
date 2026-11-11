@@ -124,10 +124,19 @@ test('original Thing composition, native archive and occurrence reading compose 
   assert.equal(MooseWorld.value(original, f.inn.thing.id, 'kind'), null);
   assert.deepEqual(f.composed.relationalField.statements.map(statement => statement.id), statementIds);
   assert.equal(world.revisions.length, 1);
-  world.revisions[0].cells.forEach((cell, position) => {
-    assert.deepEqual(cell.for, [{ source, parents: [], position }]);
-    assert.deepEqual(cell.against, []);
-  });
+  for (const presentation of f.composed.relationPresentations) {
+    const originalCell = presentation.relationCell;
+    const [received] = CairnHistory.historySection(world, originalCell.subject, originalCell.predicate);
+    assert.deepEqual(received, originalCell, 'the original relation and both witness lanes survive reception');
+    assert.equal(CairnCell.address(received), presentation.relationCellId);
+  }
+  const [kind] = CairnHistory.historySection(world, f.inn.thing.id, 'kind');
+  assert.equal(kind.for[0].kind, 'moose.thing-projection.v1');
+  assert.equal(kind.for[0].predicationCellId, f.inn.predicationCellId);
+  assert.deepEqual(kind.for[0].utterance, f.inn.source);
+  const [exit] = CairnHistory.historySection(world, f.inn.thing.id, 'exit:east');
+  const originalExit = f.composed.relationalField.statements.find(row => row.statement.predicate === 'exits-to');
+  assert.deepEqual(exit.for[0].statement, originalExit, 'the directional projection retains the native statement ID and witness');
   const repeated = yes(await MooseWorld.receiveComposedThingWorld(world, f.composed, { source }));
   assert.equal(repeated.world, world);
   assert.equal(repeated.changed, false);
@@ -242,6 +251,77 @@ test('World projection retains the original carrier before inspecting source fie
   assert.equal(refused.refusal.kind, 'invalid-thing-world-source');
   assert.equal(accessed, false);
   assert.deepEqual(CairnHistory.historyHeads(world), []);
+});
+
+test('source monitoring retains the native spatial refusal and its opposing witnesses before any World effect', async () => {
+  const f = composedDimension();
+  const original = f.composed.relationPresentations.find(row => row.relationCell.predicate === 'exits-to').relationCell;
+  const opposed = CairnCell.cell(original.subject, original.predicate, original.object, {
+    for: original.for, against: [{ source: 'independent closed-path observation' }],
+  });
+  const world = MooseWorld.createWorld();
+  const received = await MooseWorld.receiveComposedThingWorld(world, f.composed, {
+    source: 'monitored source', sourceCells: [opposed],
+  });
+  assert.equal(received.ok, false);
+  assert.equal(received.refusal.cause.kind, 'spatial-source-obstructed');
+  assert.deepEqual(received.refusal.cause.obstructions[0].witnessesFor, opposed.for);
+  assert.deepEqual(received.refusal.cause.obstructions[0].witnessesAgainst, opposed.against);
+  assert.deepEqual(CairnHistory.historyHeads(world), []);
+});
+
+test('native non-spatial opposition joins original relation testimony and survives replay', async () => {
+  const f = composedDimension();
+  const original = f.composed.relationPresentations.find(row => row.relationCell.predicate === 'part-of').relationCell;
+  const contrary = CairnCell.cell(original.subject, original.predicate, original.object, {
+    against: [{ source: 'independent disputed work membership' }],
+  });
+  const options = { source: 'monitored source', sourceCells: [contrary] };
+  const received = yes(await MooseWorld.receiveComposedThingWorld(MooseWorld.createWorld(), f.composed, options));
+  const [relation] = CairnHistory.historySection(received.world, original.subject, original.predicate);
+  assert.deepEqual(relation, CairnCell.cellSet([original, contrary])[0]);
+  assert.equal(CairnCell.knowledgeReading(relation), 'stable');
+  assert.equal(MooseWorld.certainValue(received.world, original.subject, original.predicate), null);
+  const repeated = yes(await MooseWorld.receiveComposedThingWorld(received.world, f.composed, options));
+  assert.equal(repeated.world, received.world);
+  assert.equal(repeated.changed, false);
+});
+
+test('another original Thing occurrence adds source testimony without replacing prior witnesses or Thing identity', async () => {
+  const f = composedDimension();
+  const source = 'original source admission';
+  const first = yes(await MooseWorld.receiveComposedThingWorld(MooseWorld.createWorld(), f.composed, { source }));
+  const nextSource = utterance({ source: 'second original observation' }, f.inn.thing.attributes);
+  const repeatedThing = yes(CairnThing.deriveComposedThing({ typeId: f.inn.typeId, source: nextSource }));
+  assert.equal(repeatedThing.thing.id, f.inn.thing.id);
+  const composition = yes(CairnThing.composeThings({
+    things: [...f.composed.things.map(({ typeId, source }) => ({ typeId, source })),
+      { typeId: f.inn.typeId, source: nextSource }],
+    relationSources: f.composed.relationPresentations.map(({ source }) => source),
+  }));
+  const second = yes(await MooseWorld.receiveComposedThingWorld(first.world, composition, { source }));
+  const [before] = CairnHistory.historySection(first.world, f.inn.thing.id, 'kind');
+  const [after] = CairnHistory.historySection(second.world, f.inn.thing.id, 'kind');
+  assert.equal(second.changed, true);
+  assert.equal(after.for.length, 2);
+  assert.ok(after.for.some(witness => CairnCell.coincides(witness, before.for[0])));
+  assert.ok(after.for.some(witness => witness.predicationCellId === repeatedThing.predicationCellId));
+  assert.equal(MooseWorld.certainValue(second.world, f.inn.thing.id, 'kind'), 'area');
+  assert.equal(yes(await MooseWorld.receiveComposedThingWorld(second.world, composition, { source })).world, second.world);
+});
+
+test('opposed location is retained as testimony and cannot become actionable containment', () => {
+  const world = MooseWorld.tell(MooseWorld.createWorld(), [
+    { subject: 'room-a', predicate: 'kind', object: 'room' },
+    { subject: 'alice', predicate: 'located-in', object: 'room-a', evidence: 'stable' },
+  ], { source: 'contested location' });
+  assert.equal(MooseWorld.value(world, 'alice', 'located-in'), 'room-a', 'support remains inspectable');
+  assert.equal(MooseWorld.placeOf(world, 'alice'), null);
+  assert.deepEqual(MooseWorld.contentsOf(world, 'room-a'), []);
+  assert.equal(MooseWorld.territoryOf(world, 'alice').place, null);
+  const [retained] = CairnHistory.historySection(world, 'alice', 'located-in');
+  assert.equal(retained.for.length, 1);
+  assert.equal(retained.against.length, 1);
 });
 
 test('incomplete and forged archives refuse ancestry while same-carrier visibility changes invalidate the reading', () => {

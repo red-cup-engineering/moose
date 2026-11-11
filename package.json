@@ -2,7 +2,7 @@
   "name": "@red-cup-engineering/moose",
   "version": "0.1.2-dev.1",
   "type": "module",
-  "description": "MOOSE\u2014Multi-User Dimension, Object Oriented, Socially Extended: source-owned World coordination and social/federation composition over CAIRN, Living Web Server and ActivityPub++.",
+  "description": "MOOSE—MUD, Object Oriented, Socially Extended: source-backed multi-user Worlds, native SignCraft history and inference, and Living Web composition.",
   "exports": {
     ".": "./src/application.mjs",
     "./fetch": "./src/fetch.mjs",
@@ -17,11 +17,25 @@
     "./world-reading": "./src/world-reading.mjs",
     "./geometry": "./src/geometry.mjs",
     "./world-history": "./src/world-history.mjs",
-    "./host": "./src/host.mjs"
+    "./game": "./src/game.mjs",
+    "./engine": "./src/engine.mjs",
+    "./actions": "./src/actions.mjs",
+    "./capabilities": "./src/capabilities.mjs",
+    "./predication": "./src/predication.mjs",
+    "./engine-snapshot": "./src/engine-snapshot.mjs",
+    "./identity-roles": "./src/identity-roles.mjs",
+    "./profile": "./src/profile.mjs",
+    "./skills": "./src/skills.mjs",
+    "./reputation": "./src/reputation.mjs",
+    "./character-aliases": "./src/character-aliases.mjs",
+    "./intent-origin": "./src/intent-origin.mjs",
+    "./inhabitants": "./src/inhabitants.mjs",
+    "./world-settlement": "./src/world-settlement.mjs"
   },
   "files": [
     "src",
     "bin",
+    "examples",
     "README.md",
     "LICENSE",
     "NOTICE.md",
@@ -35,7 +49,10 @@
     "test/section-site.test.mjs",
     "test/source-page-routes.test.mjs",
     "test/world-region-identity.test.mjs",
-    "test/host.test.mjs"
+    "test/world-settlement.test.mjs",
+    "test/native-mud-flow.test.mjs",
+    "test/world-source-premises.test.mjs",
+    "test/action-descriptor.test.mjs"
   ],
   "bin": {
     "serve-moose": "./bin/serve.mjs"
@@ -44,15 +61,21 @@
     "test": "node --test test/*.test.mjs",
     "test:fetch": "node --test test/fetch-dependency.test.mjs test/source-application.test.mjs test/source-page-routes.test.mjs",
     "test:gateway": "node --test test/world-gateway.test.mjs",
-    "test:world": "node --test test/world-history.test.mjs",
+    "test:world": "node --test test/world-history.test.mjs test/world-region-identity.test.mjs test/world-settlement.test.mjs test/world-source-premises.test.mjs test/native-mud-flow.test.mjs test/action-descriptor.test.mjs",
+    "demo:world": "node examples/native-world.mjs",
     "test:geometry": "node --test test/geometry-motion.test.mjs",
-    "test:pack": "node --test test/pack-contract.test.mjs",
-    "test:host": "node --test test/host.test.mjs"
+    "test:pack": "node --test test/pack-contract.test.mjs"
   },
   "dependencies": {
+    "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0",
     "@red-cup-engineering/computer-data-engineering-services-section": "0.2.0",
+    "@red-cup-engineering/cryptographic-computer-data-engineering-services-section": "0.3.1",
+    "@red-cup-engineering/gaming": "0.1.10",
+    "@red-cup-engineering/json-services-section": "0.4.0",
     "@red-cup-engineering/knowledge-system-server": "0.2.6-dev.0",
-    "@red-cup-engineering/living-web-server": "0.1.2-dev.1"
+    "@red-cup-engineering/living-web-server": "0.1.0-dev.11",
+    "@red-cup-engineering/signcraft": "0.9.3",
+    "@red-cup-engineering/uri-services-section": "0.1.1"
   },
   "engines": {
     "node": ">=24"
@@ -69,21 +92,16 @@
   "devDependencies": {
     "@fedify/fedify": "2.3.14",
     "@fedify/vocab": "2.3.14",
-    "@red-cup-engineering/activitypub-server": "0.2.2",
+    "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
     "@red-cup-engineering/activitypub-services-section": "0.11.4",
-    "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0",
-    "@red-cup-engineering/javascript-file-services-section": "0.1.1",
-    "@red-cup-engineering/json-services-section": "0.4.0",
-    "@red-cup-engineering/signcraft": "0.8.1-dev.0"
+    "@red-cup-engineering/javascript-file-services-section": "0.1.1"
   },
   "peerDependencies": {
     "@fedify/fedify": "2.3.14",
     "@fedify/vocab": "2.3.14",
-    "@red-cup-engineering/activitypub-server": "0.2.2",
+    "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
     "@red-cup-engineering/activitypub-services-section": "0.11.4",
-    "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0",
-    "@red-cup-engineering/javascript-file-services-section": "0.1.1",
-    "@red-cup-engineering/json-services-section": "0.4.0"
+    "@red-cup-engineering/javascript-file-services-section": "0.1.1"
   },
   "peerDependenciesMeta": {
     "@red-cup-engineering/activitypub-server": {
@@ -93,12 +111,6 @@
       "optional": true
     },
     "@red-cup-engineering/javascript-file-services-section": {
-      "optional": true
-    },
-    "@red-cup-engineering/json-services-section": {
-      "optional": true
-    },
-    "@red-cup-engineering/computer-content-address-engineering-services-section": {
       "optional": true
     },
     "@fedify/fedify": {
@@ -118,6 +130,9 @@
     "test/section-site.test.mjs",
     "test/source-page-routes.test.mjs",
     "test/world-region-identity.test.mjs",
-    "test/host.test.mjs"
+    "test/world-settlement.test.mjs",
+    "test/native-mud-flow.test.mjs",
+    "test/world-source-premises.test.mjs",
+    "test/action-descriptor.test.mjs"
   ]
 }

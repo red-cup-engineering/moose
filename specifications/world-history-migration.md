@@ -1,8 +1,9 @@
 # World and history migration through the original CAIRN supplier
 
-Status: World migration implemented; clean npm receiving exposed a retained-content
-provider split. The explicit owner-port repair is being qualified through its
-original upstream publishers before downstream acceptance.
+Status: the World family and reusable MUD kernel operate over the original
+CAIRN-selected SignCraft history. Native Thing reception retains source Cells;
+source-backed game selection uses that same carrier for commands and recovery.
+The earlier provider-split investigation remains below as historical evidence.
 Owner: MOOSE with the original CAIRN, SignCraft and FeltOS owners.
 The governing demand and theory obligations remain in
 [dimension-world-coordination.md](./dimension-world-coordination.md).
@@ -14,6 +15,58 @@ Implementation is source-authored under this contract. Source, package and insta
 receiving remain distinct from a live-host deployment receipt.
 
 ## Current implementation selection
+
+### Native MUD integration
+
+The current selection is CAIRN `0.2.6-dev.0`, SignCraft `0.9.3`, and SignCell
+`0.17.3`. MOOSE directly selects the same SignCraft release for its original
+settlement entry. Before closure, `world-settlement.mjs` compares the complete
+exported history namespace with CAIRN's actual namespace by identity. A second
+copy of the same version refuses before reading the supplied history. This
+preserves private archive bindings, read capture and occurrence-frame custody.
+Closure remains the original `settleHistory` algorithm and native SignChain
+rule admission.
+
+The reusable MUD implementation is relocated from FeltOS
+`68d55dc7b166fad34f4fc481a86006d06e5ee6d1`: engine, game selection, actions,
+predication, pure capabilities, snapshots and their pure policy projections.
+Original Gaming proposal admission and the existing command vocabulary remain
+in use. Host adapters, listeners, durable storage and mutable engine custody
+remain in FeltOS. Historical `feltos.*` formats retain their identities.
+
+`defineGame({ worldSource: 'history', start, dimension, ... })` selects an
+entrance and installed policy over an existing history. `createEngine(game,
+{ world })` admits and retains the original native carrier. The mode contains
+no room blueprint. Native Areas and Objects participate in the original
+movement, possession and communication operations using their original
+content-addressed references. Actor handles remain distinct. Source-backed
+game evolution changes policy selection over retained history; it cannot
+reseed a moved Object from initial composition.
+
+Thing reception appends original relation Cells with their witnesses through
+`observeHistory`. Kind/name/type and directional-exit projections retain
+their original Utterance, predication or statement identity. A receiving label
+belongs to the history revision and does not create another original source
+occurrence. Independently supplied `sourceCells` are admitted at the native
+Thing owner: opposed spatial relations refuse before observation, while
+non-spatial support and opposition join on the original knowledge semilattice.
+
+Current effect premises distinguish absence from opposition. Native containment
+uses `located-in`; `part-of` cannot repair missing or opposed native ancestry.
+Projected exits recheck their current original relation witnesses. A present
+but opposed sight or voice range cannot expand to the default range. Original
+history remains available for inspection and recovery when current action
+premises become unavailable.
+
+The native receiving path is executable with `npm run demo:world` and
+`npm run test:world`. It covers original Thing composition, current source
+premises, simultaneous object contention, normal movement/possession/speech,
+separate-World perception, native settlement, and queued-command snapshot
+recovery. The existing gateway and host contracts separately own authenticated
+remote requests and uncertain external effects; an engine snapshot is not a
+replacement for their original request journal.
+
+### Earlier migration and provider repair
 
 The initial comparison below is retained as the original design evidence. On
 implementation intake, CAIRN main had advanced to

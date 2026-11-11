@@ -183,9 +183,9 @@ Alternatives considered:
 | --- | --- |
 | SignCraft and its original upstream providers | Thing identity, witnessed relations, causal history, evidence operations and original semantic computation. |
 | CAIRN | Source custody and authorized knowledge/codecs; synchronous original Thing/history ports now retain the selected SignCraft instance. |
-| MOOSE | Composition of a multi-user Dimension, World-facing Actor/message/channel relationships and the reusable logical-World gateway. |
+| MOOSE | Composition of a multi-user Dimension, the reusable World-facing MUD engine and pure action admission, native history/settlement composition, Actor/message/channel relationships and the logical-World gateway. |
 | ActivityPub and Computer System providers | Signed protocol admission, keys, request/reply custody, execution-state transitions and transport. |
-| FeltOS | Hosting, lifecycle, World/library selection, live process/resource management, local state ownership and effect admission. |
+| FeltOS | Hosting, lifecycle, World/library selection, live process/resource management, authenticated sessions, mutable state custody and commitment of admitted effects. |
 | MetroPlat or another World library | Authored World policy, institution/account/office recognition and the operations offered by that World. |
 
 MOOSE does not acquire a second journal, scheduler, actor registry or authority

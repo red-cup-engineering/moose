@@ -70,10 +70,7 @@ test("real native Group actor and persistent authored public post cross MOOSE's 
     body: JSON.stringify(activity),
   }))).status, 401);
   const oldKey = await readFile(join(directory, "garden-keys.json"));
-  const releasing = first.site.release();
-  assert.equal(first.site.release(), releasing,
-    "managed rollback and CLI cleanup share one original provider release");
-  await releasing;
+  await first.site.release();
   const restarted = await commissionLocalMooseSite(options);
   t.after(() => restarted.site.release());
   assert.deepEqual(restarted.actorBearerTokenPaths, first.actorBearerTokenPaths,

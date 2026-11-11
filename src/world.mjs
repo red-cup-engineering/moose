@@ -1,4 +1,4 @@
-import { cell, certainObject, coincidenceKey, knowledgeReading, retainedCarrier } from "@red-cup-engineering/knowledge-system-server/signcell";
+import { cell, cellSet, certainObject, coincides, coincidenceKey, knowledgeReading, retainedCarrier } from "@red-cup-engineering/knowledge-system-server/signcell";
 import { isReading, sidesOfReading } from "@red-cup-engineering/computer-data-engineering-services-section/four";
 import { captureHistoryReads, createHistory, validateHistory, observeHistory, replayHistory, continueHistory, historySection, historySubjects, historyHeads, queryHistory, withFunctionalPredicates } from "@red-cup-engineering/knowledge-system-server/history";
 import { deriveWorldReading, isWorldReading, rebindWorldReading } from "./world-reading.mjs";
@@ -66,11 +66,42 @@ export function certainValue(world,subject,predicate) {
   return certainObject(sectionOf(world, subject, predicate));
 }
 
+// Original Thing containment is located-in. Legacy room blueprints also use
+// part-of when no location coordinate exists. Neither an opposed location
+// nor a native Thing's separate parthood relation can select that fallback.
+function enclosingSubject(world, subject) {
+  const located = sectionOf(world, subject, LOCATED_IN);
+  if (located.length > 0) return certainObject(located);
+  if (sectionOf(world, subject, "thing-type").length > 0) return null;
+  return certainValue(world, subject, "part-of");
+}
+
+/** A directional projection remains usable only while its original relation
+ * still supplies unopposed testimony. A historical projection is not a new
+ * authority to traverse an exit whose source relation has since changed. */
+export function exitDestinationOf(world, place, direction) {
+  const coordinate = sectionOf(world, place, `exit:${direction}`);
+  const destination = certainObject(coordinate);
+  if (typeof destination !== "string") return null;
+  const projected = coordinate.find(at => coincides(at.object, destination));
+  for (const witness of projected.for) {
+    if (witness?.kind !== "moose.thing-projection.v1" || witness.projection !== "area-exit") continue;
+    const statement = witness.statement?.statement;
+    if (!statement || statement.subject !== place || statement.predicate !== "exits-to"
+        || statement.object !== destination) return null;
+    const original = sectionOf(world, statement.subject, statement.predicate)
+      .find(at => coincides(at.object, statement.object));
+    if (!original || original.against.length > 0
+        || !original.for.some(at => coincides(at, statement.witness))) return null;
+  }
+  return destination;
+}
+
 /** Current graph edges, including authored changes made after the world was started. */
 export const exitsOf=deriveWorldReading((world,room)=>Object.freeze(
   [...new Set(settleSubject(world,room).filter(cell=>cell.predicate.startsWith('exit:')).map(cell=>cell.predicate.slice(5)))]
     .sort(compareText).flatMap(direction=>{
-      const destination=certainValue(world,room,`exit:${direction}`);
+      const destination=exitDestinationOf(world,room,direction);
       return typeof destination==='string'?[Object.freeze({direction,destination})]:[];
     })
 ));
@@ -84,11 +115,12 @@ export const territoryOf=deriveWorldReading((world,actor)=>{
   if(kind==='area'&&area===null)area=subject;
   if(kind==='world'&&worldId===null)worldId=subject;
   if(kind==='dimension')dimension=subject;
-  subject=certainValue(world,subject,LOCATED_IN)??certainValue(world,subject,'part-of');
+  subject=enclosingSubject(world,subject);
  }
  return Object.freeze({dimension,world:worldId,area,place,path:Object.freeze(path)});
 });
 
+/** A single positively supported value, including contested testimony. Use certainValue for effect premises. */
 export function value(world, subject, predicate) {
   const found = cells(world, subject, predicate).filter(({ evidence }) => isAffirmed(evidence));
   return found.length === 1 ? found[0].object : null;
@@ -96,7 +128,7 @@ export function value(world, subject, predicate) {
 export const values = (world, subject, predicate) => Object.freeze(cells(world, subject, predicate).filter(({ evidence }) => isAffirmed(evidence)).map(({ object }) => object));
 
 export function placeOf(world, subject) {
-  const place = value(world, subject, LOCATED_IN);
+  const place = certainValue(world, subject, LOCATED_IN);
   return typeof place === "string" ? place : null;
 }
 
@@ -107,7 +139,7 @@ export function outerPlaceOf(world, subject) {
   const seen = new Set();
   while (typeof current === "string" && !seen.has(current)) {
     seen.add(current);
-    const container = placeOf(world, current) ?? value(world, current, "part-of");
+    const container = enclosingSubject(world, current);
     if (typeof container !== "string"||["world","area","dimension"].includes(certainValue(world,container,"kind"))) return traversed ? current : null;
     current = container;
     traversed = true;
@@ -124,7 +156,7 @@ const isPose = (pose) => pose !== null && typeof pose === "object" && Array.isAr
 const isRegion = (region) => region !== null && typeof region === "object" && region.body !== null && typeof region.body === "object";
 
 export function regionOf(world, place) {
-  const region = value(world, place, REGION);
+  const region = certainValue(world, place, REGION);
   return isRegion(region) ? region : null;
 }
 
@@ -146,7 +178,7 @@ export const regionsOf = deriveWorldReading((world) => {
 });
 
 const containerOf = (world, subject) => {
-  const container = placeOf(world, subject) ?? value(world, subject, "part-of");
+  const container = enclosingSubject(world, subject);
   return typeof container === "string" ? container : null;
 };
 
@@ -169,10 +201,10 @@ export function worldPose(world, subject) {
   const seen = new Set([subject]);
   for (let current = containerOf(world, subject); current !== null && !seen.has(current); current = containerOf(world, current)) {
     if (regionOf(world, current) !== null) {
-      const own = value(world, subject, POSE);
+      const own = certainValue(world, subject, POSE);
       return isPose(own) ? own : null;
     }
-    if (isPose(value(world, current, POSE))) return worldPose(world, current);
+    if (isPose(certainValue(world, current, POSE))) return worldPose(world, current);
     seen.add(current);
   }
   return null;
@@ -186,7 +218,7 @@ function arrivalPose(world, subject, destination, region, current) {
     const position = [contact.centroid[0], contact.centroid[1], contact.z[0]];
     return { position, heading: current === null ? 0 : bearing(current.position, position) };
   }
-  const arrival = value(world, destination, "arrival");
+  const arrival = certainValue(world, destination, "arrival");
   if (isPose(arrival)) return arrival;
   const [x, y] = bodyCentroid(region);
   return { position: [x, y, region.body.z[0]], heading: current?.heading ?? 0 };
@@ -203,7 +235,7 @@ export function move(world, subject, destination, options) {
   if (region === null) return tell(world, located, options);
   const current = worldPose(reading, subject);
   const pose = current !== null && regionContains(region, current.position) ? current : arrivalPose(reading, subject, destination, region, current);
-  const own = value(reading, subject, POSE);
+  const own = certainValue(reading, subject, POSE);
   return isPose(own) && JSON.stringify(own) === JSON.stringify(pose)
     ? tell(world, located, options)
     : place(world, subject, destination, pose, options);
@@ -231,6 +263,15 @@ export function transferItem(world, item, recipient, { source = "feltos.item.tra
 
 export const DEFAULT_SIGHT = 300;
 const EYE_HEIGHT = 1.6;
+
+// Defaults are an authored policy for absence. Present but opposed or invalid
+// measurements cannot increase perception by falling back to that policy.
+function perceptionRange(world, subject, predicate, fallback) {
+  const authored = sectionOf(world, subject, predicate);
+  if (authored.length === 0) return fallback;
+  const range = certainObject(authored);
+  return Number.isFinite(range) && range >= 0 ? range : null;
+}
 
 /**
  * Whether the segment between two points is clear. An enclosed region's walls stop sight:
@@ -269,7 +310,7 @@ const holdingsOf = deriveWorldReading((world, place) => {
   const regions = regionsOf(world), held = new Set();
   const hold = (container) => {
     const rooms = queryWorld(world, { predicate: "part-of", object: container }).filter((at) => at.for.length > 0).map((at) => at.subject)
-      .filter((room) => placeOf(world, room) === null && value(world, room, "part-of") === container);
+      .filter((room) => sectionOf(world, room, LOCATED_IN).length === 0 && enclosingSubject(world, room) === container);
     for (const subject of [...contentsOf(world, container), ...rooms]) {
       if (held.has(subject)) continue;
       held.add(subject);
@@ -290,12 +331,13 @@ const sightPair = deriveWorldReading((world, pair) => {
   if (!cells(world, subject, POSE).some((at) => at.for.length > 0)) return Object.freeze([]);
   const from = worldPose(world, actor), pose = worldPose(world, subject);
   if (from === null || pose === null) return Object.freeze([]);
-  const range = Number.isFinite(value(world, actor, "sight")) ? value(world, actor, "sight") : DEFAULT_SIGHT;
+  const range = perceptionRange(world, actor, "sight", DEFAULT_SIGHT);
+  if (range === null) return Object.freeze([]);
   if (distance(from.position, pose.position) > range || !lineOfSight(regionsOf(world), eye(from), eye(pose))) return Object.freeze([]);
   const seen = [subject];
   // A movable place in sight shows who stands in its rooms: the crew on a deck, the driver at a wheel.
   for (const room of queryWorld(world, { predicate: "part-of", object: subject }).filter((at) => at.for.length > 0).map((at) => at.subject)) {
-    if (value(world, room, "part-of") === subject) seen.push(...contentsOf(world, room).filter((rider) => rider !== actor));
+    if (enclosingSubject(world, room) === subject) seen.push(...contentsOf(world, room).filter((rider) => rider !== actor));
   }
   return Object.freeze(seen);
 });
@@ -310,7 +352,8 @@ export function sightOf(world, actor) {
   if (from === null) return Object.freeze([]);
   const regions = regionsOf(world);
   if (Object.keys(regions).length === 0) return Object.freeze([]);
-  const range = Number.isFinite(value(world, actor, "sight")) ? value(world, actor, "sight") : DEFAULT_SIGHT;
+  const range = perceptionRange(world, actor, "sight", DEFAULT_SIGHT);
+  if (range === null) return Object.freeze([]);
   const seen = [];
   for (const [place, region] of Object.entries(regions)) {
     if (territoryOf(world,actor).world !== territoryOf(world,place).world) continue;
@@ -333,11 +376,11 @@ export const DEFAULT_EARSHOT = 40;
 export function earshotOf(world, speaker, listeners) {
   const place = placeOf(world, speaker);
   const from = worldPose(world, speaker);
-  const range = Number.isFinite(value(world, speaker, "voice-range")) ? value(world, speaker, "voice-range") : DEFAULT_EARSHOT;
+  const range = perceptionRange(world, speaker, "voice-range", DEFAULT_EARSHOT);
   return Object.freeze(listeners.filter((listener) => {
     if(territoryOf(world,speaker).world!==territoryOf(world,listener).world)return false;
     if (listener === speaker || (place !== null && placeOf(world, listener) === place)) return true;
-    if (from === null) return false;
+    if (from === null || range === null) return false;
     const at = worldPose(world, listener);
     return at !== null && distance(from.position, at.position) <= range;
   }));
@@ -406,7 +449,7 @@ export function isShopWare(world, item) {
  * This is a pure authored-world transformation, NOT admission of an Actor,
  * a Work Duty, a game command, movement or an external resource grant.
  */
-export async function receiveComposedThingWorld(world, composed, { source, thingOperations } = {}) {
+export async function receiveComposedThingWorld(world, composed, { source, sourceCells = [], thingOperations } = {}) {
   validateWorld(world);
   const denied = (kind, reason) => Object.freeze({
     ok: false, refusal: Object.freeze({ kind, reason }),
@@ -422,8 +465,8 @@ export async function receiveComposedThingWorld(world, composed, { source, thing
     return denied("thing-supplier-unavailable", "The original SignCraft Thing spatial reader must be installed");
   // Retain one source reading before inspecting it. Caller accessors and
   // mutable presentations cannot change between native admission and mapping.
-  let held;
-  try { held = retainedCarrier(composed); }
+  let held, monitored;
+  try { held = retainedCarrier(composed); monitored = retainedCarrier(sourceCells); }
   catch { return denied("invalid-thing-world-source", "A retained original Thing composition is required"); }
   if (held?.kind !== "signcraft.composed-things.v2"
       || !Array.isArray(held.things) || !Array.isArray(held.relationPresentations)
@@ -434,9 +477,14 @@ export async function receiveComposedThingWorld(world, composed, { source, thing
   // Thing/Cell presentations and relation field before reading space. Give
   // that owner the held source itself: recomposing locally could discard a
   // forged presentation while retaining its borrowed content address.
-  const spatial = ops.readThingSpatialProjection(held);
-  if (!spatial?.ok) return denied("unqualified-thing-spatial-projection",
-    "Original location, Thing kind or authored Area exits are ambiguous or unavailable");
+  const spatial = ops.readThingSpatialProjection(held, { sourceCells: monitored });
+  if (!spatial?.ok) return Object.freeze({ ok: false, refusal: Object.freeze({
+    kind: "unqualified-thing-spatial-projection",
+    reason: "Original location, Thing kind or authored Area exits are ambiguous or unavailable",
+    // Preserve the original owner's evidence and refusal, including both
+    // witness lanes of an opposed spatial relation.
+    ...(spatial?.refusal ? { cause: spatial.refusal } : {}),
+  }) });
   if (!Array.isArray(spatial.value?.things) || !Array.isArray(spatial.value?.territories)
       || !Array.isArray(spatial.value?.areaExits))
     return denied("thing-world-source-drift", "The source spatial readout is not complete");
@@ -444,7 +492,6 @@ export async function receiveComposedThingWorld(world, composed, { source, thing
   const members = new Map(), rows = [];
   for (const entry of held.things) {
     const id = entry.thing.id;
-    if (members.has(id)) continue; // one version, several original Utterance presentations
     const role = roles.get(id), kind = role?.kind;
     if (role?.typeId !== entry.typeId || !["dimension","world","area","task","arena",
       "work","object","quality","behavior","container","thing"].includes(kind)
@@ -452,11 +499,20 @@ export async function receiveComposedThingWorld(world, composed, { source, thing
         || !entry.thing.attributes.name.trim())
       return denied("invalid-thing-kind", "The original typed Thing role or name was not admitted");
     members.set(id, entry);
-    rows.push({ subject: id, predicate: "kind", object: kind });
-    rows.push({ subject: id, predicate: "name", object: entry.thing.attributes.name });
-    rows.push({ subject: id, predicate: "thing-type", object: entry.typeId });
+    // These World-facing coordinates are projections, not the original
+    // relation Cells. Each explicitly retains its native source occurrence
+    // and predication identity; repeated occurrences can add testimony to
+    // the same Thing without becoming new Thing identities.
+    const project = (predicate, object) => cell(id, predicate, object, { for: [{
+      kind: "moose.thing-projection.v1", source: entry.predicationCellId, projection: predicate,
+      thingId: id, typeId: entry.typeId, predicationCellId: entry.predicationCellId,
+      utterance: entry.source,
+    }] });
+    rows.push(project("kind", kind));
+    rows.push(project("name", entry.thing.attributes.name));
+    rows.push(project("thing-type", entry.typeId));
     if (typeof entry.thing.attributes.description === "string" && entry.thing.attributes.description)
-      rows.push({ subject: id, predicate: "description", object: entry.thing.attributes.description });
+      rows.push(project("description", entry.thing.attributes.description));
   }
   const subjects = new Set(spatial.value.territories.map(entry => entry.subject));
   if (roles.size !== members.size || subjects.size !== members.size
@@ -464,42 +520,54 @@ export async function receiveComposedThingWorld(world, composed, { source, thing
     return denied("thing-world-source-drift", "Original spatial reading omitted or duplicated a Thing");
   const areaSubjects = new Set(rows.filter(x => x.predicate === "kind" && x.object === "area")
     .map(x => x.subject));
+  const statements = new Map(held.relationalField.statements.map(row => [row.id, row]));
   const coveredAreas = new Set();
   for (const area of spatial.value.areaExits) {
     if (!areaSubjects.has(area.area) || coveredAreas.has(area.area))
       return denied("thing-world-source-drift", "Area exits do not match the source Things");
     coveredAreas.add(area.area);
-    for (const exit of area.exits)
-      rows.push({ subject: area.area, predicate: "exit:" + exit.direction, object: exit.destination });
+    for (const exit of area.exits) {
+      if (!Array.isArray(exit.statementIds) || exit.statementIds.length === 0
+          || exit.statementIds.some(id => !statements.has(id)))
+        return denied("thing-world-source-drift", "An Area exit lost its original relation statements");
+      rows.push(cell(area.area, "exit:" + exit.direction, exit.destination, { for:
+        exit.statementIds.map(id => ({
+          kind: "moose.thing-projection.v1", source: id, projection: "area-exit",
+          statement: statements.get(id),
+        })),
+      }));
+    }
   }
   if (coveredAreas.size !== areaSubjects.size)
     return denied("thing-world-source-drift", "An authored Area lacks its exit reading");
-  for (const row of held.relationalField.statements)
-    rows.push({ subject: row.statement.subject,
-      predicate: row.statement.predicate, object: row.statement.object });
+  // Preserve the producer's actual relation Cells. Re-observing their
+  // triples with tell() would replace the original witnesses with MOOSE's
+  // own testimony. Independently supplied, native-admitted relation
+  // evidence joins on the same SignCell knowledge semilattice.
+  rows.push(...held.relationPresentations.map(row => row.relationCell));
+  rows.push(...(spatial.value.sourceEvidence ?? []).map(row => row.cell));
   // A complete source may repeat one relation with multiple witnesses. The
   // real World keeps one current functional value; contested destinations
   // refuse here rather than superseding another author or guessing a path.
-  const functional = key => key === "kind" || key === "name" || key === "description"
-    || key === LOCATED_IN || key.startsWith("exit:");
+  const functional = key => world.functionalPredicates.includes(key) || key.startsWith("exit:");
   const distinct = new Map(), additions = [];
-  for (const row of rows) {
+  for (const row of cellSet(rows)) {
     const key = JSON.stringify([row.subject, row.predicate]);
     const prior = distinct.get(key);
-    if (functional(row.predicate) && prior !== undefined && prior !== row.object)
+    if (functional(row.predicate) && prior !== undefined && !coincides(prior, row.object))
       return denied("contested-thing-world-projection", "Authored sources disagree about one functional World coordinate");
     distinct.set(key, row.object);
-    if (additions.some(entry => entry.subject === row.subject
-        && entry.predicate === row.predicate && entry.object === row.object)) continue;
-    const existing = cells(world, row.subject, row.predicate);
-    if (existing.some(entry => entry.object !== row.object || entry.evidence !== "potential"))
+    const existing = historySection(world, row.subject, row.predicate);
+    if (functional(row.predicate) && existing.some(entry => !coincides(entry.object, row.object)))
       return denied("conflicting-world-source", "An existing World observation cannot be silently replaced by this Thing projection");
-    if (!existing.some(entry => entry.object === row.object)) additions.push(row);
+    const present = existing.find(entry => coincides(entry.object, row.object));
+    const joined = present === undefined ? row : cellSet([present, row])[0];
+    if (present === undefined || !coincides(joined, present)) additions.push(joined);
   }
   if (additions.length === 0) return Object.freeze({ ok: true, value: Object.freeze({
     world, changed: false, inserted: 0, authority: "not-conferred", movement: "not-performed",
   }) });
-  const next = tell(world, additions, { source });
+  const next = observeHistory(world, additions, { source });
   return Object.freeze({ ok: true, value: Object.freeze({
     world: next, changed: true, inserted: additions.length,
     authority: "not-conferred", movement: "not-performed",

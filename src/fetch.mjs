@@ -231,11 +231,7 @@ export function createMooseSite({
   ];
   const resources = Object.freeze(paths.map(route => Object.freeze({
     ...route, public: true,
-    handler: context => website.fetch(context.request, {
-      capabilities: context.capabilities,
-      ...(context.remoteAddress === undefined ? {} : { remoteAddress: context.remoteAddress }),
-      ...(context.httpVersion === undefined ? {} : { httpVersion: context.httpVersion }),
-    }),
+    handler: context => website.fetch(context.request),
   })));
   return Object.freeze({
     origin, provider, website, resources,
