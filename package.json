@@ -1,8 +1,8 @@
 {
   "name": "@red-cup-engineering/moose",
-  "version": "0.1.2-dev.0",
+  "version": "0.1.2-dev.1",
   "type": "module",
-  "description": "MOOSE—Multi-User Dimension, Object Oriented, Socially Extended: source-owned World coordination and social/federation composition over CAIRN, Living Web Server and ActivityPub++.",
+  "description": "MOOSE\u2014Multi-User Dimension, Object Oriented, Socially Extended: source-owned World coordination and social/federation composition over CAIRN, Living Web Server and ActivityPub++.",
   "exports": {
     ".": "./src/application.mjs",
     "./fetch": "./src/fetch.mjs",
@@ -16,7 +16,8 @@
     "./world": "./src/world.mjs",
     "./world-reading": "./src/world-reading.mjs",
     "./geometry": "./src/geometry.mjs",
-    "./world-history": "./src/world-history.mjs"
+    "./world-history": "./src/world-history.mjs",
+    "./host": "./src/host.mjs"
   },
   "files": [
     "src",
@@ -33,7 +34,8 @@
     "test/resource-readout.test.mjs",
     "test/section-site.test.mjs",
     "test/source-page-routes.test.mjs",
-    "test/world-region-identity.test.mjs"
+    "test/world-region-identity.test.mjs",
+    "test/host.test.mjs"
   ],
   "bin": {
     "serve-moose": "./bin/serve.mjs"
@@ -44,12 +46,13 @@
     "test:gateway": "node --test test/world-gateway.test.mjs",
     "test:world": "node --test test/world-history.test.mjs",
     "test:geometry": "node --test test/geometry-motion.test.mjs",
-    "test:pack": "node --test test/pack-contract.test.mjs"
+    "test:pack": "node --test test/pack-contract.test.mjs",
+    "test:host": "node --test test/host.test.mjs"
   },
   "dependencies": {
     "@red-cup-engineering/computer-data-engineering-services-section": "0.2.0",
     "@red-cup-engineering/knowledge-system-server": "0.2.6-dev.0",
-    "@red-cup-engineering/living-web-server": "0.1.0-dev.11"
+    "@red-cup-engineering/living-web-server": "0.1.2-dev.1"
   },
   "engines": {
     "node": ">=24"
@@ -66,7 +69,7 @@
   "devDependencies": {
     "@fedify/fedify": "2.3.14",
     "@fedify/vocab": "2.3.14",
-    "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
+    "@red-cup-engineering/activitypub-server": "0.2.2",
     "@red-cup-engineering/activitypub-services-section": "0.11.4",
     "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0",
     "@red-cup-engineering/javascript-file-services-section": "0.1.1",
@@ -76,7 +79,7 @@
   "peerDependencies": {
     "@fedify/fedify": "2.3.14",
     "@fedify/vocab": "2.3.14",
-    "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
+    "@red-cup-engineering/activitypub-server": "0.2.2",
     "@red-cup-engineering/activitypub-services-section": "0.11.4",
     "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0",
     "@red-cup-engineering/javascript-file-services-section": "0.1.1",
@@ -114,6 +117,7 @@
     "test/resource-readout.test.mjs",
     "test/section-site.test.mjs",
     "test/source-page-routes.test.mjs",
-    "test/world-region-identity.test.mjs"
+    "test/world-region-identity.test.mjs",
+    "test/host.test.mjs"
   ]
 }

@@ -27,6 +27,10 @@ export async function commissionLocalMooseSite({
   const runtime = createFlatfileActivityPubRuntime({ environment: configured, stateDirectory });
   const custody = createActivityPubJournalCustody({ stateDirectory: runtime.stateDirectory });
   let local;
+  let releasing;
+  // Managed startup rollback and CLI cleanup can both request release.
+  // Retain one original provider close, including a failed close promise.
+  const release = () => releasing ??= Promise.resolve().then(() => local?.close());
   try {
     local = await createLocalActivityPubProvider({
       environment: configured, runtime, custody, origin,
@@ -49,7 +53,7 @@ export async function commissionLocalMooseSite({
     const { readPublicActor, readPublicTimeline, readPublicActorTimeline } = createMoosePublicReaders({ origin, provider: local.provider });
     const site = createMooseSite({
       origin, provider: local.provider,
-      kv: custody.kv, queue: runtime.queue, release: () => local.close(),
+      kv: custody.kv, queue: runtime.queue, release,
       custodyRoot: runtime.stateDirectory,
       readPublicTimeline, readPublicActor, readPublicActorTimeline, authorizePublicRead,
     });
@@ -62,7 +66,7 @@ export async function commissionLocalMooseSite({
       ...(local.actorBearerTokenPaths === undefined ? {} : { actorBearerTokenPaths: local.actorBearerTokenPaths }),
     });
   } catch (error) {
-    try { await local?.close(); } finally { runtime.close?.(); }
+    try { await release(); } finally { runtime.close?.(); }
     throw error;
   }
 }

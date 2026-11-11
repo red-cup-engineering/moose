@@ -34,6 +34,31 @@ MOOSE keeps no second journal, scheduler, Actor registry, archive, renderer or
 authorization database. A route it declares grants no read right: every page
 still runs through its source reader and the host's `authorizePublicRead`.
 
+## The server layers
+
+MOOSE is downstream of **Living Web Server → Web Server → Computer Systems
+Server**. In dependency notation, the consumer points to its supplier:
+`MOOSE → Living Web Server → Web Server → Computer Systems Server`.
+This hosting chain complements the CAIRN knowledge and World-history chain;
+neither replaces the other.
+
+The Node hosting entry `./host` composes each original ActivityPub site into
+Living Web Server's origin host. Living Web Server compiles the admitted
+applications with Web Server and commissions its Node transport. The Systems
+server role is the existing Computer System Platform's capability lifecycle:
+Web Server binds its original HTTP listener as one capability and waits for
+that listener to close. The shared HTTP provider still owns wire handling.
+
+ActivityPub Server remains responsible for federation routes, queue admission,
+delivery workers and custody release. Its existing listener hook calls Living
+Web Server; it no longer supplies MOOSE's outer origin router or listener.
+Unknown origins are refused before application readers run, and an HTML page
+cannot claim an ActivityPub actor, inbox, outbox or WebFinger route.
+
+See [the server-layering contract](specifications/server-layering.md) for
+responsibilities, failure behavior and the receiving scenarios. Source
+qualification and package publication are recorded separately there.
+
 ## The MOOSE stack
 
 Everything MOOSE needs is in GitHub repositories under
@@ -46,11 +71,12 @@ package-registry read permission.
 | --- | --- | --- | --- |
 | [`moose`](https://github.com/red-cup-engineering/moose) | `@red-cup-engineering/moose` | This package. | — |
 | [`living-web-server`](https://github.com/red-cup-engineering/living-web-server) | `@red-cup-engineering/living-web-server` | Live TUFTE pages over the house HTTP listener: authority check before each read, Fetch application. | Runtime dependency (`./fetch`). |
-| [`web-page-tiling-engine`](https://github.com/red-cup-engineering/web-page-tiling-engine) | `@red-cup-engineering/web-page-tiling-engine` | TUFTE, the Tiling User Form Topology Engine: page tiling and rendering. | Indirect, through Living Web Server's runtime dependency. |
-| [`computer-web-server`](https://github.com/red-cup-engineering/computer-web-server) | `@red-cup-engineering/computer-web-server` | The house HTTP listener. | Indirect: an optional peer of Living Web Server and a dependency of ActivityPub Server. MOOSE must not depend on it directly (`test/fetch-dependency.test.mjs`). |
+| [`tufte`](https://github.com/red-cup-engineering/tufte) | `@red-cup-engineering/tufte` | TUFTE, the Tiling User Form Topology Engine: page tiling and rendering. | Indirect, through Living Web Server's runtime dependency. |
+| [`computer-web-server`](https://github.com/red-cup-engineering/computer-web-server) | `@red-cup-engineering/computer-web-server` | Web application dispatch and the managed Node transport binding. | Indirect, through Living Web Server's host. MOOSE must not depend on it directly (`test/fetch-dependency.test.mjs`). |
+| [`computer-system-platform`](https://github.com/red-cup-engineering/computer-system-platform) | `@red-cup-engineering/computer-system-platform` | Shared capability startup and release; the Computer Systems Server role in this hosting path. | Indirect, through Web Server's managed listener. |
 | [`knowledge-system-server`](https://github.com/red-cup-engineering/knowledge-system-server) | `@red-cup-engineering/knowledge-system-server` | CAIRN: source custody, authorized reads, codecs, and the `./history`, `./thing`, `./signcell`, `./fars` and `./finite-file-claims` ports. | Runtime dependency. |
 | [`signcraft`](https://github.com/red-cup-engineering/signcraft) | `@red-cup-engineering/signcraft` | SignCraft: Thing identity, witnessed relations, causal history, Cells. | Not a runtime dependency. MOOSE reaches SignCraft only through CAIRN, which depends on it and exposes its history, Thing and Cell modules through `./history`, `./thing` and `./signcell`. MOOSE lists it as a devDependency, used directly only by `test/cairn-pages.test.mjs`; `test/world-history.test.mjs` resolves it from CAIRN's copy. |
-| [`activitypub-server`](https://github.com/red-cup-engineering/activitypub-server) | `@red-cup-engineering/activitypub-server` | The managed ActivityPub multi-site host. | Optional peer, for `.` and `serve-moose`. |
+| [`activitypub-server`](https://github.com/red-cup-engineering/activitypub-server) | `@red-cup-engineering/activitypub-server` | Per-site federation application, delivery workers and custody lifetime. | Optional peer, for `./host`, `.` and `serve-moose`; its listener hook uses Living Web Server. |
 | [`activitypub-engineering-services-section`](https://github.com/red-cup-engineering/activitypub-engineering-services-section) | `@red-cup-engineering/activitypub-services-section` | The ActivityPub services section: AS2, signed federation, journal custody, public posts. | Optional peer, for `./public-readers`, `./local-node` and `.`. |
 | [`computer-data-engineering-services-section`](https://github.com/red-cup-engineering/computer-data-engineering-services-section) | `@red-cup-engineering/computer-data-engineering-services-section` | The data services section. | Runtime dependency (`./four`). |
 
@@ -66,7 +92,7 @@ Where each is mounted in the Group's repository tree:
 | --- | --- |
 | `moose` | [`computer-mud-systems-engineering-services-section`](https://github.com/red-cup-engineering/computer-mud-systems-engineering-services-section) `apps/moose` |
 | `living-web-server` | [`web-system-engineering-services-section`](https://github.com/red-cup-engineering/web-system-engineering-services-section) `apps/living-web-server` |
-| `web-page-tiling-engine` (TUFTE) | [`web-tufte-gui-engineering-services-section`](https://github.com/red-cup-engineering/web-tufte-gui-engineering-services-section) `apps/web-page-tiling-engine` |
+| `tufte` (formerly `web-page-tiling-engine`) | [`web-tufte-gui-engineering-services-section`](https://github.com/red-cup-engineering/web-tufte-gui-engineering-services-section) `apps/web-page-tiling-engine` |
 
 ### Installing from registry.561.group
 
@@ -112,6 +138,7 @@ Consumer tests for MOOSE live in the consumer's repository, not here.
 | `./fetch` | `createMooseSite`, `createMooseApplication` | An already-built ActivityPub provider and readers. No Node listener. |
 | `./source-application` | `createMooseApplication` | Living Web Server only. |
 | `./public-readers` | `createMoosePublicReaders`, `readPublicTimelineAtSource` | Optional peer ActivityPub Services. |
+| `./host` | `createMooseEngine`, `serveMooseSites` | Optional peer ActivityPub Server, with Living Web Server's original Web transport selected. Does not eagerly import MOOSE's page or World modules. |
 | `.` | `createMooseSite`, `createMooseApplication`, `createMoosePublicReaders`, `createMooseEngine`, `serveMooseSites` | Optional peers ActivityPub Server and Services, and `@fedify/fedify` / `@fedify/vocab`. |
 | `./local-node` | `commissionLocalMooseSite` | Optional peer ActivityPub Services; original private-key and journal custody. |
 | `./cairn-pages` | `createMooseCairnPage` | A host-bound CAIRN `cairn.fars/v1` reader. |
@@ -191,8 +218,12 @@ for an existing host. It creates no listener, key store or social database.
 - `hasMore: false` means the sampled page had no confirmed further post, not
   that the archive is exhausted.
 
-`createMooseEngine({sites})` builds the ActivityPub multi-site engine and
-`serveMooseSites({sites, trustProxy, hostname, port})` runs the managed host.
+`createMooseEngine({sites})` returns the admitted Living Web host of the original
+ActivityPub site applications. Its frozen `origins` lists the registered sites;
+`fetch` serves only those origins. `serveMooseSites({sites, trustProxy, hostname,
+port})` uses that host and the original ActivityPub delivery/custody lifecycle.
+Its default listener always goes through Living Web Server. The previously
+supported explicit `serve` injection remains available to host tests.
 The ActivityPub actor dispatcher and Fedify key dispatcher must load the same
 physical `@fedify/vocab` module; two copies of the same version make Actor
 endpoints fail with HTTP 500, so MOOSE pins the Fedify peers exactly.
@@ -246,6 +277,11 @@ every pull request and on `main`: the dependency-free source contract
 (Fetch boundary, section site, resource inventory and native route suites), the
 World gateway and World history suites with their exact suppliers, and the
 whole suite on a clean install of the declared provider graph.
+
+`npm run test:host` receives the real Living Web/Web listener on loopback,
+origin and protocol isolation, queue startup, ordered shutdown and refusal
+cleanup. Its in-memory federation provider is a controlled host fixture;
+signed federation remains covered by ActivityPub Server's original tests.
 
 ## Specifications
 
