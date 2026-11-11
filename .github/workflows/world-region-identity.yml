@@ -7,6 +7,8 @@ on:
     paths:
       - '.github/workflows/world-region-identity.yml'
       - 'src/world.mjs'
+      - 'src/world-cell.mjs'
+      - 'src/world-history.mjs'
       - 'test/world-region-identity.test.mjs'
       - 'package.json'
   push:
@@ -14,6 +16,8 @@ on:
     paths:
       - '.github/workflows/world-region-identity.yml'
       - 'src/world.mjs'
+      - 'src/world-cell.mjs'
+      - 'src/world-history.mjs'
       - 'test/world-region-identity.test.mjs'
       - 'package.json'
   workflow_dispatch:
@@ -48,7 +52,7 @@ jobs:
           import { spawnSync } from 'node:child_process';
           const { dependencies } = JSON.parse(readFileSync('package.json','utf8'));
           const suppliers = [
-            '@red-cup-engineering/knowledge-system-server',
+            '@red-cup-engineering/signcraft',
             '@red-cup-engineering/computer-data-engineering-services-section',
           ].map(name => name + '@' + dependencies[name]);
           const result = spawnSync('npm', [

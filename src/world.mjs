@@ -1,6 +1,7 @@
-import { cell, cellSet, certainObject, coincides, coincidenceKey, knowledgeReading, retainedCarrier } from "@red-cup-engineering/knowledge-system-server/signcell";
+import SignCell from "./world-cell.mjs";
+const { cell, cellSet, certainObject, coincides, coincidenceKey, knowledgeReading, retainedCarrier } = SignCell;
 import { isReading, sidesOfReading } from "@red-cup-engineering/computer-data-engineering-services-section/four";
-import { captureHistoryReads, createHistory, validateHistory, observeHistory, replayHistory, continueHistory, historySection, historySubjects, historyHeads, queryHistory, withFunctionalPredicates } from "@red-cup-engineering/knowledge-system-server/history";
+import { captureHistoryReads, createHistory, validateHistory, observeHistory, replayHistory, continueHistory, historySection, historySubjects, historyHeads, queryHistory, withFunctionalPredicates } from "./world-history.mjs";
 import { deriveWorldReading, isWorldReading, rebindWorldReading } from "./world-reading.mjs";
 import { bearing, bodyCentroid, boxDistance, contactOf, distance, prismContains, regionBounds, regionContains, segmentThroughPrism } from "./geometry.mjs";
 
@@ -443,8 +444,8 @@ export function isShopWare(world, item) {
  * Receive TAB/qtOps-style composed Things into the EXISTING SignCell/SignCraft
  * World history, not a second MUD engine or separate object registry.
  *
- * The producer is SignCraft's actual Thing/EAVT implementation. CAIRN's
- * selected SignCraft supplies its Thing API; a missing runtime supplier must
+ * The producer is the selected SignCraft's actual Thing/EAVT implementation.
+ * The same owner supplies history, Things and Cell operations; a missing runtime supplier must
  * refuse this feature without preventing the rest of World from loading.
  * This is a pure authored-world transformation, NOT admission of an Actor,
  * a Work Duty, a game command, movement or an external resource grant.
@@ -458,8 +459,8 @@ export async function receiveComposedThingWorld(world, composed, { source, sourc
     return denied("missing-thing-world-source", "World projection requires a named original authoring source");
   let ops = thingOperations;
   if (ops === undefined) {
-    try { ops = await import("@red-cup-engineering/knowledge-system-server/thing"); }
-    catch { return denied("thing-supplier-unavailable", "The selected CAIRN SignCraft dependency does not expose an admissible Thing consumer"); }
+    try { ops = await import("@red-cup-engineering/signcraft/thing"); }
+    catch { return denied("thing-supplier-unavailable", "The selected SignCraft dependency does not expose an admissible Thing consumer"); }
   }
   if (!ops || typeof ops.readThingSpatialProjection !== "function")
     return denied("thing-supplier-unavailable", "The original SignCraft Thing spatial reader must be installed");

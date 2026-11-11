@@ -1,7 +1,9 @@
 import { LOCATED_IN, cells, certainValue, contentsOf, declareFunctional, isAffirmed, isShopWare, move, perceivedOf, placeOf, settledWorld, tell, value } from "./world.mjs";
 import { historyHeads } from "./world-history.mjs";
-import { address } from "@red-cup-engineering/knowledge-system-server/signcell";
+import Cell from "./world-cell.mjs";
 import { settleHistory } from "./world-settlement.mjs";
+
+const { address } = Cell;
 
 /**
  * One actor-relative native eligibility reading shared by discovery and the

@@ -1,7 +1,7 @@
-# World and history migration through the original CAIRN supplier
+# World and MUD integration over the original SignCraft family
 
 Status: the World family and reusable MUD kernel operate over the original
-CAIRN-selected SignCraft history. Native Thing reception retains source Cells;
+MOOSE-selected SignCraft history. Native Thing reception retains source Cells;
 source-backed game selection uses that same carrier for commands and recovery.
 The earlier provider-split investigation remains below as historical evidence.
 Owner: MOOSE with the original CAIRN, SignCraft and FeltOS owners.
@@ -18,14 +18,28 @@ receiving remain distinct from a live-host deployment receipt.
 
 ### Native MUD integration
 
-The current selection is CAIRN `0.2.6-dev.0`, SignCraft `0.9.3`, and SignCell
-`0.17.3`. MOOSE directly selects the same SignCraft release for its original
-settlement entry. Before closure, `world-settlement.mjs` compares the complete
-exported history namespace with CAIRN's actual namespace by identity. A second
-copy of the same version refuses before reading the supplied history. This
-preserves private archive bindings, read capture and occurrence-frame custody.
-Closure remains the original `settleHistory` algorithm and native SignChain
-rule admission.
+MOOSE directly selects SignCraft `0.9.3` for history, Thing composition and
+settlement. Its history selects SignCell `0.17.3`. CAIRN `0.2.6-dev.0` remains
+the source-custody and authorized-knowledge supplier.
+
+Clean npm receiving exposed a genuine split: CAIRN's direct Cell facade and
+SignCraft history loaded separate copies of SignCell with separate retained-byte
+owners. Equal declared versions did not prevent that split. The current
+SignCraft release has no public Cell forwarding entry, so the Node
+`world-cell.mjs` binding resolves the original public SignCell Cell export from
+the actual SignCraft history package context. It exports the complete original
+namespace by identity and verifies `retainHistoryCell(probe) === probe`. It
+implements no Cell or content operation. CAIRN's independent Cell copy can
+remain installed. Portable Fetch and geometry entries have separate import
+closures; the MUD World family currently uses this explicit Node binding.
+
+Before closure, `world-settlement.mjs` compares MOOSE's complete history
+namespace with its selected SignCraft namespace by identity. A second history
+copy refuses before reading the supplied World. Private archive bindings, read
+capture and occurrence-frame custody remain with their original owner. Closure
+remains the original `settleHistory` algorithm and native SignChain rule
+admission. The earlier CAIRN-port design below records the preceding migration;
+this current supplier binding supersedes its World-family selection.
 
 The reusable MUD implementation is relocated from FeltOS
 `68d55dc7b166fad34f4fc481a86006d06e5ee6d1`: engine, game selection, actions,

@@ -17,6 +17,7 @@
     "./world-reading": "./src/world-reading.mjs",
     "./geometry": "./src/geometry.mjs",
     "./world-history": "./src/world-history.mjs",
+    "./world-cell": "./src/world-cell.mjs",
     "./game": "./src/game.mjs",
     "./engine": "./src/engine.mjs",
     "./actions": "./src/actions.mjs",

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { cell } from '@red-cup-engineering/knowledge-system-server/signcell';
+import Cell from '../src/world-cell.mjs';
 import { gardenGame } from './fixtures/garden.mjs';
 import { defineGame } from '../src/game.mjs';
 import { admit, createEngine, join, step, submit, availableActions, routeFor } from '../src/engine.mjs';
@@ -10,6 +10,7 @@ import { placeOf, tell, value } from '../src/world.mjs';
 
 // These are the original engine source-edition receiving cases. The separate
 // FeltOS perception-frame consumer remains tested by its original owner.
+const { cell } = Cell;
 
 const policy=defineWorldReadingPolicy({id:'test.engine.reading',version:'1',read:({source,edition})=>({cells:[
   ...source.subjects().flatMap(subject=>source.rawCells(subject)).filter(at=>!edition.replaced.some(([s,p])=>at.subject===s&&at.predicate===p)),

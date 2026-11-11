@@ -2,8 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
-import { composeThings } from "@red-cup-engineering/knowledge-system-server/thing";
-import { cell, cellSet, coincides } from "@red-cup-engineering/knowledge-system-server/signcell";
+import { composeThings } from "@red-cup-engineering/signcraft/thing";
 import { historyHeads, historySection, observeHistory } from "@red-cup-engineering/moose/world-history";
 import { admit, createEngine, join, submit } from "@red-cup-engineering/moose/engine";
 import { restoreEngine, snapshotEngine } from "@red-cup-engineering/moose/engine-snapshot";
@@ -14,8 +13,8 @@ import {
 } from "@red-cup-engineering/moose/world";
 import { createNativeWorldExample } from "../examples/native-world.mjs";
 
-const fromCairn = createRequire(import.meta.resolve("@red-cup-engineering/knowledge-system-server/thing"));
-const fromSigncraft = createRequire(fromCairn.resolve("@red-cup-engineering/signcraft/thing"));
+const fromSigncraft = createRequire(import.meta.resolve("@red-cup-engineering/signcraft/thing"));
+const { cell, cellSet, coincides } = await import(pathToFileURL(fromSigncraft.resolve("@red-cup-engineering/signcell/cell")).href);
 const { utterance } = await import(pathToFileURL(fromSigncraft.resolve("@red-cup-engineering/signcell/utterance")).href);
 const received = result => {
   assert.equal(result.ok, true, JSON.stringify(result.refusal));

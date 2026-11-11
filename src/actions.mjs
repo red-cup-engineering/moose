@@ -1,11 +1,13 @@
 import { canonical } from '@red-cup-engineering/json-services-section';
 import { sidesOfReading } from '@red-cup-engineering/computer-data-engineering-services-section/four';
-import { address } from '@red-cup-engineering/knowledge-system-server/signcell';
+import Cell from './world-cell.mjs';
 import {sha256Bytes} from '@red-cup-engineering/cryptographic-computer-data-engineering-services-section/portable-sha256';
 import {registeredAccountForActor} from './identity-roles.mjs';
 import { parseNiUri } from '@red-cup-engineering/uri-services-section/ni-uri';
 import { cells, settleSubject, placeOf, certainValue, territoryOf } from './world.mjs';
 import { gamePlaceIsCurrent } from './game-world.mjs';
+
+const { address } = Cell;
 
 const record = (x) => x !== null && typeof x === 'object' && !Array.isArray(x);
 const identifier = /^[a-z][a-z0-9]*(?:[-.:][a-z0-9]+)*$/u;

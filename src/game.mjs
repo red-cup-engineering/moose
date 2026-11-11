@@ -1,4 +1,4 @@
-import { retainedCarrier } from "@red-cup-engineering/computer-content-address-engineering-services-section/semiotic-content-address";
+import Cell from "./world-cell.mjs";
 import { sidesOfReading } from "@red-cup-engineering/computer-data-engineering-services-section/four";
 import { canonical, requireJsonValue } from "@red-cup-engineering/json-services-section";
 import { cells, certainValue, createWorld, declareFunctional, settledWorld, tell, territoryOf, validateWorld } from "./world.mjs";
@@ -6,6 +6,8 @@ import { restoreHistory } from "./world-history.mjs";
 import { gamePlaceIsCurrent, sourceReference } from "./game-world.mjs";
 
 import { defineAction, defineRequirements, actionPredicate } from './actions.mjs';
+
+const { retainedCarrier } = Cell;
 
 const IDENTIFIER = /^[a-z][a-z0-9]*(?:[-.:][a-z0-9]+)*$/u;
 const compareText = (left, right) => left < right ? -1 : left > right ? 1 : 0;

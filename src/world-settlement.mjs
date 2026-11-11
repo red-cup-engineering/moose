@@ -1,13 +1,13 @@
 /**
  * World closure uses the original SignCraft implementation with the SAME
- * history owner that CAIRN supplies to World. Equal package versions alone
+ * history owner that supplies World. Equal package versions alone
  * cannot establish private archive, occurrence or read-capture custody.
  *
  * Admission happens when closure is selected. A split installation must not
  * prevent unrelated World reads from loading, copy a history into another
  * provider, or silently discard its private archive binding.
  */
-import * as worldHistory from "@red-cup-engineering/knowledge-system-server/history";
+import * as worldHistory from "./world-history.mjs";
 import * as settlementHistory from "@red-cup-engineering/signcraft/history";
 import { settleHistory as originalSettleHistory } from "@red-cup-engineering/signcraft/settle";
 
@@ -19,7 +19,7 @@ function requireOriginalWorldHistory() {
   const names = Object.keys(worldHistory);
   if (names.length !== Object.keys(settlementHistory).length
       || names.some(name => worldHistory[name] !== settlementHistory[name])) {
-    throw new TypeError("World settlement requires the same original CAIRN and SignCraft history provider");
+    throw new TypeError("World settlement requires the same original MOOSE and SignCraft history provider");
   }
 }
 

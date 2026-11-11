@@ -2,25 +2,25 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createRequire } from 'node:module';
 import { pathToFileURL } from 'node:url';
-import * as CairnCell from '@red-cup-engineering/knowledge-system-server/signcell';
-import * as CairnHistory from '@red-cup-engineering/knowledge-system-server/history';
-import * as CairnThing from '@red-cup-engineering/knowledge-system-server/thing';
+import WorldCell from '@red-cup-engineering/moose/world-cell';
+import * as OriginalHistory from '@red-cup-engineering/signcraft/history';
+import * as OriginalThing from '@red-cup-engineering/signcraft/thing';
 import * as MooseHistory from '@red-cup-engineering/moose/world-history';
 import * as MooseWorld from '@red-cup-engineering/moose/world';
 import * as MooseReading from '@red-cup-engineering/moose/world-reading';
 
-// Resolve the original provider from CAIRN, never from an incidental test-root selection.
-const fromCairn = createRequire(import.meta.resolve('@red-cup-engineering/knowledge-system-server/history'));
-const historyPath = fromCairn.resolve('@red-cup-engineering/signcraft/history');
-const thingPath = fromCairn.resolve('@red-cup-engineering/signcraft/thing');
+// Resolve the declared SignCraft owner from MOOSE, then its own original Cell.
+const fromMoose = createRequire(import.meta.resolve('@red-cup-engineering/moose/world-history'));
+const historyPath = fromMoose.resolve('@red-cup-engineering/signcraft/history');
+const thingPath = fromMoose.resolve('@red-cup-engineering/signcraft/thing');
 const CurrentHistory = await import(pathToFileURL(historyPath).href);
 const CurrentThing = await import(pathToFileURL(thingPath).href);
 const fromCurrentSigncraft = createRequire(historyPath);
-const cellPath = fromCairn.resolve('@red-cup-engineering/signcell/cell');
+const cellPath = fromCurrentSigncraft.resolve('@red-cup-engineering/signcell/cell');
 const CurrentCell = await import(pathToFileURL(cellPath).href);
-const contentPath = fromCairn.resolve('@red-cup-engineering/signcell/content-address');
+const contentPath = fromCurrentSigncraft.resolve('@red-cup-engineering/signcell/content-address');
 const CurrentContent = await import(pathToFileURL(contentPath).href);
-const CurrentUtterance = await import(pathToFileURL(fromCairn.resolve('@red-cup-engineering/signcell/utterance')).href);
+const CurrentUtterance = await import(pathToFileURL(fromCurrentSigncraft.resolve('@red-cup-engineering/signcell/utterance')).href);
 const { utterance } = CurrentUtterance;
 function assertSameExports(received, original, label) {
   assert.deepEqual(Object.keys(received).sort(), Object.keys(original).sort(), `${label}: complete original namespace`);
@@ -31,36 +31,38 @@ const yes = result => {
   assert.equal(result.ok, true, JSON.stringify(result.refusal));
   return result.value;
 };
-const detached = history => CairnHistory.restoreHistory(structuredClone(CairnHistory.checkpointHistory(history)));
+const detached = history => OriginalHistory.restoreHistory(structuredClone(OriginalHistory.checkpointHistory(history)));
 const occurrencePolicy = MooseReading.defineWorldReadingPolicy({
   id: 'test.moose-original-occurrences', version: '1',
   read: ({ source }) => ({ cells: source.subjects().flatMap(subject =>
     source.rawOccurrences(subject, undefined, { archive: true }).rows.map(row => row.cell)) }),
 });
 
-test('MOOSE World and history retain CAIRN’s selected SignCraft and SignCell owners', () => {
-  const { dependencies } = fromCairn('@red-cup-engineering/knowledge-system-server/package.json');
-  for (const name of ['@red-cup-engineering/signcraft', '@red-cup-engineering/signcell']) {
-    assert.equal(fromCairn(name + '/package.json').version, dependencies[name]);
-  }
-  assert.equal(fromCurrentSigncraft.resolve('@red-cup-engineering/signcell/cell'), cellPath);
-  assertSameExports(CairnHistory, CurrentHistory, 'CAIRN history');
-  assertSameExports(CairnThing, CurrentThing, 'CAIRN Thing');
-  assertSameExports(CairnCell, CurrentCell, 'CAIRN SignCell and the selected Cell owner');
+test('MOOSE World and history retain the actual selected SignCraft and SignCell owners', () => {
+  const { dependencies } = fromMoose('@red-cup-engineering/moose/package.json');
+  const selected = fromMoose('@red-cup-engineering/signcraft/package.json');
+  assert.equal(selected.version, dependencies['@red-cup-engineering/signcraft']);
+  assert.equal(fromCurrentSigncraft('@red-cup-engineering/signcell/package.json').version,
+    selected.dependencies['@red-cup-engineering/signcell']);
+  assertSameExports(OriginalHistory, CurrentHistory, 'selected SignCraft history');
+  assertSameExports(OriginalThing, CurrentThing, 'selected SignCraft Thing');
+  assertSameExports(WorldCell, CurrentCell, 'MOOSE original selected Cell namespace');
   for (const name of ['bytesToHex', 'retainedCarrier', 'semanticBytes', 'semanticId', 'coincides', 'coincidenceKey']) {
-    assert.equal(typeof CairnCell[name], 'function', `${name} must be an original content operation`);
-    assert.equal(CairnCell[name], CurrentContent[name], `${name} must retain the selected SignCell content owner's identity`);
+    assert.equal(typeof WorldCell[name], 'function', `${name} must be an original content operation`);
+    assert.equal(WorldCell[name], CurrentContent[name], `${name} must retain the selected SignCell content owner's identity`);
   }
-  assertSameExports(MooseHistory, CairnHistory, 'MOOSE world history');
-  assert.equal(MooseWorld.validateWorld, CairnHistory.validateHistory);
-  assert.equal(MooseWorld.declareFunctional, CairnHistory.withFunctionalPredicates);
+  const probe = WorldCell.cell('original', 'native-owner', true);
+  assert.equal(CurrentHistory.retainHistoryCell(probe), probe);
+  assertSameExports(MooseHistory, CurrentHistory, 'MOOSE world history');
+  assert.equal(MooseWorld.validateWorld, CurrentHistory.validateHistory);
+  assert.equal(MooseWorld.declareFunctional, CurrentHistory.withFunctionalPredicates);
   const world = MooseWorld.createWorld();
-  assert.equal(CairnHistory.restoreHistory(world), world);
+  assert.equal(CurrentHistory.restoreHistory(world), world);
   assert.equal(MooseHistory.restoreHistory(world), world);
 });
 
 function composedDimension() {
-  const typed = (typeId, name, attributes = {}) => yes(CairnThing.deriveComposedThing({
+  const typed = (typeId, name, attributes = {}) => yes(OriginalThing.deriveComposedThing({
     typeId, source: utterance({ source: 'original TAB/qtOps receiving' }, { name, ...attributes }),
   }));
   const dimension = typed('Dimension', 'Union Dimension');
@@ -77,7 +79,7 @@ function composedDimension() {
   const relation = (from, predicate, to, token = {}) => utterance(
     { source: 'original relation author', token },
     { subject: from.thing.id, predicate, object: to.thing.id });
-  const composed = yes(CairnThing.composeThings({
+  const composed = yes(OriginalThing.composeThings({
     things: parts.map(({ typeId, source }) => ({ typeId, source })),
     relationSources: [
       relation(world, 'located-in', dimension),
@@ -99,7 +101,7 @@ test('original Thing composition, native archive and occurrence reading compose 
   assert.equal(f.composed.kind, 'signcraft.composed-things.v2');
   const statementIds = f.composed.relationalField.statements.map(statement => statement.id);
   const original = MooseWorld.createWorld();
-  const source = 'original CAIRN Thing projection';
+  const source = 'original SignCraft Thing projection';
   // Deliberately use the ordinary dynamic supplier, without injected Thing operations.
   const projected = yes(await MooseWorld.receiveComposedThingWorld(original, f.composed, { source }));
   assert.equal(projected.authority, 'not-conferred');
@@ -126,15 +128,15 @@ test('original Thing composition, native archive and occurrence reading compose 
   assert.equal(world.revisions.length, 1);
   for (const presentation of f.composed.relationPresentations) {
     const originalCell = presentation.relationCell;
-    const [received] = CairnHistory.historySection(world, originalCell.subject, originalCell.predicate);
+    const [received] = OriginalHistory.historySection(world, originalCell.subject, originalCell.predicate);
     assert.deepEqual(received, originalCell, 'the original relation and both witness lanes survive reception');
-    assert.equal(CairnCell.address(received), presentation.relationCellId);
+    assert.equal(WorldCell.address(received), presentation.relationCellId);
   }
-  const [kind] = CairnHistory.historySection(world, f.inn.thing.id, 'kind');
+  const [kind] = OriginalHistory.historySection(world, f.inn.thing.id, 'kind');
   assert.equal(kind.for[0].kind, 'moose.thing-projection.v1');
   assert.equal(kind.for[0].predicationCellId, f.inn.predicationCellId);
   assert.deepEqual(kind.for[0].utterance, f.inn.source);
-  const [exit] = CairnHistory.historySection(world, f.inn.thing.id, 'exit:east');
+  const [exit] = OriginalHistory.historySection(world, f.inn.thing.id, 'exit:east');
   const originalExit = f.composed.relationalField.statements.find(row => row.statement.predicate === 'exits-to');
   assert.deepEqual(exit.for[0].statement, originalExit, 'the directional projection retains the native statement ID and witness');
   const repeated = yes(await MooseWorld.receiveComposedThingWorld(world, f.composed, { source }));
@@ -146,12 +148,12 @@ test('original Thing composition, native archive and occurrence reading compose 
     { subject: f.pebble.thing.id, predicate: 'rumor', object: 'rain', evidence: 'stable' },
     { subject: f.pebble.thing.id, predicate: 'silence', object: 'unread', evidence: 'absurd' },
   ], { source: 'original evidence on both sides' });
-  const event = CairnHistory.retainHistoryCell({ subject: f.pebble.thing.id,
+  const event = OriginalHistory.retainHistoryCell({ subject: f.pebble.thing.id,
     predicate: 'heard', object: 'bell', for: [{ source: 'original bell occurrence' }], against: [] });
-  const batch = CairnHistory.observeHistory(evidence, [event, event], { source: 'original bell occurrence' });
-  const full = CairnHistory.observeHistory(batch, [event], { source: 'original bell occurrence' });
-  assert.deepEqual(CairnHistory.historySection(full, f.pebble.thing.id, 'heard'),
-    CairnHistory.historySection(batch, f.pebble.thing.id, 'heard'),
+  const batch = OriginalHistory.observeHistory(evidence, [event, event], { source: 'original bell occurrence' });
+  const full = OriginalHistory.observeHistory(batch, [event], { source: 'original bell occurrence' });
+  assert.deepEqual(OriginalHistory.historySection(full, f.pebble.thing.id, 'heard'),
+    OriginalHistory.historySection(batch, f.pebble.thing.id, 'heard'),
     'settled evidence stays equal while addressed occurrences remain distinct');
   const originalFrame = MooseHistory.captureHistoryOccurrences(full, { archive: true });
   const occurrences = MooseHistory.readCapturedHistoryOccurrences(originalFrame, f.pebble.thing.id, 'heard');
@@ -166,11 +168,11 @@ test('original Thing composition, native archive and occurrence reading compose 
   const unavailable = MooseHistory.captureHistoryOccurrences(compact, { archive: true });
   assert.ok(unavailable.unresolved.length > 0);
   assert.ok(unavailable.rows.every(row => row.occurrence === null));
-  assert.throws(() => CairnHistory.materializeHistory(compact), /archive/);
+  assert.throws(() => OriginalHistory.materializeHistory(compact), /archive/);
   // A real archive may contain later observations; only this checkpoint's ancestry belongs here.
   const future = MooseWorld.tell(full, { subject: 'later', predicate: 'event', object: 'outside this cut' });
   let archiveCalls = 0;
-  CairnHistory.bindHistoryArchive(compact, () => { archiveCalls += 1; return future.revisions; });
+  OriginalHistory.bindHistoryArchive(compact, () => { archiveCalls += 1; return future.revisions; });
   const captured = MooseHistory.captureHistoryOccurrences(compact, { archive: true });
   assert.equal(archiveCalls, 1);
   assert.deepEqual(captured.unresolved, []);
@@ -181,31 +183,31 @@ test('original Thing composition, native archive and occurrence reading compose 
   });
   assert.equal(MooseReading.carrierOfWorldReading(reading), compact);
   assert.equal(reading.occurrenceVersion, captured.id);
-  assert.deepEqual(reading.carrierHeads, CairnHistory.historyHeads(full));
+  assert.deepEqual(reading.carrierHeads, OriginalHistory.historyHeads(full));
   for (let warm = 0; warm < 2; warm += 1) {
     const tracked = MooseHistory.captureHistoryReads(() => reading.section(f.pebble.thing.id, 'heard'));
     assert.deepEqual(tracked.reads, [{}], 'both cold and warm reads retain the native conservative footprint');
-    assert.deepEqual(tracked.result, CairnHistory.historySection(full, f.pebble.thing.id, 'heard'));
+    assert.deepEqual(tracked.result, OriginalHistory.historySection(full, f.pebble.thing.id, 'heard'));
   }
   assert.equal(archiveCalls, 1, 'the explicit frame supplies the complete operation reading');
   assert.equal(MooseReading.rebindWorldReading(reading, compact), reading);
 
-  const snapshot = CairnHistory.materializeHistory(compact);
+  const snapshot = OriginalHistory.materializeHistory(compact);
   assert.deepEqual(snapshot, full);
   assert.equal(MooseWorld.value(snapshot, 'later', 'event'), null);
-  const restored = CairnHistory.restoreHistory(structuredClone(snapshot));
-  assert.deepEqual(CairnHistory.historyHeads(restored), CairnHistory.historyHeads(full));
+  const restored = OriginalHistory.restoreHistory(structuredClone(snapshot));
+  assert.deepEqual(OriginalHistory.historyHeads(restored), OriginalHistory.historyHeads(full));
   assert.deepEqual(restored.revisions, full.revisions);
   assert.deepEqual(MooseWorld.settledWorld(restored), MooseWorld.settledWorld(full));
   assert.deepEqual(MooseHistory.captureHistoryOccurrences(restored, { archive: true }).rows, originalFrame.rows);
-  const evidenceRows = CairnHistory.historySubjectCells(restored, f.pebble.thing.id);
+  const evidenceRows = OriginalHistory.historySubjectCells(restored, f.pebble.thing.id);
   const rumor = evidenceRows.find(cell => cell.predicate === 'rumor');
   assert.deepEqual(rumor.for, rumor.against);
   assert.equal(rumor.for[0].source, 'original evidence on both sides');
   const silence = evidenceRows.find(cell => cell.predicate === 'silence');
   assert.deepEqual([silence.for, silence.against], [[], []]);
 
-  const joined = MooseHistory.mergeHistories(restored, CairnHistory.restoreHistory(structuredClone(snapshot)));
+  const joined = MooseHistory.mergeHistories(restored, OriginalHistory.restoreHistory(structuredClone(snapshot)));
   assert.deepEqual(joined, restored);
   assert.equal(MooseHistory.historySize(joined), MooseHistory.historySize(restored));
   assert.deepEqual(MooseHistory.captureHistoryOccurrences(joined, { archive: true }).rows, originalFrame.rows);
@@ -220,7 +222,7 @@ test('World projection refuses the retired Thing dialect without recording an ob
   const refused = await MooseWorld.receiveComposedThingWorld(world, source, { source: 'retired source' });
   assert.equal(refused.ok, false);
   assert.equal(refused.refusal.kind, 'invalid-thing-world-source');
-  assert.deepEqual(CairnHistory.historyHeads(world), []);
+  assert.deepEqual(OriginalHistory.historyHeads(world), []);
 });
 
 for (const [name, forge] of [
@@ -231,13 +233,13 @@ for (const [name, forge] of [
   test(`World projection retains native refusal of forged ${name}`, async () => {
     const source = structuredClone(composedDimension().composed);
     forge(source);
-    assert.equal(CairnThing.readThingSpatialProjection(source).ok, false,
+    assert.equal(OriginalThing.readThingSpatialProjection(source).ok, false,
       'the original producer rejects this presentation despite its borrowed IDs');
     const world = MooseWorld.createWorld();
     const refused = await MooseWorld.receiveComposedThingWorld(world, source, { source: 'forged source' });
     assert.equal(refused.ok, false);
     assert.equal(refused.refusal.kind, 'unqualified-thing-spatial-projection');
-    assert.deepEqual(CairnHistory.historyHeads(world), []);
+    assert.deepEqual(OriginalHistory.historyHeads(world), []);
   });
 }
 
@@ -250,13 +252,13 @@ test('World projection retains the original carrier before inspecting source fie
   assert.equal(refused.ok, false);
   assert.equal(refused.refusal.kind, 'invalid-thing-world-source');
   assert.equal(accessed, false);
-  assert.deepEqual(CairnHistory.historyHeads(world), []);
+  assert.deepEqual(OriginalHistory.historyHeads(world), []);
 });
 
 test('source monitoring retains the native spatial refusal and its opposing witnesses before any World effect', async () => {
   const f = composedDimension();
   const original = f.composed.relationPresentations.find(row => row.relationCell.predicate === 'exits-to').relationCell;
-  const opposed = CairnCell.cell(original.subject, original.predicate, original.object, {
+  const opposed = WorldCell.cell(original.subject, original.predicate, original.object, {
     for: original.for, against: [{ source: 'independent closed-path observation' }],
   });
   const world = MooseWorld.createWorld();
@@ -267,20 +269,20 @@ test('source monitoring retains the native spatial refusal and its opposing witn
   assert.equal(received.refusal.cause.kind, 'spatial-source-obstructed');
   assert.deepEqual(received.refusal.cause.obstructions[0].witnessesFor, opposed.for);
   assert.deepEqual(received.refusal.cause.obstructions[0].witnessesAgainst, opposed.against);
-  assert.deepEqual(CairnHistory.historyHeads(world), []);
+  assert.deepEqual(OriginalHistory.historyHeads(world), []);
 });
 
 test('native non-spatial opposition joins original relation testimony and survives replay', async () => {
   const f = composedDimension();
   const original = f.composed.relationPresentations.find(row => row.relationCell.predicate === 'part-of').relationCell;
-  const contrary = CairnCell.cell(original.subject, original.predicate, original.object, {
+  const contrary = WorldCell.cell(original.subject, original.predicate, original.object, {
     against: [{ source: 'independent disputed work membership' }],
   });
   const options = { source: 'monitored source', sourceCells: [contrary] };
   const received = yes(await MooseWorld.receiveComposedThingWorld(MooseWorld.createWorld(), f.composed, options));
-  const [relation] = CairnHistory.historySection(received.world, original.subject, original.predicate);
-  assert.deepEqual(relation, CairnCell.cellSet([original, contrary])[0]);
-  assert.equal(CairnCell.knowledgeReading(relation), 'stable');
+  const [relation] = OriginalHistory.historySection(received.world, original.subject, original.predicate);
+  assert.deepEqual(relation, WorldCell.cellSet([original, contrary])[0]);
+  assert.equal(WorldCell.knowledgeReading(relation), 'stable');
   assert.equal(MooseWorld.certainValue(received.world, original.subject, original.predicate), null);
   const repeated = yes(await MooseWorld.receiveComposedThingWorld(received.world, f.composed, options));
   assert.equal(repeated.world, received.world);
@@ -292,19 +294,19 @@ test('another original Thing occurrence adds source testimony without replacing 
   const source = 'original source admission';
   const first = yes(await MooseWorld.receiveComposedThingWorld(MooseWorld.createWorld(), f.composed, { source }));
   const nextSource = utterance({ source: 'second original observation' }, f.inn.thing.attributes);
-  const repeatedThing = yes(CairnThing.deriveComposedThing({ typeId: f.inn.typeId, source: nextSource }));
+  const repeatedThing = yes(OriginalThing.deriveComposedThing({ typeId: f.inn.typeId, source: nextSource }));
   assert.equal(repeatedThing.thing.id, f.inn.thing.id);
-  const composition = yes(CairnThing.composeThings({
+  const composition = yes(OriginalThing.composeThings({
     things: [...f.composed.things.map(({ typeId, source }) => ({ typeId, source })),
       { typeId: f.inn.typeId, source: nextSource }],
     relationSources: f.composed.relationPresentations.map(({ source }) => source),
   }));
   const second = yes(await MooseWorld.receiveComposedThingWorld(first.world, composition, { source }));
-  const [before] = CairnHistory.historySection(first.world, f.inn.thing.id, 'kind');
-  const [after] = CairnHistory.historySection(second.world, f.inn.thing.id, 'kind');
+  const [before] = OriginalHistory.historySection(first.world, f.inn.thing.id, 'kind');
+  const [after] = OriginalHistory.historySection(second.world, f.inn.thing.id, 'kind');
   assert.equal(second.changed, true);
   assert.equal(after.for.length, 2);
-  assert.ok(after.for.some(witness => CairnCell.coincides(witness, before.for[0])));
+  assert.ok(after.for.some(witness => WorldCell.coincides(witness, before.for[0])));
   assert.ok(after.for.some(witness => witness.predicationCellId === repeatedThing.predicationCellId));
   assert.equal(MooseWorld.certainValue(second.world, f.inn.thing.id, 'kind'), 'area');
   assert.equal(yes(await MooseWorld.receiveComposedThingWorld(second.world, composition, { source })).world, second.world);
@@ -319,7 +321,7 @@ test('opposed location is retained as testimony and cannot become actionable con
   assert.equal(MooseWorld.placeOf(world, 'alice'), null);
   assert.deepEqual(MooseWorld.contentsOf(world, 'room-a'), []);
   assert.equal(MooseWorld.territoryOf(world, 'alice').place, null);
-  const [retained] = CairnHistory.historySection(world, 'alice', 'located-in');
+  const [retained] = OriginalHistory.historySection(world, 'alice', 'located-in');
   assert.equal(retained.for.length, 1);
   assert.equal(retained.against.length, 1);
 });
@@ -328,11 +330,11 @@ test('incomplete and forged archives refuse ancestry while same-carrier visibili
   const full = MooseWorld.tell(MooseWorld.createWorld(), { subject: 'room', predicate: 'name', object: 'Room' });
   const compact = detached(full);
   let available = false;
-  CairnHistory.bindHistoryArchive(compact, () => available ? full.revisions : []);
+  OriginalHistory.bindHistoryArchive(compact, () => available ? full.revisions : []);
   const absentFrame = MooseHistory.captureHistoryOccurrences(compact, { archive: true });
   const absentReading = MooseReading.readWorld(compact, { policy: occurrencePolicy, occurrenceFrame: absentFrame });
   assert.equal(MooseReading.worldReadingOccurrenceFrameIsCurrent(absentReading), true);
-  assert.throws(() => CairnHistory.materializeHistory(compact), /missing/);
+  assert.throws(() => OriginalHistory.materializeHistory(compact), /missing/);
   assert.equal(absentFrame.rows[0].occurrence, null);
   available = true;
   assert.equal(MooseReading.rebindWorldReading(absentReading, compact), absentReading);
@@ -344,8 +346,8 @@ test('incomplete and forged archives refuse ancestry while same-carrier visibili
   assert.equal(MooseReading.worldReadingOccurrenceFrameIsCurrent(presentReading), false);
   const forged = structuredClone(full.revisions);
   forged[0].cells[0].object = 'forged Room';
-  CairnHistory.bindHistoryArchive(compact, () => forged);
-  assert.throws(() => CairnHistory.materializeHistory(compact), /content address/);
+  OriginalHistory.bindHistoryArchive(compact, () => forged);
+  assert.throws(() => OriginalHistory.materializeHistory(compact), /content address/);
   const refused = MooseHistory.captureHistoryOccurrences(compact, { archive: true });
   assert.ok(refused.unresolved.length > 0);
   assert.equal(refused.rows[0].occurrence, null);
@@ -358,21 +360,21 @@ test('World tell and reading retain private byte content across the actual reloc
   const world = MooseWorld.tell(MooseWorld.createWorld(), {
     subject: 'byte-carrier', predicate: 'payload', object: { bytes },
   }, { source: 'original World cell producer' });
-  const head = CairnHistory.historyHeads(world);
+  const head = OriginalHistory.historyHeads(world);
   bytes.fill(9);
   world.revisions[0].cells[0].object.bytes.fill(8);
   const frame = MooseHistory.captureHistoryOccurrences(world, { archive: true });
   const editionBytes = new Uint8Array([4, 8, 16]);
-  const edition = CairnCell.retainedCarrier({ source: 'original byte reading edition', bytes: editionBytes });
+  const edition = WorldCell.retainedCarrier({ source: 'original byte reading edition', bytes: editionBytes });
   const policy = MooseReading.defineWorldReadingPolicy({
     id: 'test.moose-byte-edition', version: '1',
     read: ({ source, edition }) => {
       const cells = source.rawOccurrences('byte-carrier', 'payload', { archive: true }).rows.map(row => row.cell);
-      return { cells, metadata: CairnCell.retainedCarrier({ editionBytes: edition.bytes, cellBytes: cells[0].object.bytes }) };
+      return { cells, metadata: WorldCell.retainedCarrier({ editionBytes: edition.bytes, cellBytes: cells[0].object.bytes }) };
     },
   });
-  const sourceVersion = CairnCell.semanticId(edition);
-  const readingVersion = CairnCell.semanticId({ policy: { id: policy.id, version: policy.version }, edition, occurrenceFrame: frame.id });
+  const sourceVersion = WorldCell.semanticId(edition);
+  const readingVersion = WorldCell.semanticId({ policy: { id: policy.id, version: policy.version }, edition, occurrenceFrame: frame.id });
   const reading = MooseReading.readWorld(world, { policy, edition, occurrenceFrame: frame });
   editionBytes.fill(6);
   edition.bytes.fill(5);
@@ -391,7 +393,7 @@ test('World tell and reading retain private byte content across the actual reloc
   assert.deepEqual([...reading.metadata().cellBytes], [0, 1, 127, 128, 255]);
   assert.equal(reading.sourceVersion, sourceVersion);
   assert.equal(reading.readingVersion, readingVersion);
-  const restored = CairnHistory.restoreHistory(structuredClone(CairnHistory.materializeHistory(world)));
-  assert.deepEqual(CairnHistory.historyHeads(restored), head);
-  assert.deepEqual([...CairnHistory.historySubjectCells(restored, 'byte-carrier')[0].object.bytes], [0, 1, 127, 128, 255]);
+  const restored = OriginalHistory.restoreHistory(structuredClone(OriginalHistory.materializeHistory(world)));
+  assert.deepEqual(OriginalHistory.historyHeads(restored), head);
+  assert.deepEqual([...OriginalHistory.historySubjectCells(restored, 'byte-carrier')[0].object.bytes], [0, 1, 127, 128, 255]);
 });

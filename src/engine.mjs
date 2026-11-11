@@ -3,7 +3,7 @@ import { requireJsonValue, copyJson, freezeJson } from "@red-cup-engineering/jso
 import { readWorld, rebindWorldReading, isWorldReading, worldReadingOccurrenceFrameIsCurrent } from "./world-reading.mjs";
 import { isInhabitant } from "./inhabitants.mjs";
 import { captureHistoryReads, historyHeads, historySize, historySection, mergeHistories } from "./world-history.mjs";
-import { address } from "@red-cup-engineering/knowledge-system-server/signcell";
+import Cell from "./world-cell.mjs";
 import { admitProposals } from "@red-cup-engineering/gaming/running/proposals";
 import { worldMethods, requirementFailures } from './actions.mjs';
 import { cells, certainValue, territoryOf, subjects, exitsOf, exitDestinationOf, regionOf, REGION, POSE, queryWorld } from './world.mjs';
@@ -16,6 +16,8 @@ import { ROLE_REGISTERED, hasVoice } from "./identity-roles.mjs";
 import { describeActorSelf, skillsSummaryLine, standingSummaryLine } from "./profile.mjs";
 import { actorSkills } from "./skills.mjs";
 import { CHARACTER_ALIASES, readAliasBook, changeAlias, observeCommandHistory } from "./character-aliases.mjs";
+
+const { address } = Cell;
 
 // A read context is transient operation input, never engine/snapshot state.
 // Synchronous operation-local read frames. Nested admissions contribute their consulted

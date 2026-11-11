@@ -68,7 +68,6 @@ jobs:
           import { spawnSync } from 'node:child_process';
           const { dependencies } = JSON.parse(readFileSync('package.json', 'utf8'));
           const suppliers = [
-            '@red-cup-engineering/knowledge-system-server',
             '@red-cup-engineering/computer-data-engineering-services-section',
             '@red-cup-engineering/computer-content-address-engineering-services-section',
             '@red-cup-engineering/cryptographic-computer-data-engineering-services-section',

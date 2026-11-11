@@ -11,10 +11,10 @@ MOOSE is the Semioverse's reusable multi-user MUD: participants inhabit original
 SignCraft Worlds, observe and move among their Areas, use their Objects, and
 communicate through the same witnessed history. Its pure command engine retains
 causal command order, concurrent action admission and recoverable pending work.
-It sits
-in the Group's supplier chain as Metrologic → SignCell → SignChain → SignGraph
-→ SignCraft → CAIRN → **MOOSE** → FeltOS. MetroPlat is a World library that
-FeltOS hosts.
+It consumes SignCraft's World semantics and CAIRN's source custody and authorized
+knowledge views. SignCraft retains its original SignCell, SignChain, SignGraph
+and Metrologic suppliers. FeltOS hosts MOOSE with selected World libraries such
+as MetroPlat.
 
 Package: `@red-cup-engineering/moose` on `https://registry.561.group`. Source:
 [`red-cup-engineering/moose`](https://github.com/red-cup-engineering/moose),
@@ -26,7 +26,7 @@ mounted once in the forest at
 | Owner | Responsibility |
 | --- | --- |
 | SignCraft and its upstream providers | Thing identity, witnessed relations, causal history and semantic computation. |
-| CAIRN (`knowledge-system-server`) | Source custody, authorized knowledge reads and codecs, and the history, Thing and Cell ports MOOSE uses. |
+| CAIRN (`knowledge-system-server`) | Source custody, authorized knowledge reads, finite file claims and codecs. |
 | **MOOSE** | World-facing MUD behavior: source-backed game selection, command interpretation, pure action admission, perception, possession, speech, native inference, engine snapshots, the logical-World gateway and public social views. |
 | ActivityPub Server / Services | Signed federation, WebFinger, inboxes, outboxes, followers, keys and delivery. |
 | Living Web Server and TUFTE | Live human pages, authority checks before each read, and rendering. |
@@ -101,7 +101,7 @@ package-registry read permission.
 | [`tufte`](https://github.com/red-cup-engineering/tufte) | `@red-cup-engineering/tufte` | TUFTE, the Tiling User Form Topology Engine: page tiling and rendering. | Indirect, through Living Web Server's runtime dependency. |
 | [`computer-web-server`](https://github.com/red-cup-engineering/computer-web-server) | `@red-cup-engineering/computer-web-server` | The house HTTP listener. | Indirect: an optional peer of Living Web Server and a dependency of ActivityPub Server. MOOSE must not depend on it directly (`test/fetch-dependency.test.mjs`). |
 | [`knowledge-system-server`](https://github.com/red-cup-engineering/knowledge-system-server) | `@red-cup-engineering/knowledge-system-server` | CAIRN: source custody, authorized reads, codecs, and the `./history`, `./thing`, `./signcell`, `./fars` and `./finite-file-claims` ports. | Runtime dependency. |
-| [`signcraft`](https://github.com/red-cup-engineering/signcraft) | `@red-cup-engineering/signcraft` | Thing identity, witnessed relations, causal history, Cells and native inference. | Exact runtime selection aligned with CAIRN. World history/Thing/Cell operations use CAIRN's ports; `./world-settlement` admits the actual same history provider before native closure. |
+| [`signcraft`](https://github.com/red-cup-engineering/signcraft) | `@red-cup-engineering/signcraft` | Thing identity, witnessed relations, causal history, Cells and native inference. | Direct runtime owner of the complete World family. The Node `./world-cell` binding resolves the actual Cell supplier selected by its history implementation. |
 | [`gaming`](https://github.com/red-cup-engineering/gaming) | `@red-cup-engineering/gaming` | Concurrent proposal admission. | Runtime dependency used by the original MUD engine. |
 | [`activitypub-server`](https://github.com/red-cup-engineering/activitypub-server) | `@red-cup-engineering/activitypub-server` | The managed ActivityPub multi-site host. | Optional peer, for `.` and `serve-moose`. |
 | [`activitypub-engineering-services-section`](https://github.com/red-cup-engineering/activitypub-engineering-services-section) | `@red-cup-engineering/activitypub-services-section` | The ActivityPub services section: AS2, signed federation, journal custody, public posts. | Optional peer, for `./public-readers`, `./local-node` and `.`. |
@@ -161,10 +161,11 @@ Consumer tests for MOOSE live in the consumer's repository, not here.
 | `./engine` | `createEngine`, `join`, `submit`, `admit`, `step`, `elapse`, discovery and routing | Current actor/session admission and commitment of the returned immutable engine. |
 | `./engine-snapshot` | `snapshotEngine`, `restoreEngine`, World snapshot/restore | Durable storage; decoded history is re-admitted by SignCraft. |
 | `./actions`, `./capabilities`, `./predication` | Original action definitions, capability composition, affordances, possession and `closeWorld` | Installed executable selections and current World policy. |
-| `./world-settlement` | `settleHistory`, native `settlementAdmits` | Original SignChain rules and the same actual SignCraft history instance selected by CAIRN. |
-| `./world` | `createWorld`, `tell`, `move`, `place`, `perceive`, `receiveComposedThingWorld`, … | Nothing beyond the runtime dependencies. |
-| `./world-reading` | `readWorld`, `defineWorldReadingPolicy`, `rebindWorldReading`, … | Nothing beyond the runtime dependencies. |
-| `./world-history` | CAIRN's `./history`, re-exported unchanged | Nothing beyond the runtime dependencies. |
+| `./world-settlement` | `settleHistory`, native `settlementAdmits` | Original SignChain rules and MOOSE's selected SignCraft history instance. |
+| `./world` | `createWorld`, `tell`, `move`, `place`, `perceive`, `receiveComposedThingWorld`, … | Node and the declared original SignCraft family. |
+| `./world-reading` | `readWorld`, `defineWorldReadingPolicy`, `rebindWorldReading`, … | The same Node World binding. |
+| `./world-history` | SignCraft's `./history`, re-exported unchanged | The declared SignCraft dependency. |
+| `./world-cell` | Default export: SignCraft's complete original Cell namespace | Node's public package resolver, used to retain the actual selected supplier instance. |
 | `./geometry` | Polygon, prism, region and sight geometry | Nothing. |
 | `./world-gateway` | `createWorldGateway`, `admitWorldGatewayCall`, `worldGatewayExecution`, … | A native `prepare`/`send`/`recover`/`result` port. |
 | `./fetch` | `createMooseSite`, `createMooseApplication` | An already-built ActivityPub provider and readers. No Node listener. |
@@ -176,7 +177,8 @@ Consumer tests for MOOSE live in the consumer's repository, not here.
 | `./cairn-file-claims` | CAIRN's finite file-claim functions, unwrapped | The host's finite selection and reader policies. |
 | `serve-moose` (bin) | Managed host CLI | The `.` peers and JavaScript File Services. |
 
-The MUD and Fetch entry points keep separate import closures. Hosting and
+The MUD World family uses Node to bind SignCraft's actual installed Cell provider.
+The Fetch and geometry entries keep separate portable import closures. Hosting and
 federation packages are exact optional peers; a Fetch-only consumer (a Worker,
 ASSIST) starts no listener, key custody or CAIRN host.
 
@@ -184,14 +186,16 @@ ASSIST) starts no listener, key custody or CAIRN host.
 
 `./world`, `./world-reading` and `./geometry` are the World family moved from
 FeltOS. FeltOS's public paths forward these same function objects. Every World
-operation, reading, archive binding and occurrence frame uses the one history
-module CAIRN selects, and World cells use CAIRN's `./signcell` port, which
-forwards SignCraft's selected Cell implementation. A host must resolve that same
-CAIRN instance for a World's history: equal version text across two installed
-copies does not share private carriers.
+operation, reading, archive binding and occurrence frame uses MOOSE's selected
+SignCraft history module. World Cells use that history owner's actual SignCell
+instance. The `./world-cell` binding resolves the original public Cell export
+from SignCraft's package context and verifies native Cell admission by identity.
+CAIRN can retain its independently installed suppliers for knowledge services;
+its sibling Cell port does not select the MUD's Cell owner. Equal version text
+across two installed copies does not share private retained-byte custody.
 
 `receiveComposedThingWorld` retains the native `signcraft.composed-things.v2`
-carrier and asks CAIRN's selected SignCraft spatial reader to re-admit its
+carrier and asks the same selected SignCraft spatial reader to re-admit its
 complete original Thing, Cell, relation and Utterance presentations. A borrowed
 content address does not admit altered source evidence. The retired v1 dialect
 is refused. Native relation Cells enter the history with their original witness
@@ -207,7 +211,7 @@ and poses require positive, uncontradicted evidence. A running World continues
 from its retained history; replaying its initial composition after an Object
 moves cannot overwrite the current location.
 
-World settlement checks actual function identity across CAIRN's history port
+World settlement checks actual function identity across MOOSE's history port
 and the directly selected SignCraft history namespace. Equal version text alone
 does not share private archive or occurrence custody. A split installation
 refuses closure before reading its input; ordinary World reads remain usable.

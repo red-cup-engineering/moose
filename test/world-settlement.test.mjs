@@ -5,23 +5,22 @@ import { cp, copyFile, mkdir, mkdtemp, readFile, rm, symlink } from "node:fs/pro
 import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import * as WorldHistory from "@red-cup-engineering/knowledge-system-server/history";
-import * as WorldCell from "@red-cup-engineering/knowledge-system-server/signcell";
+import * as WorldHistory from "../src/world-history.mjs";
 import * as DirectHistory from "@red-cup-engineering/signcraft/history";
 import * as DirectSettlement from "@red-cup-engineering/signcraft/settle";
+import WorldCell from "../src/world-cell.mjs";
 import { createWorld, tell } from "../src/world.mjs";
 import { settleHistory, settlementAdmits } from "../src/world-settlement.mjs";
 
 // Resolve native constructors from the actual World supplier. The production
 // boundary has no Node resolver, alternate rule dialect or constructor shim.
-const fromCairn = createRequire(import.meta.resolve("@red-cup-engineering/knowledge-system-server/history"));
-const signcraftPath = fromCairn.resolve("@red-cup-engineering/signcraft/settle");
+const signcraftPath = fileURLToPath(import.meta.resolve("@red-cup-engineering/signcraft/settle"));
 const fromSigncraft = createRequire(signcraftPath);
 const originalSettlement = await import(pathToFileURL(signcraftPath).href);
-const originalHistory = await import(pathToFileURL(fromCairn.resolve("@red-cup-engineering/signcraft/history")).href);
+const originalHistory = await import(pathToFileURL(fromSigncraft.resolve("@red-cup-engineering/signcraft/history")).href);
 const originalCell = await import(pathToFileURL(fromSigncraft.resolve("@red-cup-engineering/signcell/cell")).href);
 const Rules = await import(pathToFileURL(fromSigncraft.resolve("@red-cup-engineering/signchain/rules")).href);
-const { cell, cellSet, address, semanticId, knowledgeReading } = WorldCell;
+const { cell, cellSet, address, semanticId, knowledgeReading } = originalCell;
 const same = (left, right) => assert.equal(semanticId(left), semanticId(right));
 const findCell = (values, target) => values.find(value => address(value) === address(target));
 
@@ -42,15 +41,23 @@ function fixture() {
   return { history, seed, dead, haunted, rules };
 }
 
-test("World closure and native constructors retain the selected CAIRN provider family", () => {
+test("World closure and native constructors retain the selected SignCraft provider family", () => {
   assert.deepEqual(Object.keys(WorldHistory), Object.keys(DirectHistory));
   for (const name of Object.keys(WorldHistory)) {
     assert.equal(WorldHistory[name], DirectHistory[name], `direct history ${name}`);
     assert.equal(WorldHistory[name], originalHistory[name], `selected history ${name}`);
   }
-  for (const name of Object.keys(WorldCell)) {
-    assert.equal(WorldCell[name], originalCell[name], `selected Cell ${name}`);
-  }
+  assert.equal(WorldCell, originalCell, "the complete Cell namespace is the actual selected supplier");
+  const admitted = cell("source", "retains", originalCell.retainedCarrier(new Uint8Array([0, 127, 255])), { for: ["source"] });
+  assert.equal(WorldHistory.retainHistoryCell(admitted), admitted,
+    "the Cell constructor shares SignCraft history's private admission and byte custody");
+  const world = tell(createWorld(), {
+    subject: "source", predicate: "retains", object: WorldCell.retainedCarrier(new Uint8Array([0, 127, 255])),
+  });
+  const observed = WorldHistory.historySection(world, "source", "retains")[0];
+  assert.equal(WorldCell.admitCell(observed), observed,
+    "the World observation retains the selected Cell owner's admission");
+  assert.deepEqual([...observed.object], [0, 127, 255]);
   assert.equal(DirectSettlement.settleHistory, originalSettlement.settleHistory);
   assert.equal(settlementAdmits, originalSettlement.settlementAdmits);
   const rule = Rules.rule("native", [], { cell: cell("source", "says", "claim"), reading: "potential" });
@@ -149,8 +156,7 @@ test("later functional replacement does not turn historical closure into current
 test("a second copy of the same original SignCraft refuses only when World closure is selected", async t => {
   const directory = await mkdtemp(join(tmpdir(), "moose-world-supplier-"));
   t.after(() => rm(directory, { recursive: true, force: true }));
-  const selectedRoot = dirname(fromCairn.resolve("@red-cup-engineering/signcraft/package.json"));
-  const cairnRoot = dirname(fromCairn.resolve("@red-cup-engineering/knowledge-system-server/package.json"));
+  const selectedRoot = dirname(fromSigncraft.resolve("@red-cup-engineering/signcraft/package.json"));
   const duplicateRoot = join(directory, "original-signcraft-copy");
   const consumerRoot = join(directory, "consumer");
   const scope = join(consumerRoot, "node_modules", "@red-cup-engineering");
@@ -159,8 +165,9 @@ test("a second copy of the same original SignCraft refuses only when World closu
   await copyFile(join(selectedRoot, "package.json"), join(duplicateRoot, "package.json"));
   await cp(join(selectedRoot, "src"), join(duplicateRoot, "src"), { recursive: true });
   await symlink(join(selectedRoot, "node_modules"), join(duplicateRoot, "node_modules"), "dir");
-  await symlink(cairnRoot, join(scope, "knowledge-system-server"), "dir");
   await symlink(duplicateRoot, join(scope, "signcraft"), "dir");
+  await symlink(fileURLToPath(new URL("../src/world-history.mjs", import.meta.url)),
+    join(consumerRoot, "world-history.mjs"), "file");
   const boundary = join(consumerRoot, "world-settlement.mjs");
   await copyFile(fileURLToPath(new URL("../src/world-settlement.mjs", import.meta.url)), boundary);
   assert.equal(await readFile(join(duplicateRoot, "src", "history.mjs"), "utf8"),
@@ -169,6 +176,6 @@ test("a second copy of the same original SignCraft refuses only when World closu
   assert.equal(typeof isolated.settleHistory, "function", "module loading does not reject unrelated operations");
   let reads = 0;
   const untouched = { get kind() { reads += 1; throw new Error("history must remain unread"); } };
-  assert.throws(() => isolated.settleHistory(untouched, []), /same original CAIRN and SignCraft history provider/);
+  assert.throws(() => isolated.settleHistory(untouched, []), /same original MOOSE and SignCraft history provider/);
   assert.equal(reads, 0, "supplier refusal precedes reading or rebuilding the World");
 });
