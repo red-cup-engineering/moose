@@ -55,6 +55,12 @@ test("Fetch installation has no mandatory social or managed hosting supplier", (
     "@red-cup-engineering/living-web-server": "0.1.0-dev.11",
     "@red-cup-engineering/knowledge-system-server": "0.2.6-dev.0",
     "@red-cup-engineering/computer-data-engineering-services-section": "0.2.0",
+    "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0",
+    "@red-cup-engineering/cryptographic-computer-data-engineering-services-section": "0.3.1",
+    "@red-cup-engineering/gaming": "0.1.10",
+    "@red-cup-engineering/json-services-section": "0.4.0",
+    "@red-cup-engineering/signcraft": "0.9.3",
+    "@red-cup-engineering/uri-services-section": "0.1.1",
   });
   const qualify = suppliers => assert.deepEqual(suppliers, qualifiedSuppliers);
   qualify(pkg.dependencies);
@@ -102,9 +108,7 @@ test("Fetch installation has no mandatory social or managed hosting supplier", (
     "@red-cup-engineering/json-services-section": "0.4.0",
     "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0",
   })) {
-    assert.equal(pkg.peerDependencies[name], version);
-    assert.equal(pkg.peerDependenciesMeta[name].optional, true);
-    assert.equal(pkg.devDependencies[name], version);
-    assert.equal(pkg.dependencies[name], undefined);
+    assert.equal(pkg.dependencies[name], version);
+    assert.equal(pkg.peerDependencies[name], undefined);
   }
 });
