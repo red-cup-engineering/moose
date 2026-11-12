@@ -6,12 +6,16 @@ on:
       - src/**
       - test/**
       - package.json
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
       - .github/workflows/fetch-dependency.yml
   pull_request:
     paths:
       - src/**
       - test/**
       - package.json
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
       - .github/workflows/fetch-dependency.yml
 permissions:
   contents: read
