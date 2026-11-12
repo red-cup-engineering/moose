@@ -56,33 +56,8 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '24'
-      - name: Receive the original SignCraft and MUD supplier composition
-        env:
-          WORLD_DEPENDENCIES: ${{ runner.temp }}/moose-world-history
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p "$WORLD_DEPENDENCIES"
-          node --input-type=module <<'NODE'
-          import { readFileSync } from 'node:fs';
-          import { spawnSync } from 'node:child_process';
-          const { dependencies } = JSON.parse(readFileSync('package.json', 'utf8'));
-          const suppliers = [
-            '@red-cup-engineering/computer-data-engineering-services-section',
-            '@red-cup-engineering/computer-content-address-engineering-services-section',
-            '@red-cup-engineering/cryptographic-computer-data-engineering-services-section',
-            '@red-cup-engineering/gaming',
-            '@red-cup-engineering/json-services-section',
-            '@red-cup-engineering/signcraft',
-            '@red-cup-engineering/uri-services-section',
-          ].map(name => `${name}@${dependencies[name]}`);
-          const result = spawnSync('npm', ['install', '--prefix', process.env.WORLD_DEPENDENCIES,
-            '--no-save', '--no-package-lock', '--ignore-scripts', '--no-audit', '--no-fund',
-            '--fetch-retries=1', '--fetch-timeout=30000', '--registry=https://registry.561.group',
-            ...suppliers], { stdio: 'inherit' });
-          process.exit(result.status ?? 1);
-          NODE
-          ln -s "$WORLD_DEPENDENCIES/node_modules" node_modules
+      - name: Install the locked runtime providers from the Group registry
+        run: npm exec --yes --package=pnpm@11.28.5 -- pnpm install --prod --frozen-lockfile --ignore-scripts --fetch-retries=1 --fetch-timeout=30000 --registry=https://registry.561.group
       - run: npm run test:world
       - run: node --test test/engine*.test.mjs
       - run: npm run demo:world
@@ -95,11 +70,8 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '24'
-      - name: Receive the exact declared host and public-view providers
-        shell: bash
-        run: |
-          set -euo pipefail
-          npm install --no-save --no-package-lock --ignore-scripts --no-audit --no-fund --fetch-retries=1 --fetch-timeout=30000 --registry=https://registry.561.group
+      - name: Install the locked host and test providers from the Group registry
+        run: npm exec --yes --package=pnpm@11.28.5 -- pnpm install --frozen-lockfile --ignore-scripts --fetch-retries=1 --fetch-timeout=30000 --registry=https://registry.561.group
       - name: Report selected Fedify/vocabulary module graph
         run: npm ls @fedify/fedify @fedify/vocab @fedify/vocab-runtime --all || true
       - name: Run all repository tests on the installed provider graph

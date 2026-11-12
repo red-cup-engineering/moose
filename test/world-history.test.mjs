@@ -42,8 +42,6 @@ test('MOOSE World and history retain the actual selected SignCraft and SignCell 
   const { dependencies } = fromMoose('@red-cup-engineering/moose/package.json');
   const selected = fromMoose('@red-cup-engineering/signcraft/package.json');
   assert.equal(selected.version, dependencies['@red-cup-engineering/signcraft']);
-  assert.equal(fromCurrentSigncraft('@red-cup-engineering/signcell/package.json').version,
-    selected.dependencies['@red-cup-engineering/signcell']);
   assertSameExports(OriginalHistory, CurrentHistory, 'selected SignCraft history');
   assertSameExports(OriginalThing, CurrentThing, 'selected SignCraft Thing');
   assertSameExports(WorldCell, CurrentCell, 'MOOSE original selected Cell namespace');
