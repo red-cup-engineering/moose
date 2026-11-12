@@ -1,6 +1,6 @@
 {
   "name": "@red-cup-engineering/moose",
-  "version": "0.1.2-dev.1",
+  "version": "0.1.2-dev.2",
   "type": "module",
   "description": "MOOSE—MUD, Object Oriented, Socially Extended: source-backed multi-user Worlds, native SignCraft history and inference, and Living Web composition.",
   "exports": {
