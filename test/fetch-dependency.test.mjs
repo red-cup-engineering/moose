@@ -77,7 +77,7 @@ test("Fetch installation has no mandatory social or managed hosting supplier", (
   }), { code: "ERR_ASSERTION" });
   for (const [name, version] of Object.entries({
     "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
-    "@red-cup-engineering/activitypub-services-section": "0.11.4",
+    "@red-cup-engineering/activitypub-engineering-services-section": "0.11.4",
     "@red-cup-engineering/javascript-file-services-section": "0.1.1",
     "@fedify/fedify": "2.3.14",
     "@fedify/vocab": "2.3.14",

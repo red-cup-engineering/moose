@@ -1,5 +1,5 @@
-import { projectPublicActorPostsFromWire } from "@red-cup-engineering/activitypub-services-section/public-posts";
-export { PUBLIC } from "@red-cup-engineering/activitypub-services-section/as2";
+import { projectPublicActorPostsFromWire } from "@red-cup-engineering/activitypub-engineering-services-section/public-posts";
+export { PUBLIC } from "@red-cup-engineering/activitypub-engineering-services-section/as2";
 
 const actorPattern = /^[a-z0-9][a-z0-9._-]*$/u;
 const identity = value => typeof value === "string" ? value : value?.id;

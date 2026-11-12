@@ -94,14 +94,13 @@
     "@fedify/fedify": "2.3.14",
     "@fedify/vocab": "2.3.14",
     "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
-    "@red-cup-engineering/activitypub-services-section": "0.11.4",
+    "@red-cup-engineering/activitypub-engineering-services-section": "^0.11.6",
     "@red-cup-engineering/javascript-file-services-section": "0.1.1"
   },
   "peerDependencies": {
     "@fedify/fedify": "2.3.14",
     "@fedify/vocab": "2.3.14",
     "@red-cup-engineering/activitypub-server": "0.1.4-dev.89",
-    "@red-cup-engineering/activitypub-services-section": "0.11.4",
     "@red-cup-engineering/javascript-file-services-section": "0.1.1"
   },
   "peerDependenciesMeta": {
