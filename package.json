@@ -6,6 +6,7 @@
   "exports": {
     ".": "./src/application.mjs",
     "./fetch": "./src/fetch.mjs",
+    "./client": "./src/client.mjs",
     "./local-node": "./src/local-node.mjs",
     "./package.json": "./package.json",
     "./cairn-pages": "./src/cairn-pages.mjs",
@@ -24,6 +25,7 @@
     "./capabilities": "./src/capabilities.mjs",
     "./predication": "./src/predication.mjs",
     "./engine-snapshot": "./src/engine-snapshot.mjs",
+    "./account": "./src/account.mjs",
     "./identity-roles": "./src/identity-roles.mjs",
     "./profile": "./src/profile.mjs",
     "./skills": "./src/skills.mjs",
