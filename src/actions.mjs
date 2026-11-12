@@ -1,5 +1,5 @@
 import { canonical } from '@red-cup-engineering/json-services-section';
-import { sidesOfReading } from '@red-cup-engineering/computer-data-engineering-services-section/four';
+import { sidesOfReading } from '@red-cup-engineering/metrologic/four';
 import Cell from './world-cell.mjs';
 import {sha256Bytes} from '@red-cup-engineering/cryptographic-computer-data-engineering-services-section/portable-sha256';
 import {registeredAccountForActor} from './identity-roles.mjs';

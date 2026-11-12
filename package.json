@@ -68,6 +68,7 @@
     "test:pack": "node --test test/pack-contract.test.mjs"
   },
   "dependencies": {
+    "@red-cup-engineering/metrologic": "^0.22.1",
     "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0",
     "@red-cup-engineering/computer-data-engineering-services-section": "0.2.0",
     "@red-cup-engineering/cryptographic-computer-data-engineering-services-section": "0.3.1",

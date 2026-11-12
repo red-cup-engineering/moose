@@ -1,6 +1,6 @@
 import SignCell from "./world-cell.mjs";
 const { cell, cellSet, certainObject, coincides, coincidenceKey, knowledgeReading, retainedCarrier } = SignCell;
-import { isReading, sidesOfReading } from "@red-cup-engineering/computer-data-engineering-services-section/four";
+import { isReading, sidesOfReading } from "@red-cup-engineering/metrologic/four";
 import { captureHistoryReads, createHistory, validateHistory, observeHistory, replayHistory, continueHistory, historySection, historySubjects, historyHeads, queryHistory, withFunctionalPredicates } from "./world-history.mjs";
 import { deriveWorldReading, isWorldReading, rebindWorldReading } from "./world-reading.mjs";
 import { bearing, bodyCentroid, boxDistance, contactOf, distance, prismContains, regionBounds, regionContains, segmentThroughPrism } from "./geometry.mjs";
