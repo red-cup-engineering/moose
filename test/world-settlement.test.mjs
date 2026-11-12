@@ -164,7 +164,13 @@ test("a second copy of the same original SignCraft refuses only when World closu
   await mkdir(scope, { recursive: true });
   await copyFile(join(selectedRoot, "package.json"), join(duplicateRoot, "package.json"));
   await cp(join(selectedRoot, "src"), join(duplicateRoot, "src"), { recursive: true });
-  await symlink(join(selectedRoot, "node_modules"), join(duplicateRoot, "node_modules"), "dir");
+  const manifest = JSON.parse(await readFile(join(selectedRoot, "package.json"), "utf8"));
+  for (const name of Object.keys(manifest.dependencies)) {
+    const destination = join(duplicateRoot, "node_modules", name);
+    const installedPackage = dirname(fromSigncraft.resolve(name + "/package.json"));
+    await mkdir(dirname(destination), { recursive: true });
+    await symlink(installedPackage, destination, "dir");
+  }
   await symlink(duplicateRoot, join(scope, "signcraft"), "dir");
   await symlink(fileURLToPath(new URL("../src/world-history.mjs", import.meta.url)),
     join(consumerRoot, "world-history.mjs"), "file");

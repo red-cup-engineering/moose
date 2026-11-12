@@ -76,7 +76,7 @@
     "@red-cup-engineering/json-services-section": "0.4.0",
     "@red-cup-engineering/knowledge-system-server": "0.2.6-dev.0",
     "@red-cup-engineering/living-web-server": "0.1.0-dev.11",
-    "@red-cup-engineering/signcraft": "^0.9.6-dev.2",
+    "@red-cup-engineering/signcraft": "0.9.6-dev.2",
     "@red-cup-engineering/uri-services-section": "0.1.1"
   },
   "engines": {
@@ -92,7 +92,6 @@
     "url": "https://github.com/561-group/.github/blob/main/TIPS.md"
   },
   "devDependencies": {
-    "semver": "^7.8.6",
     "@fedify/fedify": "2.3.14",
     "@fedify/vocab": "2.3.14",
     "@red-cup-engineering/activitypub-server": "^0.1.4-dev.89",

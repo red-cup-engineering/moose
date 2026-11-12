@@ -60,7 +60,7 @@ test("Fetch installation has no mandatory social or managed hosting supplier", (
     "@red-cup-engineering/cryptographic-computer-data-engineering-services-section": "0.3.1",
     "@red-cup-engineering/gaming": "0.1.10",
     "@red-cup-engineering/json-services-section": "0.4.0",
-    "@red-cup-engineering/signcraft": "^0.9.6-dev.2",
+    "@red-cup-engineering/signcraft": "0.9.6-dev.2",
     "@red-cup-engineering/uri-services-section": "0.1.1",
   });
   const qualify = suppliers => assert.deepEqual(suppliers, qualifiedSuppliers);

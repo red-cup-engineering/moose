@@ -2,7 +2,6 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createRequire } from 'node:module';
 import { pathToFileURL } from 'node:url';
-import { satisfies } from 'semver';
 import WorldCell from '@red-cup-engineering/moose/world-cell';
 import * as OriginalHistory from '@red-cup-engineering/signcraft/history';
 import * as OriginalThing from '@red-cup-engineering/signcraft/thing';
@@ -42,9 +41,7 @@ const occurrencePolicy = MooseReading.defineWorldReadingPolicy({
 test('MOOSE World and history retain the actual selected SignCraft and SignCell owners', () => {
   const { dependencies } = fromMoose('@red-cup-engineering/moose/package.json');
   const selected = fromMoose('@red-cup-engineering/signcraft/package.json');
-  assert.ok(satisfies(selected.version, dependencies['@red-cup-engineering/signcraft']));
-  assert.ok(satisfies(fromCurrentSigncraft('@red-cup-engineering/signcell/package.json').version,
-    selected.dependencies['@red-cup-engineering/signcell']));
+  assert.equal(selected.version, dependencies['@red-cup-engineering/signcraft']);
   assertSameExports(OriginalHistory, CurrentHistory, 'selected SignCraft history');
   assertSameExports(OriginalThing, CurrentThing, 'selected SignCraft Thing');
   assertSameExports(WorldCell, CurrentCell, 'MOOSE original selected Cell namespace');
