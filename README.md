@@ -265,12 +265,25 @@ for an existing host. It creates no listener, key store or social database.
 - `hasMore: false` means the sampled page had no confirmed further post, not
   that the archive is exhausted.
 
-`createMooseEngine({sites})` returns the admitted Living Web host of the original
-ActivityPub site applications. Its frozen `origins` lists the registered sites;
-`fetch` serves only those origins. `serveMooseSites({sites, trustProxy, hostname,
-port})` uses that host and the original ActivityPub delivery/custody lifecycle.
-Its default listener always goes through Living Web Server. The previously
-supported explicit `serve` injection remains available to host tests.
+`createMooseEngine({sites})` currently delegates to ActivityPub Server's
+`createActivityPubMultiSiteServerEngine`. `serveMooseSites({sites, trustProxy,
+hostname, port})` delegates to its managed host, which owns the listener and
+original delivery/custody lifecycle. An explicit `serve` injection remains
+available through that managed host. Living Web Server supplies the live pages;
+it does **not yet** supply MOOSE's default listener.
+
+The intended hosting chain is MOOSE → Living Web Server → Computer Web Server →
+Computer System Platform, with SignCraft retaining World semantics. The generic
+Living Web host is staged in [Living Web Server PR 13](https://github.com/red-cup-engineering/living-web-server/pull/13).
+MOOSE's matching host implementation is retained at
+[`b419568`](https://github.com/red-cup-engineering/moose/tree/b419568b8651360819bc45e24ce4a0f01d7f80b4),
+but [PR 36](https://github.com/red-cup-engineering/moose/pull/36) excluded it to
+integrate the native MUD without unpublished hosting prerequisites. Completing
+this chain requires the genuine supplier releases, reconciliation with MOOSE's
+current dependency graph, and installed host and downstream receiving. The
+preserved implementation and this documentation do not establish adoption or
+a live deployment.
+
 The ActivityPub actor dispatcher and Fedify key dispatcher must load the same
 physical `@fedify/vocab` module; two copies of the same version make Actor
 endpoints fail with HTTP 500, so MOOSE pins the Fedify peers exactly.
