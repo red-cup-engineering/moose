@@ -26,7 +26,7 @@ mounted once in the forest at
 | Owner | Responsibility |
 | --- | --- |
 | SignCraft and its upstream providers | Thing identity, witnessed relations, causal history and semantic computation. |
-| CAIRN (`knowledge-system-server`) | Source custody, authorized knowledge reads, finite file claims and codecs. |
+| CAIRN (`cairn`) | Source custody, authorized knowledge reads, finite file claims and codecs. |
 | **MOOSE** | World-facing MUD behavior: source-backed game selection, command interpretation, pure action admission, perception, possession, speech, native inference, engine snapshots, the logical-World gateway and public social views. |
 | ActivityPub Server / Services | Signed federation, WebFinger, inboxes, outboxes, followers, keys and delivery. |
 | Living Web Server and TUFTE | Live human pages, authority checks before each read, and rendering. |
@@ -100,7 +100,7 @@ package-registry read permission.
 | [`living-web-server`](https://github.com/red-cup-engineering/living-web-server) | `@red-cup-engineering/living-web-server` | Live TUFTE pages over the house HTTP listener: authority check before each read, Fetch application. | Runtime dependency (`./fetch`). |
 | [`tufte`](https://github.com/red-cup-engineering/tufte) | `@red-cup-engineering/tufte` | TUFTE, the Tiling User Form Topology Engine: page tiling and rendering. | Indirect, through Living Web Server's runtime dependency. |
 | [`computer-web-server`](https://github.com/red-cup-engineering/computer-web-server) | `@red-cup-engineering/computer-web-server` | The house HTTP listener. | Indirect: an optional peer of Living Web Server and a dependency of ActivityPub Server. MOOSE must not depend on it directly (`test/fetch-dependency.test.mjs`). |
-| [`knowledge-system-server`](https://github.com/red-cup-engineering/knowledge-system-server) | `@red-cup-engineering/knowledge-system-server` | CAIRN: source custody, authorized reads, codecs, and the `./history`, `./thing`, `./signcell`, `./fars` and `./finite-file-claims` ports. | Runtime dependency. |
+| [`cairn`](https://github.com/red-cup-engineering/cairn) | `@red-cup-engineering/cairn` | CAIRN: source custody, authorized reads, codecs, and the `./history`, `./thing`, `./signcell`, `./fars` and `./finite-file-claims` ports. | Runtime dependency. |
 | [`signcraft`](https://github.com/red-cup-engineering/signcraft) | `@red-cup-engineering/signcraft` | Thing identity, witnessed relations, causal history, Cells and native inference. | Direct runtime owner of the complete World family. The Node `./world-cell` binding resolves the actual Cell supplier selected by its history implementation. |
 | [`gaming`](https://github.com/red-cup-engineering/gaming) | `@red-cup-engineering/gaming` | Concurrent proposal admission. | Runtime dependency used by the original MUD engine. |
 | [`activitypub-server`](https://github.com/red-cup-engineering/activitypub-server) | `@red-cup-engineering/activitypub-server` | The managed ActivityPub multi-site host. | Optional peer, for `.` and `serve-moose`. |

@@ -76,7 +76,7 @@
   },
   "aggregateBlocker": {
     "action": "npm install --no-save --no-package-lock --ignore-scripts --no-audit --no-fund --fetch-retries=0 --fetch-timeout=30000 --registry=https://registry.561.group",
-    "outcome": "ETARGET: no matching @red-cup-engineering/knowledge-system-server@0.2.6-dev.0",
+    "outcome": "ETARGET: no matching @red-cup-engineering/cairn@0.2.6-dev.0",
     "scope": "Declared dependency already selected by base main; not modified in candidate. Full installed-host, world/history and federation suites were not run.",
     "baseHostedRun": "https://github.com/red-cup-engineering/moose/actions/runs/41684666341",
     "baseHostedEvidence": "Both installed-host job 126087151674 and world-history job 126087151767 fail npm install with ETARGET for the same CAIRN version; source-contract and world-gateway pass on unchanged base."

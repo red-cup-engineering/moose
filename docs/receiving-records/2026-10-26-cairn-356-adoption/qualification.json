@@ -7,7 +7,7 @@
   "scope": {
     "change": "Adopt issued CAIRN 0.2.5-dev.356 in the existing MOOSE owner; preserve native World/history/Thing and portable Fetch boundaries.",
     "runtimeSourceChanges": 0,
-    "manifestChange": "Only dependencies.@red-cup-engineering/knowledge-system-server changes from 0.2.5-dev.280 to 0.2.5-dev.356. All other package fields and pins are structurally identical.",
+    "manifestChange": "Only dependencies.@red-cup-engineering/cairn changes from 0.2.5-dev.280 to 0.2.5-dev.356. All other package fields and pins are structurally identical.",
     "sourcePackageVersionRetained": "0.1.0-dev.84",
     "sourceChanges": [
       {
@@ -81,10 +81,10 @@
     "result": "No newer CAIRN adoption on current main or reviewed branches. Preserve ongoing PR ownership; no cursor, section, source-route or FARS changes are incorporated."
   },
   "supplier": {
-    "name": "@red-cup-engineering/knowledge-system-server",
+    "name": "@red-cup-engineering/cairn",
     "version": "0.2.5-dev.356",
     "gitHead": "4504657f251ca5692348aee5066bad53137b803c",
-    "url": "https://registry.561.group/@red-cup-engineering/knowledge-system-server/-/knowledge-system-server-0.2.5-dev.356.tgz",
+    "url": "https://registry.561.group/@red-cup-engineering/cairn/-/cairn-0.2.5-dev.356.tgz",
     "integrity": "sha512-oO9jXvoKWvHlyJSBLsHnzKsIKCJqHKxCDRlFwTbLSNI4Mvr4rbLvSrRRJPNf9S/QmExfXCwefusbL6tYeQhQgg==",
     "sha256": "d7761cf8777f22622269f719e7afa589cf304e02efcc4b56ad645bddfdbeba06",
     "bytes": 468908,
@@ -108,7 +108,7 @@
         "manifestSha256": "404e34681023b6212e99f4343f645e4b14db427fe8ac967ae22746691a7a998a",
         "gitHead": "5044f78201cad7e2c77b977c47061b75e770fbd9"
       },
-      "@red-cup-engineering/knowledge-system-server": {
+      "@red-cup-engineering/cairn": {
         "version": "0.2.5-dev.356",
         "realpath": "/workspace/scratch/455c183ed200/evidence/published-cairn-356/package",
         "manifestSha256": "9f0c94ea10b33a0064a0e04f6506c1ebc005eb8e31e886ddde89c71bf5c2fada",

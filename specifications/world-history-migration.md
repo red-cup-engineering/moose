@@ -91,7 +91,7 @@ That cohort was the first implementation candidate. Its selected history body wa
 `2bcea3ab88f077829608f6621b19c76135a49082`. The ordinary World Thing receiver
 uses that supplier through CAIRN without injected replacement operations.
 
-[CAIRN #30](https://github.com/red-cup-engineering/knowledge-system-server/pull/30)
+[CAIRN #30](https://github.com/red-cup-engineering/cairn/pull/30)
 adds the two synchronous forwarding entries. All 34 declared receiving modules
 passed on Node 24.22.1: 252 cases, zero failures and skips. The native publisher released CAIRN `0.2.5-dev.272` from merged source
 `2597c0a96c75fdfadc03ea97a4916a984b8a61c7`, exact tree
@@ -248,8 +248,8 @@ and [Thing source](https://github.com/red-cup-engineering/signcraft/blob/7da604a
 identify the existing producers. The version difference does not establish an API incompatibility.
 
 CAIRN baseline is `39f68d3d25e7d49c0d070c979e8db0964ccb62d1`:
-[package](https://github.com/red-cup-engineering/knowledge-system-server/blob/39f68d3d25e7d49c0d070c979e8db0964ccb62d1/package.json)
-and [FARS](https://github.com/red-cup-engineering/knowledge-system-server/blob/39f68d3d25e7d49c0d070c979e8db0964ccb62d1/src/fars-codecs.mjs).
+[package](https://github.com/red-cup-engineering/cairn/blob/39f68d3d25e7d49c0d070c979e8db0964ccb62d1/package.json)
+and [FARS](https://github.com/red-cup-engineering/cairn/blob/39f68d3d25e7d49c0d070c979e8db0964ccb62d1/src/fars-codecs.mjs).
 That FARS exposes authorized knowledge reads/codecs; it exposes no history/Thing port yet.
 
 ## 2. Minimal CAIRN composition ports

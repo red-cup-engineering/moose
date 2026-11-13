@@ -235,7 +235,7 @@
         "manifestSha256": "404e34681023b6212e99f4343f645e4b14db427fe8ac967ae22746691a7a998a",
         "gitHead": "5044f78201cad7e2c77b977c47061b75e770fbd9"
       },
-      "@red-cup-engineering/knowledge-system-server": {
+      "@red-cup-engineering/cairn": {
         "version": "0.2.5-dev.356",
         "realpath": "/workspace/scratch/455c183ed200/evidence/published-cairn-356/package",
         "manifestSha256": "9f0c94ea10b33a0064a0e04f6506c1ebc005eb8e31e886ddde89c71bf5c2fada",

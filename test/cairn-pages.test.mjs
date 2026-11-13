@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { KnowledgeBase } from "@red-cup-engineering/signcraft/knowledge-base";
-import { composeCairnFars } from "@red-cup-engineering/knowledge-system-server/fars";
+import { composeCairnFars } from "@red-cup-engineering/cairn/fars";
 import { createMooseCairnPage } from "../src/cairn-pages.mjs";
 
 test("MOOSE delegates a TUFTE source page reading to original CAIRN FARS", async () => {

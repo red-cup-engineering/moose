@@ -3,4 +3,4 @@
  */
 export {
   readCairnFiniteFileClaims, encodeCairnFiniteFileClaims, admitCairnFiniteFileClaims,
-} from "@red-cup-engineering/knowledge-system-server/finite-file-claims";
+} from "@red-cup-engineering/cairn/finite-file-claims";

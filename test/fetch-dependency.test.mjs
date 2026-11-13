@@ -54,7 +54,7 @@ test("Fetch installation has no mandatory social or managed hosting supplier", (
   const qualifiedSuppliers = Object.freeze({
     "@red-cup-engineering/living-web-server": "0.1.0-dev.11",
     "@red-cup-engineering/metrologic": "^0.22.1",
-    "@red-cup-engineering/knowledge-system-server": "0.2.6-dev.0",
+    "@red-cup-engineering/cairn": "0.2.6-dev.0",
     "@red-cup-engineering/computer-data-engineering-services-section": "0.2.0",
     "@red-cup-engineering/computer-content-address-engineering-services-section": "0.2.0",
     "@red-cup-engineering/cryptographic-computer-data-engineering-services-section": "0.3.1",
@@ -92,7 +92,7 @@ test("Fetch installation has no mandatory social or managed hosting supplier", (
   assert.match(file("src/application.mjs"), /createMoosePublicReaders.*from ["']\.\/timeline\.mjs["']/u);
   assert.equal(pkg.exports["./cairn-file-claims"], "./src/cairn-file-claims.mjs");
   for (const path of ["src/fetch.mjs", "src/source-application.mjs"]) {
-    assert.doesNotMatch(file(path), /from ["'](?:node:|@red-cup-engineering\/knowledge-system-server|\.\/(?:cairn-file-claims|world(?:-gateway|-reading|-history)?|geometry)\.mjs)/u,
+    assert.doesNotMatch(file(path), /from ["'](?:node:|@red-cup-engineering\/cairn|\.\/(?:cairn-file-claims|world(?:-gateway|-reading|-history)?|geometry)\.mjs)/u,
       "separate native CAIRN and World exports must not enter the portable Fetch import path");
   }
   assert.equal(pkg.exports["./world-gateway"], "./src/world-gateway.mjs");
