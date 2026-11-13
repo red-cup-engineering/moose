@@ -1,4 +1,4 @@
-import {copyJson,freezeJson,requireJsonValue} from '@red-cup-engineering/json-services-section';
+import {copyJson,freezeJson,requireJsonValue} from '@red-cup-engineering/json-engineering-services-section';
 
 /** Opaque immutable transport-origin data. Domain owners alone interpret/admit it. */
 export function admitIntentOrigin(source) {

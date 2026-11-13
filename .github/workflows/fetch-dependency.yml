@@ -49,7 +49,7 @@ jobs:
           set -euo pipefail
           gateway_dependencies="$RUNNER_TEMP/moose-world-gateway"
           mkdir -p "$gateway_dependencies"
-          npm install --prefix "$gateway_dependencies" --no-save --no-package-lock --ignore-scripts --no-audit --no-fund --fetch-retries=1 --fetch-timeout=30000 --registry=https://registry.561.group @red-cup-engineering/computer-content-address-engineering-services-section@0.2.0 @red-cup-engineering/json-services-section@0.4.0
+          npm install --prefix "$gateway_dependencies" --no-save --no-package-lock --ignore-scripts --no-audit --no-fund --fetch-retries=1 --fetch-timeout=30000 --registry=https://registry.561.group @red-cup-engineering/computer-content-address-engineering-services-section@0.2.0 @red-cup-engineering/json-engineering-services-section@0.4.0
           ln -s "$gateway_dependencies/node_modules" node_modules
           node --test --test-reporter=tap test/world-gateway.test.mjs
   native-world:

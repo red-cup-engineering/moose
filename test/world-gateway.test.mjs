@@ -4,7 +4,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { semanticId } from '@red-cup-engineering/computer-content-address-engineering-services-section/semiotic-content-address';
-import { canonicalJson } from '@red-cup-engineering/json-services-section';
+import { canonicalJson } from '@red-cup-engineering/json-engineering-services-section';
 import {
   WORLD_GATEWAY_ADMISSION, WORLD_GATEWAY_LIMITS, worldGatewayCatalogue,
   worldGatewayBinding, admitWorldGatewayCall, worldGatewayExecution,

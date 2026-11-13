@@ -1,9 +1,9 @@
-import { canonical } from '@red-cup-engineering/json-services-section';
+import { canonical } from '@red-cup-engineering/json-engineering-services-section';
 import { sidesOfReading } from '@red-cup-engineering/metrologic/four';
 import Cell from './world-cell.mjs';
 import {sha256Bytes} from '@red-cup-engineering/cryptographic-computer-data-engineering-services-section/portable-sha256';
 import {registeredAccountForActor} from './identity-roles.mjs';
-import { parseNiUri } from '@red-cup-engineering/uri-services-section/ni-uri';
+import { parseNiUri } from '@red-cup-engineering/uri-engineering-services-section/ni-uri';
 import { cells, settleSubject, placeOf, certainValue, territoryOf } from './world.mjs';
 import { gamePlaceIsCurrent } from './game-world.mjs';
 

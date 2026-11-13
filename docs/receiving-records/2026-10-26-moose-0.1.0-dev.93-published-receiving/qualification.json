@@ -265,15 +265,15 @@
         "manifestSha256": "b9d3defc29f7eefa188296b367406e0bbe6fa4c2993ad4c69a47eff189ba07d1",
         "gitHead": "98c97282089f73b2edd3abb11623e2b8fe189d11"
       },
-      "@red-cup-engineering/javascript-file-services-section": {
+      "@red-cup-engineering/javascript-file-engineering-services-section": {
         "version": "0.1.1",
-        "realpath": "/workspace/scratch/455c183ed200/feltos/node_modules/.pnpm/@red-cup-engineering+javascript-file-services-section@0.1.1/node_modules/@red-cup-engineering/javascript-file-services-section",
+        "realpath": "/workspace/scratch/455c183ed200/feltos/node_modules/.pnpm/@red-cup-engineering+javascript-file-services-section@0.1.1/node_modules/@red-cup-engineering/javascript-file-engineering-services-section",
         "manifestSha256": "1d78ca3f6045525d98eaa3f7bbf9cc8aa4a12cc206c05f9242f520b8b2a925bc",
         "gitHead": null
       },
-      "@red-cup-engineering/json-services-section": {
+      "@red-cup-engineering/json-engineering-services-section": {
         "version": "0.4.0",
-        "realpath": "/workspace/scratch/455c183ed200/feltos/node_modules/.pnpm/@red-cup-engineering+json-services-section@0.4.0/node_modules/@red-cup-engineering/json-services-section",
+        "realpath": "/workspace/scratch/455c183ed200/feltos/node_modules/.pnpm/@red-cup-engineering+json-services-section@0.4.0/node_modules/@red-cup-engineering/json-engineering-services-section",
         "manifestSha256": "1b5945abba04ed87ad57a2a97586ee03b4742d8539fe43c2fabdec1161c181be",
         "gitHead": null
       },

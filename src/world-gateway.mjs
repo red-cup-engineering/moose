@@ -3,7 +3,7 @@
  * never reads a caller-selected root. See specifications/world-host/coordination-ingress.md. */
 import { randomUUID } from 'node:crypto';
 import { semanticId } from '@red-cup-engineering/computer-content-address-engineering-services-section/semiotic-content-address';
-import { canonicalJson, requireJsonValue } from '@red-cup-engineering/json-services-section';
+import { canonicalJson, requireJsonValue } from '@red-cup-engineering/json-engineering-services-section';
 
 export const WORLD_GATEWAY_ADMISSION = 'metroplat.subject-binding';
 export const WORLD_GATEWAY_LIMITS = Object.freeze({ inputBytes: 8192, resultBytes: 24576, inflight: 8, lifetimeMs: 60000, waitMs: 10000 });

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { runMain } from "@red-cup-engineering/javascript-file-services-section/javascript-file-main-guard";
+import { runMain } from "@red-cup-engineering/javascript-file-engineering-services-section/javascript-file-main-guard";
 import { commissionLocalMooseSite } from "../src/local-node.mjs";
 import { serveMooseSites } from "../src/application.mjs";
 

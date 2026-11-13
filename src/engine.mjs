@@ -1,5 +1,5 @@
 import {admitIntentOrigin,intentIsCurrent} from './intent-origin.mjs';
-import { requireJsonValue, copyJson, freezeJson } from "@red-cup-engineering/json-services-section";
+import { requireJsonValue, copyJson, freezeJson } from "@red-cup-engineering/json-engineering-services-section";
 import { readWorld, rebindWorldReading, isWorldReading, worldReadingOccurrenceFrameIsCurrent } from "./world-reading.mjs";
 import { isInhabitant } from "./inhabitants.mjs";
 import { captureHistoryReads, historyHeads, historySize, historySection, mergeHistories } from "./world-history.mjs";

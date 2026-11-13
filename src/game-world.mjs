@@ -1,4 +1,4 @@
-import { parseNiUri } from "@red-cup-engineering/uri-services-section/ni-uri";
+import { parseNiUri } from "@red-cup-engineering/uri-engineering-services-section/ni-uri";
 import { certainValue, LOCATED_IN } from "./world.mjs";
 
 /** Source references are admitted by their original URI owner. They are not

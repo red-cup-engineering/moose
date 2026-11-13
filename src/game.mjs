@@ -1,6 +1,6 @@
 import Cell from "./world-cell.mjs";
 import { sidesOfReading } from "@red-cup-engineering/metrologic/four";
-import { canonical, requireJsonValue } from "@red-cup-engineering/json-services-section";
+import { canonical, requireJsonValue } from "@red-cup-engineering/json-engineering-services-section";
 import { cells, certainValue, createWorld, declareFunctional, settledWorld, tell, territoryOf, validateWorld } from "./world.mjs";
 import { restoreHistory } from "./world-history.mjs";
 import { gamePlaceIsCurrent, sourceReference } from "./game-world.mjs";
