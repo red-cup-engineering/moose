@@ -2,7 +2,7 @@
  * Native actor requests carry the statement; this module grants no standing and
  * never reads a caller-selected root. See specifications/world-host/coordination-ingress.md. */
 import { randomUUID } from 'node:crypto';
-import { semanticId } from '@red-cup-engineering/computer-content-address-engineering-services-section/semiotic-content-address';
+import { semanticId } from '@red-cup-engineering/computer-content-address-engineering-services-section/semiotic-content-address-system';
 import { canonicalJson, requireJsonValue } from '@red-cup-engineering/json-engineering-services-section';
 
 export const WORLD_GATEWAY_ADMISSION = 'metroplat.subject-binding';
