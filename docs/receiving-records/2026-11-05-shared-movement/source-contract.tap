@@ -1,0 +1,125 @@
+TAP version 13
+# Subtest: MOOSE Fetch entry owns live TUFTE pages without eager managed hosting imports
+ok 1 - MOOSE Fetch entry owns live TUFTE pages without eager managed hosting imports
+  ---
+  duration_ms: 2.014162
+  type: 'test'
+  ...
+# Subtest: source qualification parses the actual MOOSE Fetch, Actor outbox and application tests
+ok 2 - source qualification parses the actual MOOSE Fetch, Actor outbox and application tests
+  ---
+  duration_ms: 944.954158
+  type: 'test'
+  ...
+# Subtest: Fetch installation has no mandatory social or managed hosting supplier
+ok 3 - Fetch installation has no mandatory social or managed hosting supplier
+  ---
+  duration_ms: 4.454396
+  type: 'test'
+  ...
+# Subtest: movement targets retain absolute coordinates and signed compass distances
+ok 4 - movement targets retain absolute coordinates and signed compass distances
+  ---
+  duration_ms: 2.199951
+  type: 'test'
+  ...
+# Subtest: only own compass directions can produce movement targets
+ok 5 - only own compass directions can produce movement targets
+  ---
+  duration_ms: 0.29115
+  type: 'test'
+  ...
+# Subtest: invalid or overflowing target input is refused without nonfinite coordinates
+ok 6 - invalid or overflowing target input is refused without nonfinite coordinates
+  ---
+  duration_ms: 0.259762
+  type: 'test'
+  ...
+# Subtest: a bounded step advances toward its target and preserves input values
+ok 7 - a bounded step advances toward its target and preserves input values
+  ---
+  duration_ms: 0.704333
+  type: 'test'
+  ...
+# Subtest: zero movement preserves orientation and reports whether the target is reached
+ok 8 - zero movement preserves orientation and reports whether the target is reached
+  ---
+  duration_ms: 0.222766
+  type: 'test'
+  ...
+# Subtest: invalid movement bounds and coordinates cannot reverse or poison a step
+ok 9 - invalid movement bounds and coordinates cannot reverse or poison a step
+  ---
+  duration_ms: 0.776142
+  type: 'test'
+  ...
+# Subtest: finite extreme coordinates still produce bounded finite movement
+ok 10 - finite extreme coordinates still produce bounded finite movement
+  ---
+  duration_ms: 0.20531
+  type: 'test'
+  ...
+# Subtest: planar movement conserves the requested bound across directions and distances
+ok 11 - planar movement conserves the requested bound across directions and distances
+  ---
+  duration_ms: 0.805246
+  type: 'test'
+  ...
+# Subtest: compass headings are invariant under complete positive and negative rotations
+ok 12 - compass headings are invariant under complete positive and negative rotations
+  ---
+  duration_ms: 0.828301
+  type: 'test'
+  ...
+# npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+# Subtest: the actual offline npm pack contains every export and binary, exactly the receiving tests
+ok 13 - the actual offline npm pack contains every export and binary, exactly the receiving tests
+  ---
+  duration_ms: 380.70753
+  type: 'test'
+  ...
+# Subtest: the original public inventory retains per-item rights and transport semantics
+ok 14 - the original public inventory retains per-item rights and transport semantics
+  ---
+  duration_ms: 3.65571
+  type: 'test'
+  ...
+# Subtest: reject mismatched house identity, duplicates, unsafe addresses and fabricated method
+ok 15 - reject mismatched house identity, duplicates, unsafe addresses and fabricated method
+  ---
+  duration_ms: 0.778045
+  type: 'test'
+  ...
+# Subtest: a source-owned public site passes as a bounded frozen navigation, never as another authority
+ok 16 - a source-owned public site passes as a bounded frozen navigation, never as another authority
+  ---
+  duration_ms: 1.930385
+  type: 'test'
+  ...
+# Subtest: no site imposture, insecure link or internal operator link
+ok 17 - no site imposture, insecure link or internal operator link
+  ---
+  duration_ms: 0.883554
+  type: 'test'
+  ...
+# Subtest: a canonical research page is a finite native resource without becoming a new publisher
+ok 18 - a canonical research page is a finite native resource without becoming a new publisher
+  ---
+  duration_ms: 3.074603
+  type: 'test'
+  ...
+# Subtest: the projection refuses unsafe, ambiguous, or claimed protocol/social space
+ok 19 - the projection refuses unsafe, ambiguous, or claimed protocol/social space
+  ---
+  duration_ms: 1.315126
+  type: 'test'
+  ...
+1..19
+# tests 19
+# suites 0
+# pass 19
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1067.030271

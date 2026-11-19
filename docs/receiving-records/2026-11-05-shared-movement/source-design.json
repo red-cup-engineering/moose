@@ -1,0 +1,1167 @@
+{
+  "requirement": {
+    "kind": "requirement",
+    "id": "moose-shared-planar-movement",
+    "met-when": [
+      {
+        "cell": "moose-shared-planar-movement:target-admission",
+        "target": "held",
+        "says": "The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose."
+      },
+      {
+        "cell": "moose-shared-planar-movement:bounded-motion",
+        "target": "held",
+        "says": "The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations."
+      }
+    ]
+  },
+  "specification": {
+    "identity": {
+      "version": "0.1.0",
+      "stability": "draft",
+      "status": "draft",
+      "date-created": "2026-11-05",
+      "id": "moose-shared-planar-movement-spec",
+      "title": "Shared planar movement",
+      "seat": "red-cup-engineering/moose",
+      "carrier": "src/geometry.mjs",
+      "authors": [
+        "Hai Xudi"
+      ],
+      "profile": "prose"
+    },
+    "whatThisIs": "The specification of Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM).",
+    "topics": [
+      {
+        "heading": "Source-owned requirement conditions",
+        "body": "{{clause:clause-0}}\n\n{{clause:clause-1}}",
+        "clauses": [
+          {
+            "id": "clause-0",
+            "keyword": "MUST",
+            "actor": "red-cup-engineering/moose",
+            "statement": "The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.",
+            "test": "Generated positional JSON contract cases and native test/geometry-motion.test.mjs; real FeltOS and Farstone receiving.",
+            "backedBy": [
+              "Original Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM), cell moose-shared-planar-movement:target-admission"
+            ]
+          },
+          {
+            "id": "clause-1",
+            "keyword": "MUST",
+            "actor": "red-cup-engineering/moose",
+            "statement": "The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.",
+            "test": "Generated positional JSON contract cases and native test/geometry-motion.test.mjs; real FeltOS and Farstone receiving.",
+            "backedBy": [
+              "Original Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM), cell moose-shared-planar-movement:bounded-motion"
+            ]
+          }
+        ]
+      }
+    ],
+    "implementations": [],
+    "openQuestions": [],
+    "laws": [],
+    "standards": [],
+    "provenance": {
+      "derivedAt": "2026-11-05T10:20:00Z",
+      "derivedBy": "Hai Xudi, source author review; no independent review asserted",
+      "derivedFrom": [
+        "moose-shared-planar-movement@ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM"
+      ]
+    }
+  },
+  "architecture": {
+    "type": "ArchitectureDescriptionCandidate",
+    "version": 1,
+    "identity": {
+      "id": "moose-shared-planar-movement-architecture",
+      "title": "Shared authoritative and predicted motion",
+      "revision": "2026-11-05",
+      "owner": "red-cup-engineering/moose",
+      "status": "candidate"
+    },
+    "standard": {
+      "designation": "ISO/IEC/IEEE 42010",
+      "edition": "2022",
+      "applicability": "Source-observed component model for bounded game geometry; complete ISO/IEC/IEEE 42010 conformance unassessed",
+      "conformance": "unassessed"
+    },
+    "system": {
+      "name": "MOOSE shared geometry",
+      "description": "MOOSE owns pure geometry; FeltOS forwards its public functions and applies world admission; Farstone calls those same movement functions for client prediction.",
+      "sourceIds": [
+        "requirement",
+        "specification"
+      ]
+    },
+    "upstream": {
+      "requirementsSourceId": "requirement",
+      "specificationSourceId": "specification"
+    },
+    "sources": [
+      {
+        "id": "requirement",
+        "locator": "user:2026-11-05-upstream-game-family",
+        "revision": "ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM"
+      },
+      {
+        "id": "specification",
+        "locator": "derived:moose-shared-planar-movement-spec",
+        "revision": "ni:///sha-256;QG66ba2dpwnyY4ce8i64WAJrBUFXKZay7qIrNwFEfEQ"
+      }
+    ],
+    "stakeholders": [
+      {
+        "id": "game-players",
+        "name": "Farstone and other FeltOS game players",
+        "concernIds": [
+          "concern-a",
+          "concern-b"
+        ]
+      }
+    ],
+    "concerns": [
+      {
+        "id": "concern-a",
+        "statement": "The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.",
+        "sourceIds": [
+          "requirement",
+          "specification"
+        ],
+        "requirementCellIds": [
+          "moose-shared-planar-movement:target-admission"
+        ],
+        "specificationClauseIds": [
+          "clause-0"
+        ]
+      },
+      {
+        "id": "concern-b",
+        "statement": "The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.",
+        "sourceIds": [
+          "requirement",
+          "specification"
+        ],
+        "requirementCellIds": [
+          "moose-shared-planar-movement:bounded-motion"
+        ],
+        "specificationClauseIds": [
+          "clause-1"
+        ]
+      }
+    ],
+    "viewpoints": [
+      {
+        "id": "functional",
+        "name": "Functional",
+        "concernIds": [
+          "concern-a",
+          "concern-b"
+        ],
+        "modelKinds": [
+          "component"
+        ],
+        "method": "Trace actual Farstone movement prediction through the FeltOS geometry forwarder to MOOSE; compare against FeltOS authoritative spaceCapability and stepToward."
+      }
+    ],
+    "views": [
+      {
+        "id": "functional-view",
+        "name": "Functional view",
+        "viewpointId": "functional",
+        "modelIds": [
+          "model-a",
+          "model-b"
+        ],
+        "sourceIds": [
+          "requirement",
+          "specification"
+        ]
+      }
+    ],
+    "models": [
+      {
+        "id": "model-a",
+        "kind": "component",
+        "content": "parseTarget retains finite target syntax, rejects inherited Object properties and checks computed coordinate finiteness; a malformed command is not a movement.",
+        "concernIds": [
+          "concern-a"
+        ],
+        "sourceIds": [
+          "requirement",
+          "specification"
+        ]
+      },
+      {
+        "id": "model-b",
+        "kind": "component",
+        "content": "stepInPlane validates inputs, clamps interpolation to [0,1], uses scaled displacement for overflow and never writes world state. nearestCompass normalizes heading modulo 360 before angular comparison.",
+        "concernIds": [
+          "concern-b"
+        ],
+        "sourceIds": [
+          "requirement",
+          "specification"
+        ]
+      }
+    ],
+    "correspondences": [],
+    "decisions": [
+      {
+        "id": "one-geometry-owner",
+        "statement": "Repair pure movement once in MOOSE while retaining FeltOS public names and the t/xy/heading result consumed by authoritative and predicted movement.",
+        "rationale": "Duplicating movement rules would cause server/client drift.",
+        "alternatives": [
+          "Implement distinct per-game movement logic."
+        ],
+        "concernIds": [
+          "concern-a",
+          "concern-b"
+        ],
+        "sourceIds": [
+          "requirement",
+          "specification"
+        ]
+      }
+    ],
+    "openQuestions": []
+  },
+  "high": {
+    "type": "EngineeringDesignCandidate",
+    "stage": "high-level",
+    "sources": [
+      {
+        "kind": "requirement",
+        "text": "{\"kind\":\"requirement\",\"id\":\"moose-shared-planar-movement\",\"met-when\":[{\"cell\":\"moose-shared-planar-movement:target-admission\",\"target\":\"held\",\"says\":\"The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.\"},{\"cell\":\"moose-shared-planar-movement:bounded-motion\",\"target\":\"held\",\"says\":\"The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.\"}]}",
+        "digest": "sha256:5a7f476d0f9809b5650a57bf9c6ce58c55243b0868b1ef4d0226bfb75a87c544"
+      },
+      {
+        "kind": "specification",
+        "text": "{\"identity\":{\"version\":\"0.1.0\",\"stability\":\"draft\",\"status\":\"draft\",\"date-created\":\"2026-11-05\",\"id\":\"moose-shared-planar-movement-spec\",\"title\":\"Shared planar movement\",\"seat\":\"red-cup-engineering/moose\",\"carrier\":\"src/geometry.mjs\",\"authors\":[\"Hai Xudi\"],\"profile\":\"prose\"},\"whatThisIs\":\"The specification of Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM).\",\"topics\":[{\"heading\":\"Source-owned requirement conditions\",\"body\":\"{{clause:clause-0}}\\n\\n{{clause:clause-1}}\",\"clauses\":[{\"id\":\"clause-0\",\"keyword\":\"MUST\",\"actor\":\"red-cup-engineering/moose\",\"statement\":\"The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.\",\"test\":\"Generated positional JSON contract cases and native test/geometry-motion.test.mjs; real FeltOS and Farstone receiving.\",\"backedBy\":[\"Original Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM), cell moose-shared-planar-movement:target-admission\"]},{\"id\":\"clause-1\",\"keyword\":\"MUST\",\"actor\":\"red-cup-engineering/moose\",\"statement\":\"The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.\",\"test\":\"Generated positional JSON contract cases and native test/geometry-motion.test.mjs; real FeltOS and Farstone receiving.\",\"backedBy\":[\"Original Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM), cell moose-shared-planar-movement:bounded-motion\"]}]}],\"implementations\":[],\"openQuestions\":[],\"laws\":[],\"standards\":[],\"provenance\":{\"derivedAt\":\"2026-11-05T10:20:00Z\",\"derivedBy\":\"Hai Xudi, source author review; no independent review asserted\",\"derivedFrom\":[\"moose-shared-planar-movement@ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM\"]}}",
+        "digest": "sha256:f0d0448d81fdd85ca05e822f14c3cc6b7e3554d038326679a6d5952b85035bd3"
+      },
+      {
+        "kind": "architecture",
+        "text": "{\"type\":\"ArchitectureDescriptionCandidate\",\"version\":1,\"identity\":{\"id\":\"moose-shared-planar-movement-architecture\",\"title\":\"Shared authoritative and predicted motion\",\"revision\":\"2026-11-05\",\"owner\":\"red-cup-engineering/moose\",\"status\":\"candidate\"},\"standard\":{\"designation\":\"ISO/IEC/IEEE 42010\",\"edition\":\"2022\",\"applicability\":\"Source-observed component model for bounded game geometry; complete ISO/IEC/IEEE 42010 conformance unassessed\",\"conformance\":\"unassessed\"},\"system\":{\"name\":\"MOOSE shared geometry\",\"description\":\"MOOSE owns pure geometry; FeltOS forwards its public functions and applies world admission; Farstone calls those same movement functions for client prediction.\",\"sourceIds\":[\"requirement\",\"specification\"]},\"upstream\":{\"requirementsSourceId\":\"requirement\",\"specificationSourceId\":\"specification\"},\"sources\":[{\"id\":\"requirement\",\"locator\":\"user:2026-11-05-upstream-game-family\",\"revision\":\"ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM\"},{\"id\":\"specification\",\"locator\":\"derived:moose-shared-planar-movement-spec\",\"revision\":\"ni:///sha-256;QG66ba2dpwnyY4ce8i64WAJrBUFXKZay7qIrNwFEfEQ\"}],\"stakeholders\":[{\"id\":\"game-players\",\"name\":\"Farstone and other FeltOS game players\",\"concernIds\":[\"concern-a\",\"concern-b\"]}],\"concerns\":[{\"id\":\"concern-a\",\"statement\":\"The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.\",\"sourceIds\":[\"requirement\",\"specification\"],\"requirementCellIds\":[\"moose-shared-planar-movement:target-admission\"],\"specificationClauseIds\":[\"clause-0\"]},{\"id\":\"concern-b\",\"statement\":\"The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.\",\"sourceIds\":[\"requirement\",\"specification\"],\"requirementCellIds\":[\"moose-shared-planar-movement:bounded-motion\"],\"specificationClauseIds\":[\"clause-1\"]}],\"viewpoints\":[{\"id\":\"functional\",\"name\":\"Functional\",\"concernIds\":[\"concern-a\",\"concern-b\"],\"modelKinds\":[\"component\"],\"method\":\"Trace actual Farstone movement prediction through the FeltOS geometry forwarder to MOOSE; compare against FeltOS authoritative spaceCapability and stepToward.\"}],\"views\":[{\"id\":\"functional-view\",\"name\":\"Functional view\",\"viewpointId\":\"functional\",\"modelIds\":[\"model-a\",\"model-b\"],\"sourceIds\":[\"requirement\",\"specification\"]}],\"models\":[{\"id\":\"model-a\",\"kind\":\"component\",\"content\":\"parseTarget retains finite target syntax, rejects inherited Object properties and checks computed coordinate finiteness; a malformed command is not a movement.\",\"concernIds\":[\"concern-a\"],\"sourceIds\":[\"requirement\",\"specification\"]},{\"id\":\"model-b\",\"kind\":\"component\",\"content\":\"stepInPlane validates inputs, clamps interpolation to [0,1], uses scaled displacement for overflow and never writes world state. nearestCompass normalizes heading modulo 360 before angular comparison.\",\"concernIds\":[\"concern-b\"],\"sourceIds\":[\"requirement\",\"specification\"]}],\"correspondences\":[],\"decisions\":[{\"id\":\"one-geometry-owner\",\"statement\":\"Repair pure movement once in MOOSE while retaining FeltOS public names and the t/xy/heading result consumed by authoritative and predicted movement.\",\"rationale\":\"Duplicating movement rules would cause server/client drift.\",\"alternatives\":[\"Implement distinct per-game movement logic.\"],\"concernIds\":[\"concern-a\",\"concern-b\"],\"sourceIds\":[\"requirement\",\"specification\"]}],\"openQuestions\":[]}",
+        "digest": "sha256:ffe1001f8d2b04df073d974ebd9235cc7e0b23699da4b020bb8c77caeb2f5750"
+      }
+    ],
+    "design": {
+      "components": [
+        {
+          "dependencyIds": [],
+          "id": "geometry",
+          "layer": "code",
+          "owner": "red-cup-engineering/moose",
+          "providedPorts": [],
+          "requiredPorts": [],
+          "responsibility": "Pure shared planar movement and compass geometry"
+        }
+      ],
+      "connections": [],
+      "openQuestions": [],
+      "traceability": [
+        {
+          "architectureModelIds": [
+            "model-a"
+          ],
+          "designElementIds": [
+            "geometry"
+          ],
+          "requirementCellId": "moose-shared-planar-movement:target-admission",
+          "specificationClauseIds": [
+            "clause-0"
+          ]
+        },
+        {
+          "architectureModelIds": [
+            "model-b"
+          ],
+          "designElementIds": [
+            "geometry"
+          ],
+          "requirementCellId": "moose-shared-planar-movement:bounded-motion",
+          "specificationClauseIds": [
+            "clause-1"
+          ]
+        }
+      ]
+    },
+    "admitted": false,
+    "proof": "unreceived"
+  },
+  "low": {
+    "type": "EngineeringDesignCandidate",
+    "stage": "low-level",
+    "sources": [
+      {
+        "kind": "requirement",
+        "text": "{\"kind\":\"requirement\",\"id\":\"moose-shared-planar-movement\",\"met-when\":[{\"cell\":\"moose-shared-planar-movement:target-admission\",\"target\":\"held\",\"says\":\"The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.\"},{\"cell\":\"moose-shared-planar-movement:bounded-motion\",\"target\":\"held\",\"says\":\"The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.\"}]}",
+        "digest": "sha256:5a7f476d0f9809b5650a57bf9c6ce58c55243b0868b1ef4d0226bfb75a87c544"
+      },
+      {
+        "kind": "specification",
+        "text": "{\"identity\":{\"version\":\"0.1.0\",\"stability\":\"draft\",\"status\":\"draft\",\"date-created\":\"2026-11-05\",\"id\":\"moose-shared-planar-movement-spec\",\"title\":\"Shared planar movement\",\"seat\":\"red-cup-engineering/moose\",\"carrier\":\"src/geometry.mjs\",\"authors\":[\"Hai Xudi\"],\"profile\":\"prose\"},\"whatThisIs\":\"The specification of Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM).\",\"topics\":[{\"heading\":\"Source-owned requirement conditions\",\"body\":\"{{clause:clause-0}}\\n\\n{{clause:clause-1}}\",\"clauses\":[{\"id\":\"clause-0\",\"keyword\":\"MUST\",\"actor\":\"red-cup-engineering/moose\",\"statement\":\"The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.\",\"test\":\"Generated positional JSON contract cases and native test/geometry-motion.test.mjs; real FeltOS and Farstone receiving.\",\"backedBy\":[\"Original Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM), cell moose-shared-planar-movement:target-admission\"]},{\"id\":\"clause-1\",\"keyword\":\"MUST\",\"actor\":\"red-cup-engineering/moose\",\"statement\":\"The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.\",\"test\":\"Generated positional JSON contract cases and native test/geometry-motion.test.mjs; real FeltOS and Farstone receiving.\",\"backedBy\":[\"Original Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM), cell moose-shared-planar-movement:bounded-motion\"]}]}],\"implementations\":[],\"openQuestions\":[],\"laws\":[],\"standards\":[],\"provenance\":{\"derivedAt\":\"2026-11-05T10:20:00Z\",\"derivedBy\":\"Hai Xudi, source author review; no independent review asserted\",\"derivedFrom\":[\"moose-shared-planar-movement@ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM\"]}}",
+        "digest": "sha256:f0d0448d81fdd85ca05e822f14c3cc6b7e3554d038326679a6d5952b85035bd3"
+      },
+      {
+        "kind": "architecture",
+        "text": "{\"type\":\"ArchitectureDescriptionCandidate\",\"version\":1,\"identity\":{\"id\":\"moose-shared-planar-movement-architecture\",\"title\":\"Shared authoritative and predicted motion\",\"revision\":\"2026-11-05\",\"owner\":\"red-cup-engineering/moose\",\"status\":\"candidate\"},\"standard\":{\"designation\":\"ISO/IEC/IEEE 42010\",\"edition\":\"2022\",\"applicability\":\"Source-observed component model for bounded game geometry; complete ISO/IEC/IEEE 42010 conformance unassessed\",\"conformance\":\"unassessed\"},\"system\":{\"name\":\"MOOSE shared geometry\",\"description\":\"MOOSE owns pure geometry; FeltOS forwards its public functions and applies world admission; Farstone calls those same movement functions for client prediction.\",\"sourceIds\":[\"requirement\",\"specification\"]},\"upstream\":{\"requirementsSourceId\":\"requirement\",\"specificationSourceId\":\"specification\"},\"sources\":[{\"id\":\"requirement\",\"locator\":\"user:2026-11-05-upstream-game-family\",\"revision\":\"ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM\"},{\"id\":\"specification\",\"locator\":\"derived:moose-shared-planar-movement-spec\",\"revision\":\"ni:///sha-256;QG66ba2dpwnyY4ce8i64WAJrBUFXKZay7qIrNwFEfEQ\"}],\"stakeholders\":[{\"id\":\"game-players\",\"name\":\"Farstone and other FeltOS game players\",\"concernIds\":[\"concern-a\",\"concern-b\"]}],\"concerns\":[{\"id\":\"concern-a\",\"statement\":\"The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.\",\"sourceIds\":[\"requirement\",\"specification\"],\"requirementCellIds\":[\"moose-shared-planar-movement:target-admission\"],\"specificationClauseIds\":[\"clause-0\"]},{\"id\":\"concern-b\",\"statement\":\"The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.\",\"sourceIds\":[\"requirement\",\"specification\"],\"requirementCellIds\":[\"moose-shared-planar-movement:bounded-motion\"],\"specificationClauseIds\":[\"clause-1\"]}],\"viewpoints\":[{\"id\":\"functional\",\"name\":\"Functional\",\"concernIds\":[\"concern-a\",\"concern-b\"],\"modelKinds\":[\"component\"],\"method\":\"Trace actual Farstone movement prediction through the FeltOS geometry forwarder to MOOSE; compare against FeltOS authoritative spaceCapability and stepToward.\"}],\"views\":[{\"id\":\"functional-view\",\"name\":\"Functional view\",\"viewpointId\":\"functional\",\"modelIds\":[\"model-a\",\"model-b\"],\"sourceIds\":[\"requirement\",\"specification\"]}],\"models\":[{\"id\":\"model-a\",\"kind\":\"component\",\"content\":\"parseTarget retains finite target syntax, rejects inherited Object properties and checks computed coordinate finiteness; a malformed command is not a movement.\",\"concernIds\":[\"concern-a\"],\"sourceIds\":[\"requirement\",\"specification\"]},{\"id\":\"model-b\",\"kind\":\"component\",\"content\":\"stepInPlane validates inputs, clamps interpolation to [0,1], uses scaled displacement for overflow and never writes world state. nearestCompass normalizes heading modulo 360 before angular comparison.\",\"concernIds\":[\"concern-b\"],\"sourceIds\":[\"requirement\",\"specification\"]}],\"correspondences\":[],\"decisions\":[{\"id\":\"one-geometry-owner\",\"statement\":\"Repair pure movement once in MOOSE while retaining FeltOS public names and the t/xy/heading result consumed by authoritative and predicted movement.\",\"rationale\":\"Duplicating movement rules would cause server/client drift.\",\"alternatives\":[\"Implement distinct per-game movement logic.\"],\"concernIds\":[\"concern-a\",\"concern-b\"],\"sourceIds\":[\"requirement\",\"specification\"]}],\"openQuestions\":[]}",
+        "digest": "sha256:ffe1001f8d2b04df073d974ebd9235cc7e0b23699da4b020bb8c77caeb2f5750"
+      },
+      {
+        "kind": "high-level",
+        "text": "{\"type\":\"EngineeringDesignCandidate\",\"stage\":\"high-level\",\"sources\":[{\"kind\":\"requirement\",\"text\":\"{\\\"kind\\\":\\\"requirement\\\",\\\"id\\\":\\\"moose-shared-planar-movement\\\",\\\"met-when\\\":[{\\\"cell\\\":\\\"moose-shared-planar-movement:target-admission\\\",\\\"target\\\":\\\"held\\\",\\\"says\\\":\\\"The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.\\\"},{\\\"cell\\\":\\\"moose-shared-planar-movement:bounded-motion\\\",\\\"target\\\":\\\"held\\\",\\\"says\\\":\\\"The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.\\\"}]}\",\"digest\":\"sha256:5a7f476d0f9809b5650a57bf9c6ce58c55243b0868b1ef4d0226bfb75a87c544\"},{\"kind\":\"specification\",\"text\":\"{\\\"identity\\\":{\\\"version\\\":\\\"0.1.0\\\",\\\"stability\\\":\\\"draft\\\",\\\"status\\\":\\\"draft\\\",\\\"date-created\\\":\\\"2026-11-05\\\",\\\"id\\\":\\\"moose-shared-planar-movement-spec\\\",\\\"title\\\":\\\"Shared planar movement\\\",\\\"seat\\\":\\\"red-cup-engineering/moose\\\",\\\"carrier\\\":\\\"src/geometry.mjs\\\",\\\"authors\\\":[\\\"Hai Xudi\\\"],\\\"profile\\\":\\\"prose\\\"},\\\"whatThisIs\\\":\\\"The specification of Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM).\\\",\\\"topics\\\":[{\\\"heading\\\":\\\"Source-owned requirement conditions\\\",\\\"body\\\":\\\"{{clause:clause-0}}\\\\n\\\\n{{clause:clause-1}}\\\",\\\"clauses\\\":[{\\\"id\\\":\\\"clause-0\\\",\\\"keyword\\\":\\\"MUST\\\",\\\"actor\\\":\\\"red-cup-engineering/moose\\\",\\\"statement\\\":\\\"The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.\\\",\\\"test\\\":\\\"Generated positional JSON contract cases and native test/geometry-motion.test.mjs; real FeltOS and Farstone receiving.\\\",\\\"backedBy\\\":[\\\"Original Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM), cell moose-shared-planar-movement:target-admission\\\"]},{\\\"id\\\":\\\"clause-1\\\",\\\"keyword\\\":\\\"MUST\\\",\\\"actor\\\":\\\"red-cup-engineering/moose\\\",\\\"statement\\\":\\\"The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.\\\",\\\"test\\\":\\\"Generated positional JSON contract cases and native test/geometry-motion.test.mjs; real FeltOS and Farstone receiving.\\\",\\\"backedBy\\\":[\\\"Original Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM), cell moose-shared-planar-movement:bounded-motion\\\"]}]}],\\\"implementations\\\":[],\\\"openQuestions\\\":[],\\\"laws\\\":[],\\\"standards\\\":[],\\\"provenance\\\":{\\\"derivedAt\\\":\\\"2026-11-05T10:20:00Z\\\",\\\"derivedBy\\\":\\\"Hai Xudi, source author review; no independent review asserted\\\",\\\"derivedFrom\\\":[\\\"moose-shared-planar-movement@ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM\\\"]}}\",\"digest\":\"sha256:f0d0448d81fdd85ca05e822f14c3cc6b7e3554d038326679a6d5952b85035bd3\"},{\"kind\":\"architecture\",\"text\":\"{\\\"type\\\":\\\"ArchitectureDescriptionCandidate\\\",\\\"version\\\":1,\\\"identity\\\":{\\\"id\\\":\\\"moose-shared-planar-movement-architecture\\\",\\\"title\\\":\\\"Shared authoritative and predicted motion\\\",\\\"revision\\\":\\\"2026-11-05\\\",\\\"owner\\\":\\\"red-cup-engineering/moose\\\",\\\"status\\\":\\\"candidate\\\"},\\\"standard\\\":{\\\"designation\\\":\\\"ISO/IEC/IEEE 42010\\\",\\\"edition\\\":\\\"2022\\\",\\\"applicability\\\":\\\"Source-observed component model for bounded game geometry; complete ISO/IEC/IEEE 42010 conformance unassessed\\\",\\\"conformance\\\":\\\"unassessed\\\"},\\\"system\\\":{\\\"name\\\":\\\"MOOSE shared geometry\\\",\\\"description\\\":\\\"MOOSE owns pure geometry; FeltOS forwards its public functions and applies world admission; Farstone calls those same movement functions for client prediction.\\\",\\\"sourceIds\\\":[\\\"requirement\\\",\\\"specification\\\"]},\\\"upstream\\\":{\\\"requirementsSourceId\\\":\\\"requirement\\\",\\\"specificationSourceId\\\":\\\"specification\\\"},\\\"sources\\\":[{\\\"id\\\":\\\"requirement\\\",\\\"locator\\\":\\\"user:2026-11-05-upstream-game-family\\\",\\\"revision\\\":\\\"ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM\\\"},{\\\"id\\\":\\\"specification\\\",\\\"locator\\\":\\\"derived:moose-shared-planar-movement-spec\\\",\\\"revision\\\":\\\"ni:///sha-256;QG66ba2dpwnyY4ce8i64WAJrBUFXKZay7qIrNwFEfEQ\\\"}],\\\"stakeholders\\\":[{\\\"id\\\":\\\"game-players\\\",\\\"name\\\":\\\"Farstone and other FeltOS game players\\\",\\\"concernIds\\\":[\\\"concern-a\\\",\\\"concern-b\\\"]}],\\\"concerns\\\":[{\\\"id\\\":\\\"concern-a\\\",\\\"statement\\\":\\\"The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.\\\",\\\"sourceIds\\\":[\\\"requirement\\\",\\\"specification\\\"],\\\"requirementCellIds\\\":[\\\"moose-shared-planar-movement:target-admission\\\"],\\\"specificationClauseIds\\\":[\\\"clause-0\\\"]},{\\\"id\\\":\\\"concern-b\\\",\\\"statement\\\":\\\"The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.\\\",\\\"sourceIds\\\":[\\\"requirement\\\",\\\"specification\\\"],\\\"requirementCellIds\\\":[\\\"moose-shared-planar-movement:bounded-motion\\\"],\\\"specificationClauseIds\\\":[\\\"clause-1\\\"]}],\\\"viewpoints\\\":[{\\\"id\\\":\\\"functional\\\",\\\"name\\\":\\\"Functional\\\",\\\"concernIds\\\":[\\\"concern-a\\\",\\\"concern-b\\\"],\\\"modelKinds\\\":[\\\"component\\\"],\\\"method\\\":\\\"Trace actual Farstone movement prediction through the FeltOS geometry forwarder to MOOSE; compare against FeltOS authoritative spaceCapability and stepToward.\\\"}],\\\"views\\\":[{\\\"id\\\":\\\"functional-view\\\",\\\"name\\\":\\\"Functional view\\\",\\\"viewpointId\\\":\\\"functional\\\",\\\"modelIds\\\":[\\\"model-a\\\",\\\"model-b\\\"],\\\"sourceIds\\\":[\\\"requirement\\\",\\\"specification\\\"]}],\\\"models\\\":[{\\\"id\\\":\\\"model-a\\\",\\\"kind\\\":\\\"component\\\",\\\"content\\\":\\\"parseTarget retains finite target syntax, rejects inherited Object properties and checks computed coordinate finiteness; a malformed command is not a movement.\\\",\\\"concernIds\\\":[\\\"concern-a\\\"],\\\"sourceIds\\\":[\\\"requirement\\\",\\\"specification\\\"]},{\\\"id\\\":\\\"model-b\\\",\\\"kind\\\":\\\"component\\\",\\\"content\\\":\\\"stepInPlane validates inputs, clamps interpolation to [0,1], uses scaled displacement for overflow and never writes world state. nearestCompass normalizes heading modulo 360 before angular comparison.\\\",\\\"concernIds\\\":[\\\"concern-b\\\"],\\\"sourceIds\\\":[\\\"requirement\\\",\\\"specification\\\"]}],\\\"correspondences\\\":[],\\\"decisions\\\":[{\\\"id\\\":\\\"one-geometry-owner\\\",\\\"statement\\\":\\\"Repair pure movement once in MOOSE while retaining FeltOS public names and the t/xy/heading result consumed by authoritative and predicted movement.\\\",\\\"rationale\\\":\\\"Duplicating movement rules would cause server/client drift.\\\",\\\"alternatives\\\":[\\\"Implement distinct per-game movement logic.\\\"],\\\"concernIds\\\":[\\\"concern-a\\\",\\\"concern-b\\\"],\\\"sourceIds\\\":[\\\"requirement\\\",\\\"specification\\\"]}],\\\"openQuestions\\\":[]}\",\"digest\":\"sha256:ffe1001f8d2b04df073d974ebd9235cc7e0b23699da4b020bb8c77caeb2f5750\"}],\"design\":{\"components\":[{\"dependencyIds\":[],\"id\":\"geometry\",\"layer\":\"code\",\"owner\":\"red-cup-engineering/moose\",\"providedPorts\":[],\"requiredPorts\":[],\"responsibility\":\"Pure shared planar movement and compass geometry\"}],\"connections\":[],\"openQuestions\":[],\"traceability\":[{\"architectureModelIds\":[\"model-a\"],\"designElementIds\":[\"geometry\"],\"requirementCellId\":\"moose-shared-planar-movement:target-admission\",\"specificationClauseIds\":[\"clause-0\"]},{\"architectureModelIds\":[\"model-b\"],\"designElementIds\":[\"geometry\"],\"requirementCellId\":\"moose-shared-planar-movement:bounded-motion\",\"specificationClauseIds\":[\"clause-1\"]}]},\"admitted\":false,\"proof\":\"unreceived\"}",
+        "digest": "sha256:a40fb5e3936ae027047adcd97c25cd8750d7ce8347bb1277f3f86b75bf998102"
+      }
+    ],
+    "design": {
+      "openQuestions": [],
+      "operations": [
+        {
+          "acceptanceObligations": [
+            "Generated exact-source cases and native properties pass; actual server and client movement callers agree."
+          ],
+          "behavior": "The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.",
+          "componentId": "geometry",
+          "effectBoundaries": [
+            "No network, world mutation, file write, authority grant or dependency installation."
+          ],
+          "exportName": "parseTarget",
+          "failureCases": [
+            "Malformed target text returns null; invalid direct geometry arguments throw TypeError or RangeError."
+          ],
+          "id": "parse-target",
+          "inputSchemaJson": "{\"type\":\"array\",\"minItems\":2,\"maxItems\":2,\"x-javascript-arguments\":\"positional\"}",
+          "module": "src/geometry.mjs",
+          "outputSchemaJson": "{\"type\":[\"array\",\"null\"]}",
+          "postconditions": [
+            "Inputs are not mutated and valid results contain only finite coordinates."
+          ],
+          "preconditions": [],
+          "resourceBounds": [
+            "Constant-size coordinate arithmetic; eight compass entries."
+          ]
+        },
+        {
+          "acceptanceObligations": [
+            "Generated exact-source cases and native properties pass; actual server and client movement callers agree."
+          ],
+          "behavior": "The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.",
+          "componentId": "geometry",
+          "effectBoundaries": [
+            "No network, world mutation, file write, authority grant or dependency installation."
+          ],
+          "exportName": "stepInPlane",
+          "failureCases": [
+            "Malformed target text returns null; invalid direct geometry arguments throw TypeError or RangeError."
+          ],
+          "id": "advance-planar-movement",
+          "inputSchemaJson": "{\"type\":\"array\",\"minItems\":3,\"maxItems\":3,\"x-javascript-arguments\":\"positional\"}",
+          "module": "src/geometry.mjs",
+          "outputSchemaJson": "{\"type\":\"object\"}",
+          "postconditions": [
+            "Inputs are not mutated and valid results contain only finite coordinates."
+          ],
+          "preconditions": [],
+          "resourceBounds": [
+            "Constant-size coordinate arithmetic; eight compass entries."
+          ]
+        },
+        {
+          "acceptanceObligations": [
+            "Generated exact-source cases and native properties pass; actual server and client movement callers agree."
+          ],
+          "behavior": "The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.",
+          "componentId": "geometry",
+          "effectBoundaries": [
+            "No network, world mutation, file write, authority grant or dependency installation."
+          ],
+          "exportName": "nearestCompass",
+          "failureCases": [
+            "Malformed target text returns null; invalid direct geometry arguments throw TypeError or RangeError."
+          ],
+          "id": "read-compass-heading",
+          "inputSchemaJson": "{\"type\":\"array\",\"minItems\":1,\"maxItems\":1,\"x-javascript-arguments\":\"positional\"}",
+          "module": "src/geometry.mjs",
+          "outputSchemaJson": "{\"type\":\"string\"}",
+          "postconditions": [
+            "Inputs are not mutated and valid results contain only finite coordinates."
+          ],
+          "preconditions": [],
+          "resourceBounds": [
+            "Constant-size coordinate arithmetic; eight compass entries."
+          ]
+        }
+      ],
+      "traceability": [
+        {
+          "architectureModelIds": [
+            "model-a"
+          ],
+          "designElementIds": [
+            "parse-target"
+          ],
+          "requirementCellId": "moose-shared-planar-movement:target-admission",
+          "specificationClauseIds": [
+            "clause-0"
+          ]
+        },
+        {
+          "architectureModelIds": [
+            "model-b"
+          ],
+          "designElementIds": [
+            "advance-planar-movement",
+            "read-compass-heading"
+          ],
+          "requirementCellId": "moose-shared-planar-movement:bounded-motion",
+          "specificationClauseIds": [
+            "clause-1"
+          ]
+        }
+      ]
+    },
+    "admitted": false,
+    "proof": "unreceived"
+  },
+  "plan": {
+    "type": "EngineeringDesignDerivationPlan",
+    "stage": "low-level",
+    "sources": [
+      {
+        "kind": "requirement",
+        "text": "{\"kind\":\"requirement\",\"id\":\"moose-shared-planar-movement\",\"met-when\":[{\"cell\":\"moose-shared-planar-movement:target-admission\",\"target\":\"held\",\"says\":\"The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.\"},{\"cell\":\"moose-shared-planar-movement:bounded-motion\",\"target\":\"held\",\"says\":\"The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.\"}]}",
+        "digest": "sha256:5a7f476d0f9809b5650a57bf9c6ce58c55243b0868b1ef4d0226bfb75a87c544"
+      },
+      {
+        "kind": "specification",
+        "text": "{\"identity\":{\"version\":\"0.1.0\",\"stability\":\"draft\",\"status\":\"draft\",\"date-created\":\"2026-11-05\",\"id\":\"moose-shared-planar-movement-spec\",\"title\":\"Shared planar movement\",\"seat\":\"red-cup-engineering/moose\",\"carrier\":\"src/geometry.mjs\",\"authors\":[\"Hai Xudi\"],\"profile\":\"prose\"},\"whatThisIs\":\"The specification of Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM).\",\"topics\":[{\"heading\":\"Source-owned requirement conditions\",\"body\":\"{{clause:clause-0}}\\n\\n{{clause:clause-1}}\",\"clauses\":[{\"id\":\"clause-0\",\"keyword\":\"MUST\",\"actor\":\"red-cup-engineering/moose\",\"statement\":\"The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.\",\"test\":\"Generated positional JSON contract cases and native test/geometry-motion.test.mjs; real FeltOS and Farstone receiving.\",\"backedBy\":[\"Original Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM), cell moose-shared-planar-movement:target-admission\"]},{\"id\":\"clause-1\",\"keyword\":\"MUST\",\"actor\":\"red-cup-engineering/moose\",\"statement\":\"The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.\",\"test\":\"Generated positional JSON contract cases and native test/geometry-motion.test.mjs; real FeltOS and Farstone receiving.\",\"backedBy\":[\"Original Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM), cell moose-shared-planar-movement:bounded-motion\"]}]}],\"implementations\":[],\"openQuestions\":[],\"laws\":[],\"standards\":[],\"provenance\":{\"derivedAt\":\"2026-11-05T10:20:00Z\",\"derivedBy\":\"Hai Xudi, source author review; no independent review asserted\",\"derivedFrom\":[\"moose-shared-planar-movement@ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM\"]}}",
+        "digest": "sha256:f0d0448d81fdd85ca05e822f14c3cc6b7e3554d038326679a6d5952b85035bd3"
+      },
+      {
+        "kind": "architecture",
+        "text": "{\"type\":\"ArchitectureDescriptionCandidate\",\"version\":1,\"identity\":{\"id\":\"moose-shared-planar-movement-architecture\",\"title\":\"Shared authoritative and predicted motion\",\"revision\":\"2026-11-05\",\"owner\":\"red-cup-engineering/moose\",\"status\":\"candidate\"},\"standard\":{\"designation\":\"ISO/IEC/IEEE 42010\",\"edition\":\"2022\",\"applicability\":\"Source-observed component model for bounded game geometry; complete ISO/IEC/IEEE 42010 conformance unassessed\",\"conformance\":\"unassessed\"},\"system\":{\"name\":\"MOOSE shared geometry\",\"description\":\"MOOSE owns pure geometry; FeltOS forwards its public functions and applies world admission; Farstone calls those same movement functions for client prediction.\",\"sourceIds\":[\"requirement\",\"specification\"]},\"upstream\":{\"requirementsSourceId\":\"requirement\",\"specificationSourceId\":\"specification\"},\"sources\":[{\"id\":\"requirement\",\"locator\":\"user:2026-11-05-upstream-game-family\",\"revision\":\"ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM\"},{\"id\":\"specification\",\"locator\":\"derived:moose-shared-planar-movement-spec\",\"revision\":\"ni:///sha-256;QG66ba2dpwnyY4ce8i64WAJrBUFXKZay7qIrNwFEfEQ\"}],\"stakeholders\":[{\"id\":\"game-players\",\"name\":\"Farstone and other FeltOS game players\",\"concernIds\":[\"concern-a\",\"concern-b\"]}],\"concerns\":[{\"id\":\"concern-a\",\"statement\":\"The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.\",\"sourceIds\":[\"requirement\",\"specification\"],\"requirementCellIds\":[\"moose-shared-planar-movement:target-admission\"],\"specificationClauseIds\":[\"clause-0\"]},{\"id\":\"concern-b\",\"statement\":\"The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.\",\"sourceIds\":[\"requirement\",\"specification\"],\"requirementCellIds\":[\"moose-shared-planar-movement:bounded-motion\"],\"specificationClauseIds\":[\"clause-1\"]}],\"viewpoints\":[{\"id\":\"functional\",\"name\":\"Functional\",\"concernIds\":[\"concern-a\",\"concern-b\"],\"modelKinds\":[\"component\"],\"method\":\"Trace actual Farstone movement prediction through the FeltOS geometry forwarder to MOOSE; compare against FeltOS authoritative spaceCapability and stepToward.\"}],\"views\":[{\"id\":\"functional-view\",\"name\":\"Functional view\",\"viewpointId\":\"functional\",\"modelIds\":[\"model-a\",\"model-b\"],\"sourceIds\":[\"requirement\",\"specification\"]}],\"models\":[{\"id\":\"model-a\",\"kind\":\"component\",\"content\":\"parseTarget retains finite target syntax, rejects inherited Object properties and checks computed coordinate finiteness; a malformed command is not a movement.\",\"concernIds\":[\"concern-a\"],\"sourceIds\":[\"requirement\",\"specification\"]},{\"id\":\"model-b\",\"kind\":\"component\",\"content\":\"stepInPlane validates inputs, clamps interpolation to [0,1], uses scaled displacement for overflow and never writes world state. nearestCompass normalizes heading modulo 360 before angular comparison.\",\"concernIds\":[\"concern-b\"],\"sourceIds\":[\"requirement\",\"specification\"]}],\"correspondences\":[],\"decisions\":[{\"id\":\"one-geometry-owner\",\"statement\":\"Repair pure movement once in MOOSE while retaining FeltOS public names and the t/xy/heading result consumed by authoritative and predicted movement.\",\"rationale\":\"Duplicating movement rules would cause server/client drift.\",\"alternatives\":[\"Implement distinct per-game movement logic.\"],\"concernIds\":[\"concern-a\",\"concern-b\"],\"sourceIds\":[\"requirement\",\"specification\"]}],\"openQuestions\":[]}",
+        "digest": "sha256:ffe1001f8d2b04df073d974ebd9235cc7e0b23699da4b020bb8c77caeb2f5750"
+      },
+      {
+        "kind": "high-level",
+        "text": "{\"type\":\"EngineeringDesignCandidate\",\"stage\":\"high-level\",\"sources\":[{\"kind\":\"requirement\",\"text\":\"{\\\"kind\\\":\\\"requirement\\\",\\\"id\\\":\\\"moose-shared-planar-movement\\\",\\\"met-when\\\":[{\\\"cell\\\":\\\"moose-shared-planar-movement:target-admission\\\",\\\"target\\\":\\\"held\\\",\\\"says\\\":\\\"The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.\\\"},{\\\"cell\\\":\\\"moose-shared-planar-movement:bounded-motion\\\",\\\"target\\\":\\\"held\\\",\\\"says\\\":\\\"The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.\\\"}]}\",\"digest\":\"sha256:5a7f476d0f9809b5650a57bf9c6ce58c55243b0868b1ef4d0226bfb75a87c544\"},{\"kind\":\"specification\",\"text\":\"{\\\"identity\\\":{\\\"version\\\":\\\"0.1.0\\\",\\\"stability\\\":\\\"draft\\\",\\\"status\\\":\\\"draft\\\",\\\"date-created\\\":\\\"2026-11-05\\\",\\\"id\\\":\\\"moose-shared-planar-movement-spec\\\",\\\"title\\\":\\\"Shared planar movement\\\",\\\"seat\\\":\\\"red-cup-engineering/moose\\\",\\\"carrier\\\":\\\"src/geometry.mjs\\\",\\\"authors\\\":[\\\"Hai Xudi\\\"],\\\"profile\\\":\\\"prose\\\"},\\\"whatThisIs\\\":\\\"The specification of Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM).\\\",\\\"topics\\\":[{\\\"heading\\\":\\\"Source-owned requirement conditions\\\",\\\"body\\\":\\\"{{clause:clause-0}}\\\\n\\\\n{{clause:clause-1}}\\\",\\\"clauses\\\":[{\\\"id\\\":\\\"clause-0\\\",\\\"keyword\\\":\\\"MUST\\\",\\\"actor\\\":\\\"red-cup-engineering/moose\\\",\\\"statement\\\":\\\"The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.\\\",\\\"test\\\":\\\"Generated positional JSON contract cases and native test/geometry-motion.test.mjs; real FeltOS and Farstone receiving.\\\",\\\"backedBy\\\":[\\\"Original Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM), cell moose-shared-planar-movement:target-admission\\\"]},{\\\"id\\\":\\\"clause-1\\\",\\\"keyword\\\":\\\"MUST\\\",\\\"actor\\\":\\\"red-cup-engineering/moose\\\",\\\"statement\\\":\\\"The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.\\\",\\\"test\\\":\\\"Generated positional JSON contract cases and native test/geometry-motion.test.mjs; real FeltOS and Farstone receiving.\\\",\\\"backedBy\\\":[\\\"Original Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM), cell moose-shared-planar-movement:bounded-motion\\\"]}]}],\\\"implementations\\\":[],\\\"openQuestions\\\":[],\\\"laws\\\":[],\\\"standards\\\":[],\\\"provenance\\\":{\\\"derivedAt\\\":\\\"2026-11-05T10:20:00Z\\\",\\\"derivedBy\\\":\\\"Hai Xudi, source author review; no independent review asserted\\\",\\\"derivedFrom\\\":[\\\"moose-shared-planar-movement@ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM\\\"]}}\",\"digest\":\"sha256:f0d0448d81fdd85ca05e822f14c3cc6b7e3554d038326679a6d5952b85035bd3\"},{\"kind\":\"architecture\",\"text\":\"{\\\"type\\\":\\\"ArchitectureDescriptionCandidate\\\",\\\"version\\\":1,\\\"identity\\\":{\\\"id\\\":\\\"moose-shared-planar-movement-architecture\\\",\\\"title\\\":\\\"Shared authoritative and predicted motion\\\",\\\"revision\\\":\\\"2026-11-05\\\",\\\"owner\\\":\\\"red-cup-engineering/moose\\\",\\\"status\\\":\\\"candidate\\\"},\\\"standard\\\":{\\\"designation\\\":\\\"ISO/IEC/IEEE 42010\\\",\\\"edition\\\":\\\"2022\\\",\\\"applicability\\\":\\\"Source-observed component model for bounded game geometry; complete ISO/IEC/IEEE 42010 conformance unassessed\\\",\\\"conformance\\\":\\\"unassessed\\\"},\\\"system\\\":{\\\"name\\\":\\\"MOOSE shared geometry\\\",\\\"description\\\":\\\"MOOSE owns pure geometry; FeltOS forwards its public functions and applies world admission; Farstone calls those same movement functions for client prediction.\\\",\\\"sourceIds\\\":[\\\"requirement\\\",\\\"specification\\\"]},\\\"upstream\\\":{\\\"requirementsSourceId\\\":\\\"requirement\\\",\\\"specificationSourceId\\\":\\\"specification\\\"},\\\"sources\\\":[{\\\"id\\\":\\\"requirement\\\",\\\"locator\\\":\\\"user:2026-11-05-upstream-game-family\\\",\\\"revision\\\":\\\"ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM\\\"},{\\\"id\\\":\\\"specification\\\",\\\"locator\\\":\\\"derived:moose-shared-planar-movement-spec\\\",\\\"revision\\\":\\\"ni:///sha-256;QG66ba2dpwnyY4ce8i64WAJrBUFXKZay7qIrNwFEfEQ\\\"}],\\\"stakeholders\\\":[{\\\"id\\\":\\\"game-players\\\",\\\"name\\\":\\\"Farstone and other FeltOS game players\\\",\\\"concernIds\\\":[\\\"concern-a\\\",\\\"concern-b\\\"]}],\\\"concerns\\\":[{\\\"id\\\":\\\"concern-a\\\",\\\"statement\\\":\\\"The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.\\\",\\\"sourceIds\\\":[\\\"requirement\\\",\\\"specification\\\"],\\\"requirementCellIds\\\":[\\\"moose-shared-planar-movement:target-admission\\\"],\\\"specificationClauseIds\\\":[\\\"clause-0\\\"]},{\\\"id\\\":\\\"concern-b\\\",\\\"statement\\\":\\\"The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.\\\",\\\"sourceIds\\\":[\\\"requirement\\\",\\\"specification\\\"],\\\"requirementCellIds\\\":[\\\"moose-shared-planar-movement:bounded-motion\\\"],\\\"specificationClauseIds\\\":[\\\"clause-1\\\"]}],\\\"viewpoints\\\":[{\\\"id\\\":\\\"functional\\\",\\\"name\\\":\\\"Functional\\\",\\\"concernIds\\\":[\\\"concern-a\\\",\\\"concern-b\\\"],\\\"modelKinds\\\":[\\\"component\\\"],\\\"method\\\":\\\"Trace actual Farstone movement prediction through the FeltOS geometry forwarder to MOOSE; compare against FeltOS authoritative spaceCapability and stepToward.\\\"}],\\\"views\\\":[{\\\"id\\\":\\\"functional-view\\\",\\\"name\\\":\\\"Functional view\\\",\\\"viewpointId\\\":\\\"functional\\\",\\\"modelIds\\\":[\\\"model-a\\\",\\\"model-b\\\"],\\\"sourceIds\\\":[\\\"requirement\\\",\\\"specification\\\"]}],\\\"models\\\":[{\\\"id\\\":\\\"model-a\\\",\\\"kind\\\":\\\"component\\\",\\\"content\\\":\\\"parseTarget retains finite target syntax, rejects inherited Object properties and checks computed coordinate finiteness; a malformed command is not a movement.\\\",\\\"concernIds\\\":[\\\"concern-a\\\"],\\\"sourceIds\\\":[\\\"requirement\\\",\\\"specification\\\"]},{\\\"id\\\":\\\"model-b\\\",\\\"kind\\\":\\\"component\\\",\\\"content\\\":\\\"stepInPlane validates inputs, clamps interpolation to [0,1], uses scaled displacement for overflow and never writes world state. nearestCompass normalizes heading modulo 360 before angular comparison.\\\",\\\"concernIds\\\":[\\\"concern-b\\\"],\\\"sourceIds\\\":[\\\"requirement\\\",\\\"specification\\\"]}],\\\"correspondences\\\":[],\\\"decisions\\\":[{\\\"id\\\":\\\"one-geometry-owner\\\",\\\"statement\\\":\\\"Repair pure movement once in MOOSE while retaining FeltOS public names and the t/xy/heading result consumed by authoritative and predicted movement.\\\",\\\"rationale\\\":\\\"Duplicating movement rules would cause server/client drift.\\\",\\\"alternatives\\\":[\\\"Implement distinct per-game movement logic.\\\"],\\\"concernIds\\\":[\\\"concern-a\\\",\\\"concern-b\\\"],\\\"sourceIds\\\":[\\\"requirement\\\",\\\"specification\\\"]}],\\\"openQuestions\\\":[]}\",\"digest\":\"sha256:ffe1001f8d2b04df073d974ebd9235cc7e0b23699da4b020bb8c77caeb2f5750\"}],\"design\":{\"components\":[{\"dependencyIds\":[],\"id\":\"geometry\",\"layer\":\"code\",\"owner\":\"red-cup-engineering/moose\",\"providedPorts\":[],\"requiredPorts\":[],\"responsibility\":\"Pure shared planar movement and compass geometry\"}],\"connections\":[],\"openQuestions\":[],\"traceability\":[{\"architectureModelIds\":[\"model-a\"],\"designElementIds\":[\"geometry\"],\"requirementCellId\":\"moose-shared-planar-movement:target-admission\",\"specificationClauseIds\":[\"clause-0\"]},{\"architectureModelIds\":[\"model-b\"],\"designElementIds\":[\"geometry\"],\"requirementCellId\":\"moose-shared-planar-movement:bounded-motion\",\"specificationClauseIds\":[\"clause-1\"]}]},\"admitted\":false,\"proof\":\"unreceived\"}",
+        "digest": "sha256:a40fb5e3936ae027047adcd97c25cd8750d7ce8347bb1277f3f86b75bf998102"
+      }
+    ],
+    "request": {
+      "taskClass": "code-fabrication",
+      "objective": "Derive low-level design",
+      "messages": [
+        {
+          "role": "system",
+          "content": "Derive only the requested engineering design candidate from the complete original source cut. Retain every original requirement, explicit uncertainty and source identity. Follow the supplied response schema. A candidate is not adoption, proof, fabrication, installation or operation. Return one complete JSON design value. Exact source identity and upstream uncertainty remain in the complete source envelope; keep openQuestions concise and retain relevant blockers without repeating entire source records or source metadata. For high-level design use unique component IDs, acyclic dependencies on same or lower Data, Code, Networking, Systems layers, provider-to-consumer port connections with exactly one provider per required port, and one exact original Requirement-cell trace row covering every component. For low-level design use the exact component IDs and per-cell allocations from the supplied high-level candidate, cover every high-level component, and use unique operation IDs and module/export pairs. Every module is a concrete prospective POSIX relative path starting src/ and ending .mjs, with no backslash or empty, dot or dotdot segment. Every exportName is a whole ASCII identifier spelling: letter, underscore or dollar first, then letters, digits, underscores or dollars. Choose concrete NEW candidate module/export names where new work is required; this does not assert that those interfaces already exist. Retain unresolved existing bindings in openQuestions, never as placeholder prose in module or exportName. Input/output schema fields contain JSON text decoding to an object or boolean. Each trace row names exactly its original Specification clauses, actual Architecture model IDs and selected design elements; low-level operation component IDs for that row must equal the high-level component allocation as a set. Keep all declared behavior, failure, bound, effect and acceptance fields; unknown bounds or mechanisms remain explicit unqualified blockers and grant no effect authority. The receiver checks structural correspondence only; semantic refinement, source adoption, Proof and installed operation remain separately unreceived."
+        },
+        {
+          "role": "user",
+          "content": "{\"stage\":\"low-level\",\"sources\":[{\"kind\":\"requirement\",\"text\":\"{\\\"kind\\\":\\\"requirement\\\",\\\"id\\\":\\\"moose-shared-planar-movement\\\",\\\"met-when\\\":[{\\\"cell\\\":\\\"moose-shared-planar-movement:target-admission\\\",\\\"target\\\":\\\"held\\\",\\\"says\\\":\\\"The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.\\\"},{\\\"cell\\\":\\\"moose-shared-planar-movement:bounded-motion\\\",\\\"target\\\":\\\"held\\\",\\\"says\\\":\\\"The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.\\\"}]}\",\"digest\":\"sha256:5a7f476d0f9809b5650a57bf9c6ce58c55243b0868b1ef4d0226bfb75a87c544\"},{\"kind\":\"specification\",\"text\":\"{\\\"identity\\\":{\\\"version\\\":\\\"0.1.0\\\",\\\"stability\\\":\\\"draft\\\",\\\"status\\\":\\\"draft\\\",\\\"date-created\\\":\\\"2026-11-05\\\",\\\"id\\\":\\\"moose-shared-planar-movement-spec\\\",\\\"title\\\":\\\"Shared planar movement\\\",\\\"seat\\\":\\\"red-cup-engineering/moose\\\",\\\"carrier\\\":\\\"src/geometry.mjs\\\",\\\"authors\\\":[\\\"Hai Xudi\\\"],\\\"profile\\\":\\\"prose\\\"},\\\"whatThisIs\\\":\\\"The specification of Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM).\\\",\\\"topics\\\":[{\\\"heading\\\":\\\"Source-owned requirement conditions\\\",\\\"body\\\":\\\"{{clause:clause-0}}\\\\n\\\\n{{clause:clause-1}}\\\",\\\"clauses\\\":[{\\\"id\\\":\\\"clause-0\\\",\\\"keyword\\\":\\\"MUST\\\",\\\"actor\\\":\\\"red-cup-engineering/moose\\\",\\\"statement\\\":\\\"The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.\\\",\\\"test\\\":\\\"Generated positional JSON contract cases and native test/geometry-motion.test.mjs; real FeltOS and Farstone receiving.\\\",\\\"backedBy\\\":[\\\"Original Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM), cell moose-shared-planar-movement:target-admission\\\"]},{\\\"id\\\":\\\"clause-1\\\",\\\"keyword\\\":\\\"MUST\\\",\\\"actor\\\":\\\"red-cup-engineering/moose\\\",\\\"statement\\\":\\\"The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.\\\",\\\"test\\\":\\\"Generated positional JSON contract cases and native test/geometry-motion.test.mjs; real FeltOS and Farstone receiving.\\\",\\\"backedBy\\\":[\\\"Original Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM), cell moose-shared-planar-movement:bounded-motion\\\"]}]}],\\\"implementations\\\":[],\\\"openQuestions\\\":[],\\\"laws\\\":[],\\\"standards\\\":[],\\\"provenance\\\":{\\\"derivedAt\\\":\\\"2026-11-05T10:20:00Z\\\",\\\"derivedBy\\\":\\\"Hai Xudi, source author review; no independent review asserted\\\",\\\"derivedFrom\\\":[\\\"moose-shared-planar-movement@ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM\\\"]}}\",\"digest\":\"sha256:f0d0448d81fdd85ca05e822f14c3cc6b7e3554d038326679a6d5952b85035bd3\"},{\"kind\":\"architecture\",\"text\":\"{\\\"type\\\":\\\"ArchitectureDescriptionCandidate\\\",\\\"version\\\":1,\\\"identity\\\":{\\\"id\\\":\\\"moose-shared-planar-movement-architecture\\\",\\\"title\\\":\\\"Shared authoritative and predicted motion\\\",\\\"revision\\\":\\\"2026-11-05\\\",\\\"owner\\\":\\\"red-cup-engineering/moose\\\",\\\"status\\\":\\\"candidate\\\"},\\\"standard\\\":{\\\"designation\\\":\\\"ISO/IEC/IEEE 42010\\\",\\\"edition\\\":\\\"2022\\\",\\\"applicability\\\":\\\"Source-observed component model for bounded game geometry; complete ISO/IEC/IEEE 42010 conformance unassessed\\\",\\\"conformance\\\":\\\"unassessed\\\"},\\\"system\\\":{\\\"name\\\":\\\"MOOSE shared geometry\\\",\\\"description\\\":\\\"MOOSE owns pure geometry; FeltOS forwards its public functions and applies world admission; Farstone calls those same movement functions for client prediction.\\\",\\\"sourceIds\\\":[\\\"requirement\\\",\\\"specification\\\"]},\\\"upstream\\\":{\\\"requirementsSourceId\\\":\\\"requirement\\\",\\\"specificationSourceId\\\":\\\"specification\\\"},\\\"sources\\\":[{\\\"id\\\":\\\"requirement\\\",\\\"locator\\\":\\\"user:2026-11-05-upstream-game-family\\\",\\\"revision\\\":\\\"ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM\\\"},{\\\"id\\\":\\\"specification\\\",\\\"locator\\\":\\\"derived:moose-shared-planar-movement-spec\\\",\\\"revision\\\":\\\"ni:///sha-256;QG66ba2dpwnyY4ce8i64WAJrBUFXKZay7qIrNwFEfEQ\\\"}],\\\"stakeholders\\\":[{\\\"id\\\":\\\"game-players\\\",\\\"name\\\":\\\"Farstone and other FeltOS game players\\\",\\\"concernIds\\\":[\\\"concern-a\\\",\\\"concern-b\\\"]}],\\\"concerns\\\":[{\\\"id\\\":\\\"concern-a\\\",\\\"statement\\\":\\\"The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.\\\",\\\"sourceIds\\\":[\\\"requirement\\\",\\\"specification\\\"],\\\"requirementCellIds\\\":[\\\"moose-shared-planar-movement:target-admission\\\"],\\\"specificationClauseIds\\\":[\\\"clause-0\\\"]},{\\\"id\\\":\\\"concern-b\\\",\\\"statement\\\":\\\"The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.\\\",\\\"sourceIds\\\":[\\\"requirement\\\",\\\"specification\\\"],\\\"requirementCellIds\\\":[\\\"moose-shared-planar-movement:bounded-motion\\\"],\\\"specificationClauseIds\\\":[\\\"clause-1\\\"]}],\\\"viewpoints\\\":[{\\\"id\\\":\\\"functional\\\",\\\"name\\\":\\\"Functional\\\",\\\"concernIds\\\":[\\\"concern-a\\\",\\\"concern-b\\\"],\\\"modelKinds\\\":[\\\"component\\\"],\\\"method\\\":\\\"Trace actual Farstone movement prediction through the FeltOS geometry forwarder to MOOSE; compare against FeltOS authoritative spaceCapability and stepToward.\\\"}],\\\"views\\\":[{\\\"id\\\":\\\"functional-view\\\",\\\"name\\\":\\\"Functional view\\\",\\\"viewpointId\\\":\\\"functional\\\",\\\"modelIds\\\":[\\\"model-a\\\",\\\"model-b\\\"],\\\"sourceIds\\\":[\\\"requirement\\\",\\\"specification\\\"]}],\\\"models\\\":[{\\\"id\\\":\\\"model-a\\\",\\\"kind\\\":\\\"component\\\",\\\"content\\\":\\\"parseTarget retains finite target syntax, rejects inherited Object properties and checks computed coordinate finiteness; a malformed command is not a movement.\\\",\\\"concernIds\\\":[\\\"concern-a\\\"],\\\"sourceIds\\\":[\\\"requirement\\\",\\\"specification\\\"]},{\\\"id\\\":\\\"model-b\\\",\\\"kind\\\":\\\"component\\\",\\\"content\\\":\\\"stepInPlane validates inputs, clamps interpolation to [0,1], uses scaled displacement for overflow and never writes world state. nearestCompass normalizes heading modulo 360 before angular comparison.\\\",\\\"concernIds\\\":[\\\"concern-b\\\"],\\\"sourceIds\\\":[\\\"requirement\\\",\\\"specification\\\"]}],\\\"correspondences\\\":[],\\\"decisions\\\":[{\\\"id\\\":\\\"one-geometry-owner\\\",\\\"statement\\\":\\\"Repair pure movement once in MOOSE while retaining FeltOS public names and the t/xy/heading result consumed by authoritative and predicted movement.\\\",\\\"rationale\\\":\\\"Duplicating movement rules would cause server/client drift.\\\",\\\"alternatives\\\":[\\\"Implement distinct per-game movement logic.\\\"],\\\"concernIds\\\":[\\\"concern-a\\\",\\\"concern-b\\\"],\\\"sourceIds\\\":[\\\"requirement\\\",\\\"specification\\\"]}],\\\"openQuestions\\\":[]}\",\"digest\":\"sha256:ffe1001f8d2b04df073d974ebd9235cc7e0b23699da4b020bb8c77caeb2f5750\"},{\"kind\":\"high-level\",\"text\":\"{\\\"type\\\":\\\"EngineeringDesignCandidate\\\",\\\"stage\\\":\\\"high-level\\\",\\\"sources\\\":[{\\\"kind\\\":\\\"requirement\\\",\\\"text\\\":\\\"{\\\\\\\"kind\\\\\\\":\\\\\\\"requirement\\\\\\\",\\\\\\\"id\\\\\\\":\\\\\\\"moose-shared-planar-movement\\\\\\\",\\\\\\\"met-when\\\\\\\":[{\\\\\\\"cell\\\\\\\":\\\\\\\"moose-shared-planar-movement:target-admission\\\\\\\",\\\\\\\"target\\\\\\\":\\\\\\\"held\\\\\\\",\\\\\\\"says\\\\\\\":\\\\\\\"The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.\\\\\\\"},{\\\\\\\"cell\\\\\\\":\\\\\\\"moose-shared-planar-movement:bounded-motion\\\\\\\",\\\\\\\"target\\\\\\\":\\\\\\\"held\\\\\\\",\\\\\\\"says\\\\\\\":\\\\\\\"The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.\\\\\\\"}]}\\\",\\\"digest\\\":\\\"sha256:5a7f476d0f9809b5650a57bf9c6ce58c55243b0868b1ef4d0226bfb75a87c544\\\"},{\\\"kind\\\":\\\"specification\\\",\\\"text\\\":\\\"{\\\\\\\"identity\\\\\\\":{\\\\\\\"version\\\\\\\":\\\\\\\"0.1.0\\\\\\\",\\\\\\\"stability\\\\\\\":\\\\\\\"draft\\\\\\\",\\\\\\\"status\\\\\\\":\\\\\\\"draft\\\\\\\",\\\\\\\"date-created\\\\\\\":\\\\\\\"2026-11-05\\\\\\\",\\\\\\\"id\\\\\\\":\\\\\\\"moose-shared-planar-movement-spec\\\\\\\",\\\\\\\"title\\\\\\\":\\\\\\\"Shared planar movement\\\\\\\",\\\\\\\"seat\\\\\\\":\\\\\\\"red-cup-engineering/moose\\\\\\\",\\\\\\\"carrier\\\\\\\":\\\\\\\"src/geometry.mjs\\\\\\\",\\\\\\\"authors\\\\\\\":[\\\\\\\"Hai Xudi\\\\\\\"],\\\\\\\"profile\\\\\\\":\\\\\\\"prose\\\\\\\"},\\\\\\\"whatThisIs\\\\\\\":\\\\\\\"The specification of Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM).\\\\\\\",\\\\\\\"topics\\\\\\\":[{\\\\\\\"heading\\\\\\\":\\\\\\\"Source-owned requirement conditions\\\\\\\",\\\\\\\"body\\\\\\\":\\\\\\\"{{clause:clause-0}}\\\\\\\\n\\\\\\\\n{{clause:clause-1}}\\\\\\\",\\\\\\\"clauses\\\\\\\":[{\\\\\\\"id\\\\\\\":\\\\\\\"clause-0\\\\\\\",\\\\\\\"keyword\\\\\\\":\\\\\\\"MUST\\\\\\\",\\\\\\\"actor\\\\\\\":\\\\\\\"red-cup-engineering/moose\\\\\\\",\\\\\\\"statement\\\\\\\":\\\\\\\"The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.\\\\\\\",\\\\\\\"test\\\\\\\":\\\\\\\"Generated positional JSON contract cases and native test/geometry-motion.test.mjs; real FeltOS and Farstone receiving.\\\\\\\",\\\\\\\"backedBy\\\\\\\":[\\\\\\\"Original Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM), cell moose-shared-planar-movement:target-admission\\\\\\\"]},{\\\\\\\"id\\\\\\\":\\\\\\\"clause-1\\\\\\\",\\\\\\\"keyword\\\\\\\":\\\\\\\"MUST\\\\\\\",\\\\\\\"actor\\\\\\\":\\\\\\\"red-cup-engineering/moose\\\\\\\",\\\\\\\"statement\\\\\\\":\\\\\\\"The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.\\\\\\\",\\\\\\\"test\\\\\\\":\\\\\\\"Generated positional JSON contract cases and native test/geometry-motion.test.mjs; real FeltOS and Farstone receiving.\\\\\\\",\\\\\\\"backedBy\\\\\\\":[\\\\\\\"Original Requirement moose-shared-planar-movement (ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM), cell moose-shared-planar-movement:bounded-motion\\\\\\\"]}]}],\\\\\\\"implementations\\\\\\\":[],\\\\\\\"openQuestions\\\\\\\":[],\\\\\\\"laws\\\\\\\":[],\\\\\\\"standards\\\\\\\":[],\\\\\\\"provenance\\\\\\\":{\\\\\\\"derivedAt\\\\\\\":\\\\\\\"2026-11-05T10:20:00Z\\\\\\\",\\\\\\\"derivedBy\\\\\\\":\\\\\\\"Hai Xudi, source author review; no independent review asserted\\\\\\\",\\\\\\\"derivedFrom\\\\\\\":[\\\\\\\"moose-shared-planar-movement@ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM\\\\\\\"]}}\\\",\\\"digest\\\":\\\"sha256:f0d0448d81fdd85ca05e822f14c3cc6b7e3554d038326679a6d5952b85035bd3\\\"},{\\\"kind\\\":\\\"architecture\\\",\\\"text\\\":\\\"{\\\\\\\"type\\\\\\\":\\\\\\\"ArchitectureDescriptionCandidate\\\\\\\",\\\\\\\"version\\\\\\\":1,\\\\\\\"identity\\\\\\\":{\\\\\\\"id\\\\\\\":\\\\\\\"moose-shared-planar-movement-architecture\\\\\\\",\\\\\\\"title\\\\\\\":\\\\\\\"Shared authoritative and predicted motion\\\\\\\",\\\\\\\"revision\\\\\\\":\\\\\\\"2026-11-05\\\\\\\",\\\\\\\"owner\\\\\\\":\\\\\\\"red-cup-engineering/moose\\\\\\\",\\\\\\\"status\\\\\\\":\\\\\\\"candidate\\\\\\\"},\\\\\\\"standard\\\\\\\":{\\\\\\\"designation\\\\\\\":\\\\\\\"ISO/IEC/IEEE 42010\\\\\\\",\\\\\\\"edition\\\\\\\":\\\\\\\"2022\\\\\\\",\\\\\\\"applicability\\\\\\\":\\\\\\\"Source-observed component model for bounded game geometry; complete ISO/IEC/IEEE 42010 conformance unassessed\\\\\\\",\\\\\\\"conformance\\\\\\\":\\\\\\\"unassessed\\\\\\\"},\\\\\\\"system\\\\\\\":{\\\\\\\"name\\\\\\\":\\\\\\\"MOOSE shared geometry\\\\\\\",\\\\\\\"description\\\\\\\":\\\\\\\"MOOSE owns pure geometry; FeltOS forwards its public functions and applies world admission; Farstone calls those same movement functions for client prediction.\\\\\\\",\\\\\\\"sourceIds\\\\\\\":[\\\\\\\"requirement\\\\\\\",\\\\\\\"specification\\\\\\\"]},\\\\\\\"upstream\\\\\\\":{\\\\\\\"requirementsSourceId\\\\\\\":\\\\\\\"requirement\\\\\\\",\\\\\\\"specificationSourceId\\\\\\\":\\\\\\\"specification\\\\\\\"},\\\\\\\"sources\\\\\\\":[{\\\\\\\"id\\\\\\\":\\\\\\\"requirement\\\\\\\",\\\\\\\"locator\\\\\\\":\\\\\\\"user:2026-11-05-upstream-game-family\\\\\\\",\\\\\\\"revision\\\\\\\":\\\\\\\"ni:///sha-256;1qe5TAFmxmch_cYflq6vbAAT4iro9hMqFK0uVVj9SgM\\\\\\\"},{\\\\\\\"id\\\\\\\":\\\\\\\"specification\\\\\\\",\\\\\\\"locator\\\\\\\":\\\\\\\"derived:moose-shared-planar-movement-spec\\\\\\\",\\\\\\\"revision\\\\\\\":\\\\\\\"ni:///sha-256;QG66ba2dpwnyY4ce8i64WAJrBUFXKZay7qIrNwFEfEQ\\\\\\\"}],\\\\\\\"stakeholders\\\\\\\":[{\\\\\\\"id\\\\\\\":\\\\\\\"game-players\\\\\\\",\\\\\\\"name\\\\\\\":\\\\\\\"Farstone and other FeltOS game players\\\\\\\",\\\\\\\"concernIds\\\\\\\":[\\\\\\\"concern-a\\\\\\\",\\\\\\\"concern-b\\\\\\\"]}],\\\\\\\"concerns\\\\\\\":[{\\\\\\\"id\\\\\\\":\\\\\\\"concern-a\\\\\\\",\\\\\\\"statement\\\\\\\":\\\\\\\"The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.\\\\\\\",\\\\\\\"sourceIds\\\\\\\":[\\\\\\\"requirement\\\\\\\",\\\\\\\"specification\\\\\\\"],\\\\\\\"requirementCellIds\\\\\\\":[\\\\\\\"moose-shared-planar-movement:target-admission\\\\\\\"],\\\\\\\"specificationClauseIds\\\\\\\":[\\\\\\\"clause-0\\\\\\\"]},{\\\\\\\"id\\\\\\\":\\\\\\\"concern-b\\\\\\\",\\\\\\\"statement\\\\\\\":\\\\\\\"The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.\\\\\\\",\\\\\\\"sourceIds\\\\\\\":[\\\\\\\"requirement\\\\\\\",\\\\\\\"specification\\\\\\\"],\\\\\\\"requirementCellIds\\\\\\\":[\\\\\\\"moose-shared-planar-movement:bounded-motion\\\\\\\"],\\\\\\\"specificationClauseIds\\\\\\\":[\\\\\\\"clause-1\\\\\\\"]}],\\\\\\\"viewpoints\\\\\\\":[{\\\\\\\"id\\\\\\\":\\\\\\\"functional\\\\\\\",\\\\\\\"name\\\\\\\":\\\\\\\"Functional\\\\\\\",\\\\\\\"concernIds\\\\\\\":[\\\\\\\"concern-a\\\\\\\",\\\\\\\"concern-b\\\\\\\"],\\\\\\\"modelKinds\\\\\\\":[\\\\\\\"component\\\\\\\"],\\\\\\\"method\\\\\\\":\\\\\\\"Trace actual Farstone movement prediction through the FeltOS geometry forwarder to MOOSE; compare against FeltOS authoritative spaceCapability and stepToward.\\\\\\\"}],\\\\\\\"views\\\\\\\":[{\\\\\\\"id\\\\\\\":\\\\\\\"functional-view\\\\\\\",\\\\\\\"name\\\\\\\":\\\\\\\"Functional view\\\\\\\",\\\\\\\"viewpointId\\\\\\\":\\\\\\\"functional\\\\\\\",\\\\\\\"modelIds\\\\\\\":[\\\\\\\"model-a\\\\\\\",\\\\\\\"model-b\\\\\\\"],\\\\\\\"sourceIds\\\\\\\":[\\\\\\\"requirement\\\\\\\",\\\\\\\"specification\\\\\\\"]}],\\\\\\\"models\\\\\\\":[{\\\\\\\"id\\\\\\\":\\\\\\\"model-a\\\\\\\",\\\\\\\"kind\\\\\\\":\\\\\\\"component\\\\\\\",\\\\\\\"content\\\\\\\":\\\\\\\"parseTarget retains finite target syntax, rejects inherited Object properties and checks computed coordinate finiteness; a malformed command is not a movement.\\\\\\\",\\\\\\\"concernIds\\\\\\\":[\\\\\\\"concern-a\\\\\\\"],\\\\\\\"sourceIds\\\\\\\":[\\\\\\\"requirement\\\\\\\",\\\\\\\"specification\\\\\\\"]},{\\\\\\\"id\\\\\\\":\\\\\\\"model-b\\\\\\\",\\\\\\\"kind\\\\\\\":\\\\\\\"component\\\\\\\",\\\\\\\"content\\\\\\\":\\\\\\\"stepInPlane validates inputs, clamps interpolation to [0,1], uses scaled displacement for overflow and never writes world state. nearestCompass normalizes heading modulo 360 before angular comparison.\\\\\\\",\\\\\\\"concernIds\\\\\\\":[\\\\\\\"concern-b\\\\\\\"],\\\\\\\"sourceIds\\\\\\\":[\\\\\\\"requirement\\\\\\\",\\\\\\\"specification\\\\\\\"]}],\\\\\\\"correspondences\\\\\\\":[],\\\\\\\"decisions\\\\\\\":[{\\\\\\\"id\\\\\\\":\\\\\\\"one-geometry-owner\\\\\\\",\\\\\\\"statement\\\\\\\":\\\\\\\"Repair pure movement once in MOOSE while retaining FeltOS public names and the t/xy/heading result consumed by authoritative and predicted movement.\\\\\\\",\\\\\\\"rationale\\\\\\\":\\\\\\\"Duplicating movement rules would cause server/client drift.\\\\\\\",\\\\\\\"alternatives\\\\\\\":[\\\\\\\"Implement distinct per-game movement logic.\\\\\\\"],\\\\\\\"concernIds\\\\\\\":[\\\\\\\"concern-a\\\\\\\",\\\\\\\"concern-b\\\\\\\"],\\\\\\\"sourceIds\\\\\\\":[\\\\\\\"requirement\\\\\\\",\\\\\\\"specification\\\\\\\"]}],\\\\\\\"openQuestions\\\\\\\":[]}\\\",\\\"digest\\\":\\\"sha256:ffe1001f8d2b04df073d974ebd9235cc7e0b23699da4b020bb8c77caeb2f5750\\\"}],\\\"design\\\":{\\\"components\\\":[{\\\"dependencyIds\\\":[],\\\"id\\\":\\\"geometry\\\",\\\"layer\\\":\\\"code\\\",\\\"owner\\\":\\\"red-cup-engineering/moose\\\",\\\"providedPorts\\\":[],\\\"requiredPorts\\\":[],\\\"responsibility\\\":\\\"Pure shared planar movement and compass geometry\\\"}],\\\"connections\\\":[],\\\"openQuestions\\\":[],\\\"traceability\\\":[{\\\"architectureModelIds\\\":[\\\"model-a\\\"],\\\"designElementIds\\\":[\\\"geometry\\\"],\\\"requirementCellId\\\":\\\"moose-shared-planar-movement:target-admission\\\",\\\"specificationClauseIds\\\":[\\\"clause-0\\\"]},{\\\"architectureModelIds\\\":[\\\"model-b\\\"],\\\"designElementIds\\\":[\\\"geometry\\\"],\\\"requirementCellId\\\":\\\"moose-shared-planar-movement:bounded-motion\\\",\\\"specificationClauseIds\\\":[\\\"clause-1\\\"]}]},\\\"admitted\\\":false,\\\"proof\\\":\\\"unreceived\\\"}\",\"digest\":\"sha256:a40fb5e3936ae027047adcd97c25cd8750d7ce8347bb1277f3f86b75bf998102\"}]}"
+        }
+      ],
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operations",
+          "traceability",
+          "openQuestions"
+        ],
+        "properties": {
+          "operations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "componentId",
+                "module",
+                "exportName",
+                "inputSchemaJson",
+                "outputSchemaJson",
+                "behavior",
+                "preconditions",
+                "postconditions",
+                "failureCases",
+                "resourceBounds",
+                "effectBoundaries",
+                "acceptanceObligations"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "componentId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "module": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "exportName": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "inputSchemaJson": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "outputSchemaJson": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "behavior": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "preconditions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "postconditions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                },
+                "failureCases": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                },
+                "resourceBounds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                },
+                "effectBoundaries": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                },
+                "acceptanceObligations": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                }
+              }
+            },
+            "minItems": 1
+          },
+          "traceability": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "requirementCellId",
+                "specificationClauseIds",
+                "architectureModelIds",
+                "designElementIds"
+              ],
+              "properties": {
+                "requirementCellId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "specificationClauseIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                },
+                "architectureModelIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                },
+                "designElementIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                }
+              }
+            },
+            "minItems": 1
+          },
+          "openQuestions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      },
+      "requiredCapabilities": [
+        "text-output"
+      ]
+    }
+  },
+  "lowDelivery": "{\"operations\":[{\"id\":\"parse-target\",\"componentId\":\"geometry\",\"module\":\"src/geometry.mjs\",\"exportName\":\"parseTarget\",\"inputSchemaJson\":\"{\\\"type\\\":\\\"array\\\",\\\"minItems\\\":2,\\\"maxItems\\\":2,\\\"x-javascript-arguments\\\":\\\"positional\\\"}\",\"outputSchemaJson\":\"{\\\"type\\\":[\\\"array\\\",\\\"null\\\"]}\",\"behavior\":\"The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.\",\"preconditions\":[],\"postconditions\":[\"Inputs are not mutated and valid results contain only finite coordinates.\"],\"failureCases\":[\"Malformed target text returns null; invalid direct geometry arguments throw TypeError or RangeError.\"],\"resourceBounds\":[\"Constant-size coordinate arithmetic; eight compass entries.\"],\"effectBoundaries\":[\"No network, world mutation, file write, authority grant or dependency installation.\"],\"acceptanceObligations\":[\"Generated exact-source cases and native properties pass; actual server and client movement callers agree.\"]},{\"id\":\"advance-planar-movement\",\"componentId\":\"geometry\",\"module\":\"src/geometry.mjs\",\"exportName\":\"stepInPlane\",\"inputSchemaJson\":\"{\\\"type\\\":\\\"array\\\",\\\"minItems\\\":3,\\\"maxItems\\\":3,\\\"x-javascript-arguments\\\":\\\"positional\\\"}\",\"outputSchemaJson\":\"{\\\"type\\\":\\\"object\\\"}\",\"behavior\":\"The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.\",\"preconditions\":[],\"postconditions\":[\"Inputs are not mutated and valid results contain only finite coordinates.\"],\"failureCases\":[\"Malformed target text returns null; invalid direct geometry arguments throw TypeError or RangeError.\"],\"resourceBounds\":[\"Constant-size coordinate arithmetic; eight compass entries.\"],\"effectBoundaries\":[\"No network, world mutation, file write, authority grant or dependency installation.\"],\"acceptanceObligations\":[\"Generated exact-source cases and native properties pass; actual server and client movement callers agree.\"]},{\"id\":\"read-compass-heading\",\"componentId\":\"geometry\",\"module\":\"src/geometry.mjs\",\"exportName\":\"nearestCompass\",\"inputSchemaJson\":\"{\\\"type\\\":\\\"array\\\",\\\"minItems\\\":1,\\\"maxItems\\\":1,\\\"x-javascript-arguments\\\":\\\"positional\\\"}\",\"outputSchemaJson\":\"{\\\"type\\\":\\\"string\\\"}\",\"behavior\":\"The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.\",\"preconditions\":[],\"postconditions\":[\"Inputs are not mutated and valid results contain only finite coordinates.\"],\"failureCases\":[\"Malformed target text returns null; invalid direct geometry arguments throw TypeError or RangeError.\"],\"resourceBounds\":[\"Constant-size coordinate arithmetic; eight compass entries.\"],\"effectBoundaries\":[\"No network, world mutation, file write, authority grant or dependency installation.\"],\"acceptanceObligations\":[\"Generated exact-source cases and native properties pass; actual server and client movement callers agree.\"]}],\"traceability\":[{\"requirementCellId\":\"moose-shared-planar-movement:target-admission\",\"specificationClauseIds\":[\"clause-0\"],\"architectureModelIds\":[\"model-a\"],\"designElementIds\":[\"parse-target\"]},{\"requirementCellId\":\"moose-shared-planar-movement:bounded-motion\",\"specificationClauseIds\":[\"clause-1\"],\"architectureModelIds\":[\"model-b\"],\"designElementIds\":[\"advance-planar-movement\",\"read-compass-heading\"]}],\"openQuestions\":[]}",
+  "codeWorkReadout": {
+    "type": "EngineeringDesignCodeWorkReadout",
+    "version": 1,
+    "designCarrierId": "ni:///sha-256;5Lc-GKcrUpEXhkOFRD2-Gvc0iLu1D8Q4aL2JUNVKvxI",
+    "sourceCut": [
+      {
+        "kind": "requirement",
+        "digest": "sha256:5a7f476d0f9809b5650a57bf9c6ce58c55243b0868b1ef4d0226bfb75a87c544"
+      },
+      {
+        "kind": "specification",
+        "digest": "sha256:f0d0448d81fdd85ca05e822f14c3cc6b7e3554d038326679a6d5952b85035bd3"
+      },
+      {
+        "kind": "architecture",
+        "digest": "sha256:ffe1001f8d2b04df073d974ebd9235cc7e0b23699da4b020bb8c77caeb2f5750"
+      },
+      {
+        "kind": "high-level",
+        "digest": "sha256:a40fb5e3936ae027047adcd97c25cd8750d7ce8347bb1277f3f86b75bf998102"
+      }
+    ],
+    "codeSnapshotScope": "supplied-target-views-only",
+    "status": "source-present-unassayed",
+    "targets": [
+      {
+        "operationId": "advance-planar-movement",
+        "componentId": "geometry",
+        "originalComponentOwner": "red-cup-engineering/moose",
+        "module": "src/geometry.mjs",
+        "exportName": "stepInPlane",
+        "sourceStatus": "source-present-unassayed",
+        "observedSha256": "sha256:fd2e8d803853b02e1f0dbd18b66741c569fabf8182c3379c5842d147d7284e21",
+        "expectedSha256": "sha256:fd2e8d803853b02e1f0dbd18b66741c569fabf8182c3379c5842d147d7284e21",
+        "bindingObservation": {
+          "status": "observed",
+          "resolved": {
+            "owner": "red-cup-engineering/moose",
+            "path": "src/geometry.mjs",
+            "binding": "stepInPlane"
+          },
+          "evidence": [
+            {
+              "path": "src/geometry.mjs",
+              "exportedName": "stepInPlane",
+              "start": 10981,
+              "end": 12773
+            }
+          ],
+          "reason": null
+        },
+        "reviewedPortContracts": null,
+        "originalTrace": [
+          {
+            "requirementCellId": "moose-shared-planar-movement:bounded-motion",
+            "sourceTarget": "held",
+            "specificationClauseIds": [
+              "clause-1"
+            ],
+            "architectureModelIds": [
+              "model-b"
+            ]
+          }
+        ],
+        "interface": {
+          "inputSchema": {
+            "maxItems": 3,
+            "minItems": 3,
+            "type": "array",
+            "x-javascript-arguments": "positional"
+          },
+          "outputSchema": {
+            "type": "object"
+          }
+        },
+        "testObligations": {
+          "behavior": "The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.",
+          "preconditions": [],
+          "postconditions": [
+            "Inputs are not mutated and valid results contain only finite coordinates."
+          ],
+          "failureCases": [
+            "Malformed target text returns null; invalid direct geometry arguments throw TypeError or RangeError."
+          ],
+          "resourceBounds": [
+            "Constant-size coordinate arithmetic; eight compass entries."
+          ],
+          "effectBoundaries": [
+            "No network, world mutation, file write, authority grant or dependency installation."
+          ],
+          "acceptance": [
+            "Generated exact-source cases and native properties pass; actual server and client movement callers agree."
+          ],
+          "sourceVerification": [
+            {
+              "requirementCellId": "moose-shared-planar-movement:bounded-motion",
+              "specificationClauseId": "clause-1",
+              "test": "Generated positional JSON contract cases and native test/geometry-motion.test.mjs; real FeltOS and Farstone receiving.",
+              "status": "declared-unverified"
+            }
+          ],
+          "status": "unreceived"
+        }
+      },
+      {
+        "operationId": "parse-target",
+        "componentId": "geometry",
+        "originalComponentOwner": "red-cup-engineering/moose",
+        "module": "src/geometry.mjs",
+        "exportName": "parseTarget",
+        "sourceStatus": "source-present-unassayed",
+        "observedSha256": "sha256:fd2e8d803853b02e1f0dbd18b66741c569fabf8182c3379c5842d147d7284e21",
+        "expectedSha256": "sha256:fd2e8d803853b02e1f0dbd18b66741c569fabf8182c3379c5842d147d7284e21",
+        "bindingObservation": {
+          "status": "observed",
+          "resolved": {
+            "owner": "red-cup-engineering/moose",
+            "path": "src/geometry.mjs",
+            "binding": "parseTarget"
+          },
+          "evidence": [
+            {
+              "path": "src/geometry.mjs",
+              "exportedName": "parseTarget",
+              "start": 9803,
+              "end": 10611
+            }
+          ],
+          "reason": null
+        },
+        "reviewedPortContracts": null,
+        "originalTrace": [
+          {
+            "requirementCellId": "moose-shared-planar-movement:target-admission",
+            "sourceTarget": "held",
+            "specificationClauseIds": [
+              "clause-0"
+            ],
+            "architectureModelIds": [
+              "model-a"
+            ]
+          }
+        ],
+        "interface": {
+          "inputSchema": {
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array",
+            "x-javascript-arguments": "positional"
+          },
+          "outputSchema": {
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "testObligations": {
+          "behavior": "The shared movement parser admits finite absolute coordinates or own compass directions with signed distances, and returns null for malformed or overflowing input without mutating the starting pose.",
+          "preconditions": [],
+          "postconditions": [
+            "Inputs are not mutated and valid results contain only finite coordinates."
+          ],
+          "failureCases": [
+            "Malformed target text returns null; invalid direct geometry arguments throw TypeError or RangeError."
+          ],
+          "resourceBounds": [
+            "Constant-size coordinate arithmetic; eight compass entries."
+          ],
+          "effectBoundaries": [
+            "No network, world mutation, file write, authority grant or dependency installation."
+          ],
+          "acceptance": [
+            "Generated exact-source cases and native properties pass; actual server and client movement callers agree."
+          ],
+          "sourceVerification": [
+            {
+              "requirementCellId": "moose-shared-planar-movement:target-admission",
+              "specificationClauseId": "clause-0",
+              "test": "Generated positional JSON contract cases and native test/geometry-motion.test.mjs; real FeltOS and Farstone receiving.",
+              "status": "declared-unverified"
+            }
+          ],
+          "status": "unreceived"
+        }
+      },
+      {
+        "operationId": "read-compass-heading",
+        "componentId": "geometry",
+        "originalComponentOwner": "red-cup-engineering/moose",
+        "module": "src/geometry.mjs",
+        "exportName": "nearestCompass",
+        "sourceStatus": "source-present-unassayed",
+        "observedSha256": "sha256:fd2e8d803853b02e1f0dbd18b66741c569fabf8182c3379c5842d147d7284e21",
+        "expectedSha256": "sha256:fd2e8d803853b02e1f0dbd18b66741c569fabf8182c3379c5842d147d7284e21",
+        "bindingObservation": {
+          "status": "observed",
+          "resolved": {
+            "owner": "red-cup-engineering/moose",
+            "path": "src/geometry.mjs",
+            "binding": "nearestCompass"
+          },
+          "evidence": [
+            {
+              "path": "src/geometry.mjs",
+              "exportedName": "nearestCompass",
+              "start": 8954,
+              "end": 9350
+            }
+          ],
+          "reason": null
+        },
+        "reviewedPortContracts": null,
+        "originalTrace": [
+          {
+            "requirementCellId": "moose-shared-planar-movement:bounded-motion",
+            "sourceTarget": "held",
+            "specificationClauseIds": [
+              "clause-1"
+            ],
+            "architectureModelIds": [
+              "model-b"
+            ]
+          }
+        ],
+        "interface": {
+          "inputSchema": {
+            "maxItems": 1,
+            "minItems": 1,
+            "type": "array",
+            "x-javascript-arguments": "positional"
+          },
+          "outputSchema": {
+            "type": "string"
+          }
+        },
+        "testObligations": {
+          "behavior": "The shared planar movement operation advances toward its target by at most a finite nonnegative distance, preserves heading when stationary, handles overflowing intermediate distances, and refuses invalid arguments. Compass readings are invariant under complete rotations.",
+          "preconditions": [],
+          "postconditions": [
+            "Inputs are not mutated and valid results contain only finite coordinates."
+          ],
+          "failureCases": [
+            "Malformed target text returns null; invalid direct geometry arguments throw TypeError or RangeError."
+          ],
+          "resourceBounds": [
+            "Constant-size coordinate arithmetic; eight compass entries."
+          ],
+          "effectBoundaries": [
+            "No network, world mutation, file write, authority grant or dependency installation."
+          ],
+          "acceptance": [
+            "Generated exact-source cases and native properties pass; actual server and client movement callers agree."
+          ],
+          "sourceVerification": [
+            {
+              "requirementCellId": "moose-shared-planar-movement:bounded-motion",
+              "specificationClauseId": "clause-1",
+              "test": "Generated positional JSON contract cases and native test/geometry-motion.test.mjs; real FeltOS and Farstone receiving.",
+              "status": "declared-unverified"
+            }
+          ],
+          "status": "unreceived"
+        }
+      }
+    ],
+    "discrepancies": [],
+    "sourceVerification": {
+      "scope": "original-specification-clauses",
+      "status": "source-tests-declared-unverified",
+      "clauseCount": 2,
+      "declaredTestCount": 2,
+      "missingClauseIds": []
+    },
+    "hldPortSource": {
+      "status": "name-only-unreviewed"
+    },
+    "originalDesignAdmitted": false,
+    "independentProof": "unreceived",
+    "executableWork": false,
+    "codeApplied": false,
+    "beneficiaryReceived": false
+  },
+  "cases": [
+    {
+      "operationId": "parse-target",
+      "requirementCellId": "moose-shared-planar-movement:target-admission",
+      "name": "absolute-coordinates",
+      "input": [
+        "3 4 5",
+        {
+          "position": [
+            10,
+            20,
+            3
+          ],
+          "heading": 45
+        }
+      ],
+      "expectedOutput": [
+        3,
+        4,
+        5
+      ],
+      "throws": null
+    },
+    {
+      "operationId": "parse-target",
+      "requirementCellId": "moose-shared-planar-movement:target-admission",
+      "name": "signed-compass",
+      "input": [
+        "north -6",
+        {
+          "position": [
+            10,
+            20,
+            3
+          ],
+          "heading": 45
+        }
+      ],
+      "expectedOutput": [
+        10,
+        14
+      ],
+      "throws": null
+    },
+    {
+      "operationId": "parse-target",
+      "requirementCellId": "moose-shared-planar-movement:target-admission",
+      "name": "inherited-property",
+      "input": [
+        "constructor 6",
+        {
+          "position": [
+            10,
+            20,
+            3
+          ],
+          "heading": 45
+        }
+      ],
+      "expectedOutput": null,
+      "throws": null
+    },
+    {
+      "operationId": "parse-target",
+      "requirementCellId": "moose-shared-planar-movement:target-admission",
+      "name": "computed-overflow",
+      "input": [
+        "east 1e308",
+        {
+          "position": [
+            1e+308,
+            0,
+            0
+          ],
+          "heading": 0
+        }
+      ],
+      "expectedOutput": null,
+      "throws": null
+    },
+    {
+      "operationId": "parse-target",
+      "requirementCellId": "moose-shared-planar-movement:target-admission",
+      "name": "nonstring-input",
+      "input": [
+        null,
+        {
+          "position": [
+            10,
+            20,
+            3
+          ],
+          "heading": 45
+        }
+      ],
+      "expectedOutput": null,
+      "throws": null
+    },
+    {
+      "operationId": "advance-planar-movement",
+      "requirementCellId": "moose-shared-planar-movement:bounded-motion",
+      "name": "bounded-step",
+      "input": [
+        {
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "heading": 0
+        },
+        [
+          10,
+          0
+        ],
+        6
+      ],
+      "expectedOutput": {
+        "xy": [
+          6,
+          0
+        ],
+        "t": 0.6,
+        "heading": 90
+      },
+      "throws": null
+    },
+    {
+      "operationId": "advance-planar-movement",
+      "requirementCellId": "moose-shared-planar-movement:bounded-motion",
+      "name": "zero-distance",
+      "input": [
+        {
+          "position": [
+            10,
+            20,
+            3
+          ],
+          "heading": 45
+        },
+        [
+          30,
+          20
+        ],
+        0
+      ],
+      "expectedOutput": {
+        "xy": [
+          10,
+          20
+        ],
+        "t": 0,
+        "heading": 45
+      },
+      "throws": null
+    },
+    {
+      "operationId": "advance-planar-movement",
+      "requirementCellId": "moose-shared-planar-movement:bounded-motion",
+      "name": "negative-distance",
+      "input": [
+        {
+          "position": [
+            10,
+            20,
+            3
+          ],
+          "heading": 45
+        },
+        [
+          30,
+          20
+        ],
+        -1
+      ],
+      "expectedOutput": null,
+      "throws": "RangeError"
+    },
+    {
+      "operationId": "advance-planar-movement",
+      "requirementCellId": "moose-shared-planar-movement:bounded-motion",
+      "name": "invalid-coordinates",
+      "input": [
+        {
+          "position": [
+            10,
+            20,
+            3
+          ],
+          "heading": 45
+        },
+        [
+          1
+        ],
+        6
+      ],
+      "expectedOutput": null,
+      "throws": "TypeError"
+    },
+    {
+      "operationId": "advance-planar-movement",
+      "requirementCellId": "moose-shared-planar-movement:bounded-motion",
+      "name": "overflow-safe-step",
+      "input": [
+        {
+          "position": [
+            -1e+308,
+            0,
+            0
+          ],
+          "heading": 0
+        },
+        [
+          1e+308,
+          0
+        ],
+        1e+308
+      ],
+      "expectedOutput": {
+        "xy": [
+          0,
+          0
+        ],
+        "t": 0.5,
+        "heading": 90
+      },
+      "throws": null
+    },
+    {
+      "operationId": "read-compass-heading",
+      "requirementCellId": "moose-shared-planar-movement:bounded-motion",
+      "name": "negative-rotation",
+      "input": [
+        -990
+      ],
+      "expectedOutput": "east",
+      "throws": null
+    },
+    {
+      "operationId": "read-compass-heading",
+      "requirementCellId": "moose-shared-planar-movement:bounded-motion",
+      "name": "positive-rotation",
+      "input": [
+        1170
+      ],
+      "expectedOutput": "east",
+      "throws": null
+    }
+  ]
+}

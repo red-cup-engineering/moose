@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: regions and poses are world facts; joining stands an actor on the start region's floor
+ok 1 - regions and poses are world facts; joining stands an actor on the start region's floor
+  ---
+  duration_ms: 42.258215
+  type: 'test'
+  ...
+# Subtest: walking across a threshold moves located-in with the pose; the cover forbids leaping a region
+ok 2 - walking across a threshold moves located-in with the pose; the cover forbids leaping a region
+  ---
+  duration_ms: 82.328207
+  type: 'test'
+  ...
+# Subtest: c1: under concurrent moves a thing is in one region, and every pose lies in the place that holds it
+ok 3 - c1: under concurrent moves a thing is in one region, and every pose lies in the place that holds it
+  ---
+  duration_ms: 926.367153
+  type: 'test'
+  ...
+# Subtest: c1: perception restricts by distance and line of sight across regions
+ok 4 - c1: perception restricts by distance and line of sight across regions
+  ---
+  duration_ms: 696.541665
+  type: 'test'
+  ...
+# Subtest: a voice carries by distance across places and walls; a gesture only as far as sight
+ok 5 - a voice carries by distance across places and walls; a gesture only as far as sight
+  ---
+  duration_ms: 562.549117
+  type: 'test'
+  ...
+# Subtest: go across an exit stands the actor at the threshold it crosses
+ok 6 - go across an exit stands the actor at the threshold it crosses
+  ---
+  duration_ms: 13.877373
+  type: 'test'
+  ...
+# Subtest: c2: a vehicle with a pose carries its occupants; only its controller steers
+ok 7 - c2: a vehicle with a pose carries its occupants; only its controller steers
+  ---
+  duration_ms: 395.594431
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4007.288985

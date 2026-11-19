@@ -1,0 +1,38 @@
+TAP version 13
+# Subtest: real native Group actor and persistent authored public post cross MOOSE's living-web surface
+not ok 1 - real native Group actor and persistent authored public post cross MOOSE's living-web surface
+  ---
+  duration_ms: 426.066132
+  type: 'test'
+  location: '/workspace/scratch/455c183ed200/evidence/moose356-baseline-local-node.test.mjs:9:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    500 !== 200
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 200
+  actual: 500
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/scratch/455c183ed200/evidence/moose356-baseline-local-node.test.mjs:51:10)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Subtest: MOOSE commissions neither an unsigned actor nor a no-op inbox
+ok 2 - MOOSE commissions neither an unsigned actor nor a no-op inbox
+  ---
+  duration_ms: 3.428557
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 1
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 978.651467
