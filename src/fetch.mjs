@@ -1,6 +1,6 @@
 import { exactPublicPageRoutes } from "./source-page-routes.mjs";
 import { createMooseApplication } from "./source-application.mjs";
-import { validateMoosePublicSite } from "./section-site.mjs";
+import { admitMoosePublicSite } from "./section-site.mjs";
 import { projectMooseResourceInventory } from "./resource-readout.mjs";
 
 const NAME = /^[a-z][a-z0-9._-]*$/u;
@@ -10,13 +10,13 @@ function named(value, label) {
   if (typeof value !== "string" || !value.trim()) throw new TypeError(`${label} must be nonempty text`);
   return value;
 }
-function publicItems(report, provider) {
-  if (!report || !Array.isArray(report.items) ||
-      report.items.length > MAX_VISIBLE || typeof report.hasMore !== "boolean") {
+function publicItems(readout, provider) {
+  if (!readout || !Array.isArray(readout.items) ||
+      readout.items.length > MAX_VISIBLE || typeof readout.hasMore !== "boolean") {
     throw new TypeError("MOOSE timeline reader must return at most 64 admitted public activities and hasMore");
   }
   const seen = new Set();
-  return report.items.map((item, index) => {
+  return readout.items.map((item, index) => {
     if (!item || item.visibility !== "public" || typeof item.id !== "string" ||
         typeof item.summary !== "string" || item.summary.length > 4096 ||
         typeof item.author !== "string" || !item.author.trim()) {
@@ -56,7 +56,7 @@ function publicItems(report, provider) {
  */
 export function createMooseSite({
   origin, provider, readPublicTimeline, readPublicActor, readPublicActorTimeline,
-  authorizePublicRead, pages = [], kv, queue, release, custodyRoot: storageRoot,
+  authorizePublicRead, pages = [], kv, queue, release, custodyRoot,
   basePath = "/", publicSite, tufteTheme, readPublicResources,
 } = {}) {
   const address = new URL(origin);
@@ -78,7 +78,7 @@ export function createMooseSite({
   if (!Array.isArray(provider.identifiers) || provider.identifiers.some(id => !NAME.test(id))) {
     throw new TypeError("MOOSE site needs admitted original actor identifiers");
   }
-  const section = validateMoosePublicSite(publicSite, origin);
+  const section = admitMoosePublicSite(publicSite, origin);
   if (readPublicResources !== undefined &&
       (typeof readPublicResources !== "function" || !section)) {
     throw new TypeError("MOOSE resource inventory reader needs a source-owned public section");
@@ -103,14 +103,14 @@ export function createMooseSite({
     const summary = named(actor.summary, "public actor summary");
     // Never filter the site-wide recent feed. That operation silently hides
     // quieter Actors whenever other Actors publish enough public activity.
-    const report = readPublicActorTimeline === undefined ? null
+    const readout = readPublicActorTimeline === undefined ? null
       : await readPublicActorTimeline({ identifier, maxItems: MAX_VISIBLE });
-    if (report !== null && report !== undefined &&
-        (!Array.isArray(report.items) ||
-         report.items.some(item => item.author !== identifier))) {
+    if (readout !== null && readout !== undefined &&
+        (!Array.isArray(readout.items) ||
+         readout.items.some(item => item.author !== identifier))) {
       throw new TypeError("MOOSE source reader crossed Actor ownership boundaries");
     }
-    const actorPosts = report == null ? [] : publicItems(report, provider);
+    const actorPosts = readout == null ? [] : publicItems(readout, provider);
     return {
       title: label,
       ...(section ? { subtitle: section.description, navigation: section.menu } : {}),
@@ -126,10 +126,10 @@ export function createMooseSite({
           content: "The original ActivityPub outbox is the source of this Actor's public posts. This homepage is a bounded current reading.",
           links: [{ href: new URL(`/actors/${identifier}/outbox`, origin).href, label: "Original public outbox" }] },
         ...actorPosts,
-        ...(report == null ? [{
+        ...(readout == null ? [{
           id: "actor-feed-not-mounted", title: "Actor feed not installed",
           content: "This site has not supplied a qualified per-Actor outbox reader; no posts are represented here.",
-        }] : report.hasMore || report.coverage === "bounded-source-outbox" ? [{
+        }] : readout.hasMore || readout.coverage === "bounded-source-outbox" ? [{
           id: "actor-history-note",
           title: "More history may exist",
           content: "This is a bounded first-page public reading, not proof of a complete archive. Continue through the original ActivityPub outbox.",
@@ -238,7 +238,7 @@ export function createMooseSite({
     ...(kv === undefined ? {} : { kv }),
     ...(queue === undefined ? {} : { queue }),
     ...(release === undefined ? {} : { release }),
-    ...(storageRoot === undefined ? {} : { custodyRoot: storageRoot }),
+    ...(custodyRoot === undefined ? {} : { custodyRoot }),
   });
 }
 

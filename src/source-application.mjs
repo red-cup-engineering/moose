@@ -10,7 +10,7 @@ export function createMooseApplication({
 } = {}) {
   if (!Array.isArray(pages)) throw new TypeError("MOOSE application pages must be source declarations");
   const paths = new Set(home === undefined ? [] : ["/"]);
-  const validated = pages.map((page, index) => {
+  const admitted = pages.map((page, index) => {
     const name = page?.name ?? `page-${index + 1}`;
     if (!page || typeof name !== "string" || !name.trim() || name.length > 512 ||
         /[\u0000-\u001f\u007f]/u.test(name) || typeof page.read !== "function") {
@@ -24,5 +24,5 @@ export function createMooseApplication({
     paths.add(route);
     return Object.freeze({ ...page, name });
   });
-  return createLivingWebServer({ origin, home, pages: validated, authorizePublicRead, document });
+  return createLivingWebServer({ origin, home, pages: admitted, authorizePublicRead, document });
 }

@@ -1,5 +1,5 @@
-import {validateIntentOrigin} from './intent-origin.mjs';
-import { validateGameWorld, defineGame } from "./game.mjs";
+import {admitIntentOrigin} from './intent-origin.mjs';
+import { admitGameWorld, defineGame } from "./game.mjs";
 import { cells } from "./world.mjs";
 import { materializeHistory, restoreHistory, validateHistory } from "./world-history.mjs";
 
@@ -45,7 +45,7 @@ function restoreEngineStateOf(snapshot, world) {
     || !Number.isSafeInteger(snapshot.nextIntent)
     || snapshot.nextIntent < 1) fail("invalid engine snapshot envelope");
   const game = defineGame(record(snapshot.game, "snapshot game"));
-  validateGameWorld(game, world, { recovering: true });
+  admitGameWorld(game, world, { recovering: true });
   const actors = [...snapshot.actors];
   if (new Set(actors).size !== actors.length
     || actors.some((actor) => typeof actor !== "string" || !ACTOR_IDENTIFIER.test(actor)
@@ -58,7 +58,7 @@ function restoreEngineStateOf(snapshot, world) {
       || !actors.includes(intent.actor)
       || typeof intent.command !== "string"
       || intent.command.length === 0) fail(`queued intent ${index} is invalid`);
-    return Object.freeze({ kind: intent.kind, ordinal: intent.ordinal, actor: intent.actor, command: intent.command, ...(Object.hasOwn(intent,"origin")?{origin:validateIntentOrigin(intent.origin)}:{}) });
+    return Object.freeze({ kind: intent.kind, ordinal: intent.ordinal, actor: intent.actor, command: intent.command, ...(Object.hasOwn(intent,"origin")?{origin:admitIntentOrigin(intent.origin)}:{}) });
   });
   if (new Set(queue.map(intent => intent.ordinal)).size !== queue.length) fail("queued intent ordinals must be unique");
   if (queue.some(({ ordinal }) => ordinal >= snapshot.nextIntent)) fail("queued intent exceeds nextIntent frontier");

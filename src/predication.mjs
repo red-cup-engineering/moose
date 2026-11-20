@@ -12,7 +12,7 @@ const { address } = Cell;
  */
 /** Current original Thing custody, not the UI, authorizes container effects.
  * Missing, contested, foreign and invisible properties never grant access. */
-export function ownedContainerRejection(world,actor,target,{requireOpen=false}={}) {
+export function ownedContainerRefusal(world,actor,target,{requireOpen=false}={}) {
   const room=placeOf(world,actor);
   if(typeof room!=="string"||typeof target!=="string"
     ||certainValue(world,target,"kind")!=="container"
@@ -23,7 +23,7 @@ export function ownedContainerRejection(world,actor,target,{requireOpen=false}={
     return "That container is closed.";
   return null;
 }
-export function takeRejection(world, actor, target) {
+export function takeRefusal(world, actor, target) {
   const room = certainValue(world, actor, LOCATED_IN);
   if (typeof target !== "string" || typeof room !== "string"
       // A definite same-room Thing is already in the actor's original
@@ -48,10 +48,10 @@ export function takeRejection(world, actor, target) {
 export function affordances(world, actor, target) {
   if (!perceivedOf(world, actor).subjects.includes(target)) return Object.freeze([]);
   const actions = ["examine"];
-  if (takeRejection(world, actor, target) === null) actions.push("take");
+  if (takeRefusal(world, actor, target) === null) actions.push("take");
   if (["thing","object","container"].includes(certainValue(world,target,"kind"))
       && placeOf(world,target)===actor) actions.push("drop");
-  if(ownedContainerRejection(world,actor,target)===null) {
+  if(ownedContainerRefusal(world,actor,target)===null) {
     const opened=certainValue(world,target,"open")===true;
     actions.push(opened?"close":"open");
     if(opened)actions.push("put","get");

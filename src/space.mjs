@@ -59,7 +59,7 @@ export function vehicleOf(world, subject) {
 }
 
 /** Whether a mover may enter a region: vehicles keep to the tags they traverse, walkers stay off open water. */
-function validates(world, mover, place) {
+function admits(world, mover, place) {
   const tags = values(world, place, "tag");
   const traverses = values(world, mover, "traverses");
   if (traverses.length === 0 && value(world, mover, "kind") === "ship") return tags.includes("ocean") || tags.includes("dock");
@@ -86,7 +86,7 @@ export function stepToward(world, subject, target, { pace, source = "feltos.spac
   const into = point === null ? null : regionAt(regions, point, from);
   if (into === null) return { refused: "There is nowhere to stand that way." };
   if (!reachable.includes(into)) return { refused: "That is more than one threshold away; go there by stages." };
-  if (!validates(world, subject, into)) return { refused: isVehicle(world, subject) ? "This vehicle cannot go there." : "The open water is no place to walk. Board a vessel to travel there." };
+  if (!admits(world, subject, into)) return { refused: isVehicle(world, subject) ? "This vehicle cannot go there." : "The open water is no place to walk. Board a vessel to travel there." };
   return { world: place(world, subject, into, { position: point, heading }, { source }), into, arrived: t === 1 };
 }
 

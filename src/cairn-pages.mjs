@@ -64,13 +64,13 @@ export function createMooseCairnPage({
       // Return exactly the representation that passed the byte limit.
       // Raw projections can carry toJSON, accessors or later mutation: returning
       // the original object lets the renderer serve data we never measured.
-      const validated = JSON.parse(serialized);
-      if (!validated || typeof validated !== "object" || Array.isArray(validated) ||
-          typeof validated.title !== "string" || !validated.title.trim() ||
-          !Array.isArray(validated.tiles) || validated.tiles.length > 64) {
+      const admitted = JSON.parse(serialized);
+      if (!admitted || typeof admitted !== "object" || Array.isArray(admitted) ||
+          typeof admitted.title !== "string" || !admitted.title.trim() ||
+          !Array.isArray(admitted.tiles) || admitted.tiles.length > 64) {
         throw new TypeError("MOOSE CAIRN serialized projection must retain one bounded TUFTE page");
       }
-      return validated;
+      return admitted;
     },
   });
 }

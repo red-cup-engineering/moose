@@ -25,11 +25,11 @@ export async function commissionLocalMooseSite({
   }
   const configured = { ...environment, ACTIVITYPUB_ORIGIN: origin };
   const runtime = createFlatfileActivityPubRuntime({ environment: configured, stateDirectory });
-  const storage = createActivityPubLogStorage({ stateDirectory: runtime.stateDirectory });
+  const custody = createActivityPubLogStorage({ stateDirectory: runtime.stateDirectory });
   let local;
   try {
     local = await createLocalActivityPubProvider({
-      environment: configured, runtime, custody: storage, origin,
+      environment: configured, runtime, custody, origin,
       ...(actors === undefined ? {} : { actors }),
       manuallyStartQueue: true,
       // Fedify calls the customer only AFTER signed arrival verification.
@@ -49,7 +49,7 @@ export async function commissionLocalMooseSite({
     const { readPublicActor, readPublicTimeline, readPublicActorTimeline } = createMoosePublicReaders({ origin, provider: local.provider });
     const site = createMooseSite({
       origin, provider: local.provider,
-      kv: storage.kv, queue: runtime.queue, release: () => local.close(),
+      kv: custody.kv, queue: runtime.queue, release: () => local.close(),
       custodyRoot: runtime.stateDirectory,
       readPublicTimeline, readPublicActor, readPublicActorTimeline, authorizePublicRead,
     });
