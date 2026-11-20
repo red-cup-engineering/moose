@@ -18,20 +18,20 @@ receiving remain distinct from a live-host deployment receipt.
 
 ### Native MUD integration
 
-MOOSE directly selects SignCraft `0.9.3` for history, Thing composition and
-settlement. Its history selects SignCell `0.17.3`. CAIRN `0.2.6-dev.0` remains
-the source-custody and authorized-knowledge supplier.
+MOOSE selects SignCraft 0.11.1 or later within the 0.11 series for history,
+Thing composition and settlement. Its selected SignCell begins at 0.18.2 and
+its Semiotic carrier begins at 0.1.9. CAIRN 0.4 provides source custody and
+authorized knowledge. The package manifest identifies the exact ranges.
 
-Clean npm receiving exposed a genuine split: CAIRN's direct Cell facade and
-SignCraft history loaded separate copies of SignCell with separate retained-byte
-owners. Equal declared versions did not prevent that split. The current
-SignCraft release has no public Cell forwarding entry, so the Node
-`world-cell.mjs` binding resolves the original public SignCell Cell export from
-the actual SignCraft history package context. It exports the complete original
-namespace by identity and verifies `retainHistoryCell(probe) === probe`. It
-implements no Cell or content operation. CAIRN's independent Cell copy can
-remain installed. Portable Fetch and geometry entries have separate import
-closures; the MUD World family currently uses this explicit Node binding.
+`world-cell.mjs` imports the Cell namespace exported by the original
+`@red-cup-engineering/signcraft/history` provider. World mutations and causal
+history consequently use the same owner for Cell admission. Other participants
+may load independent owners in the same process. A rule author transfers its
+admitted rule using exact canonical CBOR. Application code gives the decoded
+data to `closeWorld`. SignChain admits the rule, and SignCraft produces the
+complete settlement. Byte-valued premises, conclusions, rule commitments and
+history revision identifiers must survive snapshot restoration. Closing the
+restored World with that same rule must preserve its history identity.
 
 Before closure, `world-settlement.mjs` compares MOOSE's complete history
 namespace with its selected SignCraft namespace by identity. A second history

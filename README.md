@@ -93,7 +93,8 @@ transport failure. Each admitted activity retains one occurrence through
 restart. [World speech and room grants](specifications/addressed-world-speech.md)
 
 `closeWorld` from `./predication` accepts original SignChain rules and delegates
-closure to SignCraft. Native settlement retains rule and premise witnesses,
+closure to SignCraft. Transport an authored rule across independent package installations
+with the Semiotic owner's exact canonical CBOR. Native settlement retains rule and premise witnesses,
 adds changed Cells in one revision, and preserves history identity when nothing
 changes. Functional state changes remain admitted commands; historical derived
 testimony retains SignCraft's own semantics after a premise changes.
