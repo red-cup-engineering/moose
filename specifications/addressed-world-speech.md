@@ -14,6 +14,12 @@ The local World author places the following nonfunctional predicates on an exist
 
 The host verifies the signed sender, the intended personal inbox and the source ActivityStreams document through ActivityPub Engineering. MOOSE checks the current local reading for the room's authority, including opposing evidence. A player can address an offered Group with `sayto <world-group-IRI> <words>`. The source Dimension and World come from that player's current territory. The host binds the account to its own actor. [ActivityPub inbox](https://www.w3.org/TR/activitypub/#inbox) and [ActivityStreams context](https://www.w3.org/TR/activitystreams-vocabulary/#dfn-context)
 
+## Authored city editions
+
+A city may identify its Dimension and Worlds with a local identifier, an NI reference, or an absolute HTTP(S) IRI. Rooms and Areas refer to their declared parent. A World selecting `policy: "runtime"` uses the installed game capabilities. A World with authored actions selects its action policy from those declarations.
+
+An edition that removes speech standing records the room, predicate, object, and exact witness that its author withdraws. The receiving World checks this withdrawal against the author's source. An independent witness for the same grant survives. A subsequent edition can grant the same terms with a fresh witness. Independent opposition still blocks speech. The same rules apply after a checkpoint and to a reading that hides the withdrawal. This uses observed-remove set semantics for authored witnesses. [Bieniusa et al., *An optimized conflict-free replicated set*](https://arxiv.org/abs/1210.3368)
+
 ## Occurrence and recovery
 
 The ActivityPub provider returns the Create activity ID, embedded Note ID, actor, recipient Group, source Dimension, source World and original content. The room accepts up to 4096 UTF-8 bytes of nonblank text. MOOSE observes the complete record and its destination room together in one SignCraft revision. Both statements retain the same witness, including the activity IRI and original local causal frontier.
