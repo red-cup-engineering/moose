@@ -1,3 +1,4 @@
+import { sleep } from "@red-cup-engineering/parse-javascript-argv-service";
 // run-session — Wave1 §5: an honest rooms-per-process ceiling, measured the SAME way
 // examples/head-to-head/run-session.mjs already measures one room (real websockets, real Rooms, no
 // mocks), extended from one room/20 clients to N INDEPENDENT rooms concurrently in one process,
@@ -25,7 +26,7 @@ const INTERVAL_MS = Number(process.env.MULTI_ROOM_INTERVAL_MS ?? 100);
 const SESSION_MS = Number(process.env.MULTI_ROOM_SESSION_MS ?? 4000);
 const DEGRADE_THRESHOLD = Number(process.env.MULTI_ROOM_DEGRADE_THRESHOLD ?? 1.5); // meanIntervalMs > configured * this = degraded
 
-const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
 function mean(xs) {
   return xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0;
 }
@@ -46,7 +47,7 @@ async function runAtRoomCount(n) {
     await new Promise((res) => httpServer.listen(0, "127.0.0.1", res));
     rooms.push({ room, httpServer, port: httpServer.address().port, timestamps: [], lastTick: 0 });
   }
-  await wait(100); // this sandbox's listen->connect race, see tests/prove-client-node.mjs's header
+  await sleep(100); // this sandbox's listen->connect race, see tests/prove-client-node.mjs's header
   for (const r of rooms) r.room.start();
 
   const samplers = rooms.map((r) =>
@@ -66,7 +67,7 @@ async function runAtRoomCount(n) {
       bots.push(client);
     }
   }
-  await wait(200);
+  await sleep(200);
   for (const client of bots) {
     const tick = () => {
       client.sendIntent("move", { dx: Math.random() * 2 - 1, dy: Math.random() * 2 - 1 });
@@ -75,11 +76,11 @@ async function runAtRoomCount(n) {
     moveTimers.push(setTimeout(tick, Math.random() * 150));
   }
 
-  await wait(SESSION_MS);
+  await sleep(SESSION_MS);
   for (const t of moveTimers) clearTimeout(t);
   for (const s of samplers) clearInterval(s);
   for (const client of bots) client.close();
-  await wait(150);
+  await sleep(150);
   for (const r of rooms) r.room.stop();
 
   const perRoom = rooms.map((r) => {

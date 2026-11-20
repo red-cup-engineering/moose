@@ -1,3 +1,4 @@
+import { sleep } from "@red-cup-engineering/parse-javascript-argv-service";
 import { isEqual } from "@red-cup-engineering/signcell/values";
 // run-session — a 20-client synthetic room session (bots) over real websockets on localhost,
 // measuring tick stability, message counts, resume correctness under forced disconnects, and the
@@ -31,7 +32,7 @@ const FORCE_DISCONNECT_AT = [0.25, 0.5, 0.75]; // fractions of SESSION_MS
 const FORCE_DISCONNECT_PER_WAVE = 2;
 const PACK = process.env.QWZSPACE_PACK === "1"; // opt-in entry packing on the wire (protocol.mjs)
 
-const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
 function mean(xs) {
   return xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0;
 }
@@ -58,7 +59,7 @@ async function main() {
   room.attach(httpServer);
   await room.ready;
   await new Promise((res) => httpServer.listen(0, "127.0.0.1", res));
-  await wait(100); // this sandbox's listen->connect race, see tests/prove-client-node.mjs's header
+  await sleep(100); // this sandbox's listen->connect race, see tests/prove-client-node.mjs's header
   const port = httpServer.address().port;
   const url = `ws://127.0.0.1:${port}/`;
   room.start();
@@ -111,7 +112,7 @@ async function main() {
     bots.push({ i, client, stateLog, moveTimer: null, actorIdAtStart: null });
   }
 
-  await wait(300); // let everyone actually join before driving movement
+  await sleep(300); // let everyone actually join before driving movement
   for (const bot of bots) {
     bot.actorIdAtStart = bot.client.view.myId();
     const tick = () => {
@@ -145,13 +146,13 @@ async function main() {
     }, SESSION_MS * frac);
   }
 
-  await wait(SESSION_MS);
+  await sleep(SESSION_MS);
   for (const bot of bots) clearTimeout(bot.moveTimer);
-  await wait(SETTLE_MS); // let forced-disconnect bots finish reconnect+resume
+  await sleep(SETTLE_MS); // let forced-disconnect bots finish reconnect+resume
 
   clearInterval(sampler);
   for (const bot of bots) bot.client.close();
-  await wait(200);
+  await sleep(200);
   room.stop();
 
   const finalTick = room.tickNow();

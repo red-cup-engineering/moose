@@ -119,7 +119,8 @@
     "@red-cup-engineering/uri-engineering-services-section": "^0.1.7",
     "@red-cup-engineering/semiotic-content-address-system": "^0.1.7",
     "@red-cup-engineering/typed-content": "^0.1.0",
-    "@red-cup-engineering/game-engine": "0.1.0-dev.0"
+    "@red-cup-engineering/game-engine": "0.1.0-dev.0",
+    "@red-cup-engineering/parse-javascript-argv-service": "^0.3.0 || 0.3.1-dev.0"
   },
   "engines": {
     "node": ">=24"
