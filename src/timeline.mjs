@@ -1,79 +1,10 @@
-import { projectPublicActorPostsFromWire } from "@red-cup-engineering/activitypub-engineering-services-section/public-posts";
-export { PUBLIC } from "@red-cup-engineering/activitypub-engineering-services-section/as2";
+import { openPublicActor } from "@red-cup-engineering/activitypub-engineering-services-section/public-actor";
 
 const actorPattern = /^[a-z0-9][a-z0-9._-]*$/u;
-const identity = value => typeof value === "string" ? value : value?.id;
 
-/** Read the original source-owned public outbox; protocol interpretation is upstream. */
-export async function readPublicTimelineAtSource({ origin, provider, identifiers, limit = 40 } = {}) {
-  const base = new URL(origin);
-  if (base.href !== base.origin + "/" ||
-      (base.protocol !== "https:" &&
-       !(base.protocol === "http:" && ["localhost", "127.0.0.1", "[::1]"].includes(base.hostname)))) {
-    throw new TypeError("MOOSE needs one canonical HTTPS origin (or loopback HTTP)");
-  }
-  if (!provider || typeof provider.fetch !== "function" || provider.origin !== base.origin) {
-    throw new TypeError("MOOSE reads the original same-origin ActivityPub provider");
-  }
-  if (!Array.isArray(identifiers) || identifiers.length < 1 || identifiers.length > 100 ||
-      identifiers.some(id => typeof id !== "string" || !actorPattern.test(id)) ||
-      new Set(identifiers).size !== identifiers.length) {
-    throw new TypeError("MOOSE needs distinct source-owned actor identifiers");
-  }
-  if (!Number.isSafeInteger(limit) || limit < 1 || limit > 100) {
-    throw new RangeError("MOOSE timeline limit must be between 1 and 100");
-  }
-  const request = async address => {
-    const result = await provider.fetch(new Request(address, { headers: { accept: "application/activity+json" } }));
-    if (!result.ok) throw new Error("MOOSE original public outbox refused with status " + result.status);
-    return result.json();
-  };
-  const entries = await Promise.all(identifiers.map(async identifier => {
-    // The original identity provider, not a MOOSE-maintained list, decides
-    // whether a once-provisioned actor still exists. A retired actor's 404
-    // must not take down the public timeline of every remaining actor.
-    if (typeof provider.resolveActor === "function" &&
-        await provider.resolveActor(identifier) == null) return [];
-    const outbox = new URL("/actors/" + identifier + "/outbox", base);
-    const collection = await request(outbox.href);
-    if (collection.type !== "OrderedCollection" || !Number.isSafeInteger(collection.totalItems) ||
-        collection.totalItems < 0) throw new TypeError("MOOSE received a malformed public outbox collection");
-    let items;
-    if (Array.isArray(collection.orderedItems)) {
-      items = collection.orderedItems;
-    } else if (collection.totalItems === 0) {
-      items = [];
-    } else {
-      const firstId = identity(collection.first);
-      if (typeof firstId !== "string") throw new TypeError("MOOSE outbox lacks the original first page");
-      const first = new URL(firstId);
-      // The original Fedify provider emits a cursor-only first-page URI.
-      // Keep its opaque cursor and the existing page=true representation.
-      const pages = first.searchParams.getAll("page");
-      const cursors = first.searchParams.getAll("cursor");
-      const validCursor = cursors.length === 1 && cursors[0] !== "";
-      const canonicalPage = pages.length === 1 && pages[0] === "true" &&
-        (cursors.length === 0 || validCursor);
-      const cursorOnly = pages.length === 0 && validCursor;
-      if (first.origin !== base.origin || first.pathname !== outbox.pathname ||
-          first.username || first.password || first.hash ||
-          (!canonicalPage && !cursorOnly) ||
-          [...first.searchParams.keys()].some(key => !["page", "cursor"].includes(key))) {
-        throw new TypeError("MOOSE refuses a foreign or noncanonical outbox cursor");
-      }
-      const page = await request(first.href);
-      if (page.type !== "OrderedCollectionPage" || !Array.isArray(page.orderedItems)) {
-        throw new TypeError("MOOSE received a malformed public outbox page");
-      }
-      items = page.orderedItems;
-    }
-    if (items.length > 100) throw new TypeError("MOOSE public outbox exceeds a bounded page");
-    const actor = new URL("/actors/" + identifier, base).href;
-    return (await projectPublicActorPostsFromWire(items, { actor, origin: base.origin }))
-      .map(post => Object.freeze({ ...post, identifier }));
-  }));
+function orderPosts(posts, limit) {
   const unique = new Map();
-  for (const post of entries.flat()) unique.set(post.id, post);
+  for (const post of posts) unique.set(post.id, post);
   return Object.freeze([...unique.values()]
     // Time is optional. Undated authoring is not assigned a fictional timestamp.
     .sort((a, b) => a.published && b.published
@@ -82,68 +13,53 @@ export async function readPublicTimelineAtSource({ origin, provider, identifiers
     .slice(0, limit));
 }
 
-
-/**
- * The single MOOSE projection of a source-owned ActivityPub provider.
- *
- * The same readers serve a standalone MOOSE node and a FeltOS-hosted social
- * application. No second actor registry, cached feed, private inbox reader,
- * or downstream assumption about credentials is created here.
- */
-export function createMoosePublicReaders({ origin, provider } = {}) {
-  if (typeof origin !== "string" || provider?.origin !== origin ||
-      !Array.isArray(provider.identifiers) || typeof provider.resolveActor !== "function" ||
-      typeof provider.fetch !== "function") {
-    throw new TypeError("MOOSE requires the installed original actor and public outbox readers");
-  }
-  const readPublicActor = async ({ identifier } = {}) => {
-    if (typeof identifier !== "string" || !provider.identifiers.includes(identifier)) return null;
-    const actor = await provider.resolveActor(identifier);
-    return actor == null ? null : Object.freeze({
-      identifier, name: actor.actorName, summary: actor.summary,
-    });
-  };
-  // A public profile's own posts must come from that Actor's original
-  // outbox, never by filtering a globally truncated /social feed.
-  const readPublicActorTimeline = async ({ identifier, maxItems = 64 } = {}) => {
-    if (typeof identifier !== "string" || !provider.identifiers.includes(identifier)) return null;
-    if (!Number.isSafeInteger(maxItems) || maxItems < 1 || maxItems > 64) {
-      throw new TypeError("MOOSE actor source read must be bounded to 1..64 public posts");
-    }
-    if (await readPublicActor({ identifier }) === null) return null;
-    const posts = await readPublicTimelineAtSource({
-      origin, provider, identifiers: [identifier], limit: maxItems + 1,
-    });
-    const visible = posts.slice(0, maxItems);
-    return Object.freeze({
-      items: Object.freeze(visible.map(post => Object.freeze({
-        id: post.id, author: post.identifier, visibility: "public",
-        summary: `${post.type}: ${post.content.slice(0, 4070)}`,
-      }))),
-      hasMore: posts.length > maxItems,
-      // hasMore=false means no confirmed further post in the sampled page,
-      // NOT verified archive exhaustion. ActivityPub outboxes may paginate.
-      coverage: "bounded-source-outbox",
-      sourceOutbox: new URL("/actors/" + identifier + "/outbox", origin).href,
-    });
-  };
-  const readPublicTimeline = async ({ maxItems = 64 } = {}) => {
-    if (!Number.isSafeInteger(maxItems) || maxItems < 1 || maxItems > 64) {
-      throw new TypeError("MOOSE source read must be bounded to 1..64 public posts");
-    }
-    const posts = await readPublicTimelineAtSource({
-      origin, provider, identifiers: provider.identifiers, limit: maxItems + 1,
-    });
-    return Object.freeze({
-      items: Object.freeze(posts.slice(0, maxItems).map(post => Object.freeze({
-        id: post.id, author: post.identifier, visibility: "public",
-        summary: `${post.type}: ${post.content.slice(0, 4070)}`,
-      }))),
-      hasMore: posts.length > maxItems,
-      coverage: "bounded-source-outboxes",
-    });
-  };
-  return Object.freeze({ readPublicActor, readPublicTimeline, readPublicActorTimeline });
+function displayLimit(maxItems) {
+  if (!Number.isSafeInteger(maxItems) || maxItems < 1 || maxItems > 64)
+    throw new TypeError("MOOSE source read must be bounded to 1..64 public posts");
 }
 
-export const readPublicTimeline = readPublicTimelineAtSource;
+function publicReadout(posts, maxItems, scope) {
+  const items = posts.slice(0, maxItems).map(post => Object.freeze({
+    id: post.id, author: post.identifier, visibility: "public",
+    ...(post.permalink ? { permalink: post.permalink } : {}),
+    summary: `${post.type}: ${post.content.slice(0, 4070)}`,
+  }));
+  return Object.freeze({ items: Object.freeze(items), hasMore: posts.length > maxItems, ...scope });
+}
+
+/** Compose MOOSE display records from anonymous source actors and their advertised outboxes. */
+export function createMoosePublicReaders({ origin, provider } = {}) {
+  if (typeof origin !== "string" || provider?.origin !== origin || typeof provider.fetch !== "function" ||
+      !Array.isArray(provider.identifiers) || provider.identifiers.length > 100 ||
+      provider.identifiers.some(id => typeof id !== "string" || !actorPattern.test(id)) ||
+      new Set(provider.identifiers).size !== provider.identifiers.length)
+    throw new TypeError("MOOSE needs its source provider and distinct local actor identifiers");
+
+  async function readActor(identifier, maxItems) {
+    const actor = await openPublicActor({ provider, identifier });
+    if (actor === null) return null;
+    const posts = await actor.readPosts({ minimumPosts: maxItems + 1 });
+    return { actor, posts: posts.map(post => ({ ...post, identifier })) };
+  }
+
+  async function readPublicProfile({ identifier, maxItems = 64 } = {}) {
+    if (!provider.identifiers.includes(identifier)) return null;
+    displayLimit(maxItems);
+    const reading = await readActor(identifier, maxItems);
+    if (reading === null) return null;
+    const { actor, posts } = reading;
+    return Object.freeze({
+      identifier, id: actor.id, name: actor.name, summary: actor.summary, outbox: actor.outbox,
+      timeline: publicReadout(orderPosts(posts, maxItems + 1), maxItems, { coverage: "bounded-source-outbox" }),
+    });
+  }
+
+  async function readPublicTimeline({ maxItems = 64 } = {}) {
+    displayLimit(maxItems);
+    const readings = await Promise.all(provider.identifiers.map(id => readActor(id, maxItems)));
+    const posts = readings.flatMap(reading => reading?.posts ?? []);
+    return publicReadout(orderPosts(posts, maxItems + 1), maxItems, { coverage: "bounded-source-outboxes" });
+  }
+
+  return Object.freeze({ readPublicProfile, readPublicTimeline });
+}

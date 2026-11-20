@@ -3,8 +3,8 @@ import SignCell from "./world-cell.mjs";
 import { coincides, coincidenceKey, retainedCarrier } from "@red-cup-engineering/semiotic-content-address-system";
 const { cell, cellSet, certainObject, knowledgeReading } = SignCell;
 import { isReading, sidesOfReading } from "@red-cup-engineering/metrologic/four";
-import { captureHistoryReads, createHistory, validateHistory, observeHistory, replayHistory, continueHistory, historySection, historySubjects, historyHeads, queryHistory, withFunctionalPredicates } from "./world-history.mjs";
-import { deriveWorldReading, isWorldReading, rebindWorldReading } from "./world-reading.mjs";
+import { captureHistoryReads, createHistory, validateHistory, observeHistory, replayHistory, continueHistory, historySection, historySubjects, historyHeads, historySize, queryHistory, withFunctionalPredicates } from "./world-history.mjs";
+import { deriveWorldReading, isWorldReading, rebindWorldReading, worldReadingOccurrenceFrameIsCurrent } from "./world-reading.mjs";
 import { bearing, bodyCentroid, boxDistance, contactOf, distance, prismContains, regionBounds, regionContains, segmentThroughPrism } from "./geometry.mjs";
 
 // A reading is explicit read-only context; observation and persistence still require raw history.
@@ -387,6 +387,149 @@ export function earshotOf(world, speaker, listeners) {
     const at = worldPose(world, listener);
     return at !== null && distance(from.position, at.position) <= range;
   }));
+}
+
+export const WORLD_SPEECH_GROUP = "world-speech-group";
+export const WORLD_SPEECH_FROM = "world-speech-from";
+export const WORLD_SPEECH_TO = "world-speech-to";
+const SPEECH_OCCURRENCE = "world-speech-occurrence";
+const HEARD_IN = "world-speech-heard-in";
+const speechFields = ["activityId", "noteId", "actor", "recipient", "dimension", "world", "content"];
+
+function isSpeechRecord(value) {
+  return value !== null && typeof value === "object" && Object.keys(value).length === speechFields.length &&
+    speechFields.every(field => typeof value[field] === "string" && value[field].length);
+}
+
+function roomTerritory(reading, room) {
+  if (!["area", "room"].includes(certainValue(reading, room, "kind")))
+    throw new TypeError("World speech requires a current room or Area");
+  const territory = territoryOf(reading, room);
+  if (!territory.world || !territory.dimension ||
+      territory.path.indexOf(territory.world) >= territory.path.indexOf(territory.dimension))
+    throw new TypeError("The speech room requires its original enclosing World and Dimension");
+  return territory;
+}
+
+/** Resolve the addressed Group from a current unopposed relation in this World. */
+export function worldSpeechRoom(reading, groupIri) {
+  if (isWorldReading(reading) && !worldReadingOccurrenceFrameIsCurrent(reading))
+    throw new TypeError("World speech requires the current evidence horizon");
+  if (typeof groupIri !== "string" || !groupIri.length) throw new TypeError("World speech requires a Group IRI");
+  const claims = queryWorld(reading, { predicate: WORLD_SPEECH_GROUP, object: groupIri });
+  if (!claims.length) return null;
+  const rooms = claims.filter(at => at.for.length);
+  if (rooms.length !== 1 || rooms[0].against.length ||
+      certainValue(reading, rooms[0].subject, WORLD_SPEECH_GROUP) !== groupIri)
+    throw new TypeError("The addressed Group must belong to exactly one current speech room");
+  const room = rooms[0].subject;
+  roomTerritory(reading, room);
+  return room;
+}
+
+function requireSpeechGrant(reading, room, predicate, object) {
+  const [grant] = queryWorld(reading, { subject: room, predicate, object });
+  if (!grant?.for.length || grant.against.length)
+    throw new TypeError("World speech lacks an unopposed " + predicate + " grant for this room");
+}
+
+/** The local room owner selects which remote actors and source Worlds can speak here. */
+export function admitWorldSpeech(reading, { actor, dimension, world, recipient }) {
+  const room = worldSpeechRoom(reading, recipient);
+  if (room === null) throw new TypeError("The addressed Group has no local speech room");
+  requireSpeechGrant(reading, room, WORLD_SPEECH_FROM, { actor, dimension, world });
+  return room;
+}
+
+/** An outgoing speaker can use only the destinations offered in their actual room. */
+export function worldSpeechSource(reading, player, recipient) {
+  const room = placeOf(reading, player);
+  const { dimension, world } = roomTerritory(reading, room);
+  const group = certainValue(reading, room, WORLD_SPEECH_GROUP);
+  if (typeof group !== "string" || worldSpeechRoom(reading, group) !== room)
+    throw new TypeError("The speaker's room requires its current Group");
+  requireSpeechGrant(reading, room, WORLD_SPEECH_TO, recipient);
+  return Object.freeze({ dimension, world, room, group });
+}
+
+/** Preserve the original utterance within the MUD's per-message budget. */
+export function worldSpeechText(content) {
+  if (typeof content !== "string" || !content.trim() || new TextEncoder().encode(content).byteLength > 4096)
+    throw new TypeError("World speech requires 1 to 4096 UTF-8 bytes of nonblank text");
+  return content;
+}
+
+/** Terminal presentation keeps control characters out of the player's command stream. */
+export function renderWorldSpeech(speech) {
+  return `${speech.actor} says, “${speech.content.replace(/\p{Cc}/gu, " ")}”`;
+}
+
+function firstSpeechWitness(body, place, id) {
+  let position = Infinity;
+  for (const witness of place.for) {
+    if (witness?.source === id && Array.isArray(witness.parents) &&
+        Number.isSafeInteger(witness.position) && witness.position >= 0 &&
+        body.for.some(original => coincides(original, witness))) {
+      position = Math.min(position, witness.position);
+    }
+  }
+  return position;
+}
+
+/** The immutable input is the protocol owner's authenticated, addressed speech occurrence. */
+export function receiveWorldSpeech(world, occurrence, { room, reading = world }) {
+  validateWorld(world);
+  if (reading !== world && (!isWorldReading(reading) || reading.carrier !== world))
+    throw new TypeError("Speech admission requires a reading of the actual receiving World");
+  const speech = retainedCarrier(occurrence);
+  if (!isSpeechRecord(speech))
+    throw new TypeError("World speech requires the complete addressed occurrence");
+  worldSpeechText(speech.content);
+  if (admitWorldSpeech(reading, speech) !== room)
+    throw new TypeError("The addressed speech belongs to another room");
+
+  const id = speech.activityId;
+  const body = sectionOf(world, id, SPEECH_OCCURRENCE);
+  const places = sectionOf(world, id, HEARD_IN);
+  if (body.length || places.length) {
+    if (!coincides(certainObject(body), speech) || certainObject(places) !== room)
+      throw new TypeError("The original speech activity already names different or opposed World evidence");
+    const statement = body.find(row => coincides(row.object, speech));
+    const place = places.find(row => row.object === room);
+    if (!Number.isFinite(firstSpeechWitness(statement, place, id)))
+      throw new TypeError("The original speech has no common occurrence witness");
+    return Object.freeze({ world, appended: false });
+  }
+
+  // The activity identifies the performed utterance. Its local witness records
+  // the original causal frontier and its size for ordered room presentation.
+  const witness = { source: id, parents: historyHeads(world), position: historySize(world) };
+  const evidence = { for: [witness], against: [] };
+  const next = observeHistory(world, [
+    cell(id, SPEECH_OCCURRENCE, speech, evidence),
+    cell(id, HEARD_IN, room, evidence),
+  ], { source: id });
+  return Object.freeze({ world: next, appended: true });
+}
+
+/** Read only occurrences and room membership visible together in the caller's reading. */
+export function roomSpeech(reading, room, { limit = 20 } = {}) {
+  if (!Number.isSafeInteger(limit) || limit < 1 || limit > 20)
+    throw new RangeError("A room reading admits 1 to 20 utterances");
+  const heard = [];
+  if (["area", "room"].includes(certainValue(reading, room, "kind"))) {
+    for (const at of queryWorld(reading, { predicate: HEARD_IN, object: room })) {
+      if (!at.for.length || at.against.length || certainValue(reading, at.subject, HEARD_IN) !== room) continue;
+      const statements = sectionOf(reading, at.subject, SPEECH_OCCURRENCE);
+      const body = certainObject(statements);
+      if (!isSpeechRecord(body) || body.activityId !== at.subject) continue;
+      const statement = statements.find(row => coincides(row.object, body));
+      const position = firstSpeechWitness(statement, at, at.subject);
+      if (Number.isFinite(position)) heard.push({ body, position });
+    }
+  }
+  heard.sort((a, b) => a.position - b.position || compareText(a.body.activityId, b.body.activityId));
+  return Object.freeze(heard.slice(-limit).map(({ body }) => body));
 }
 
 /** Who sees a gesture: everyone in the actor's place, and every listener with the actor in sight. */

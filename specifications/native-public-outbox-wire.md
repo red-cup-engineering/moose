@@ -2,12 +2,18 @@
 
 ## Requirement
 
-The Leader requires useful upstream fixes to be published and received in Bare Cedar Fog. The original local-node acceptance test retains a public post and serves its Note, but its human timeline omits the post because Fedify emits a compact JSON-LD Public IRI. MOOSE shall interpret the original provider’s wire document through the context-aware ActivityPub reader before projecting the public timeline. It shall preserve original custody, actor/object identity, latest-update/delete behavior and public-read admission.
+The machine outbox, served object and human timeline must agree on which post is current and public, including after an edit or restart. The original activity and source IDs stay in provider custody.
 
 ## Design
 
-Use projectPublicActorPostsFromWire from the independently owned ActivityPub package. The existing async timeline reader awaits that producer. Keep the synchronous canonical projector at its existing upstream interface. No local alias map, remote context fetching, second feed database or unconditional public addressing is introduced. An explicit context that rebinds a prefix retains its original meaning. Exact package selection must include the exported native wire reader.
+MOOSE opens the anonymous actor document through ActivityPub's `openPublicActor` and reads the outbox it advertises. The Modeled Actor Protocol (ActivityPub++) delegates collection traversal, JSON-LD interpretation, current-revision selection, and registered object routes to the ActivityPub provider. MOOSE selects its local actors and orders and limits their posts for presentation. A 404 or 410 actor contributes no posts. An invalid continuation fails the reading.
+
+## Public profile and timeline
+
+A profile read obtains the actor description and posts from one anonymous actor lookup and its declared outbox. The site timeline reads the admitted actors' outboxes. Both request one more visible post than they display so that `hasMore` can report confirmed additional results. Reading can stop at the provider's five-page sampling limit. The human page links to the actor's original public outbox. [ActivityPub outbox](https://www.w3.org/TR/activitypub/#outbox) and [Activity Streams paging](https://www.w3.org/TR/activitystreams-core/#paging)
 
 ## Receiving
 
 Keep the original native local-node test: publish, protocol Note read, human HTML, edit, restart, delete and refusal. Keep bounded cursor tests and public/foreign/private actor refusals. Qualify the actual installed package and FeltOS consumer before host receiving.
+
+The [Node acceptance specification](../specification/node-acceptance.json) binds the MOOSE reader refusal and human-page example to their native tests.

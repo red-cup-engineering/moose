@@ -7,7 +7,7 @@ import { captureHistoryReads, historyHeads, historySize, historySection, mergeHi
 import Cell from "./world-cell.mjs";
 import { admitProposals } from "@red-cup-engineering/gaming/running/proposals";
 import { worldMethods, requirementFailures } from './actions.mjs';
-import { cells, certainValue, territoryOf, subjects, exitsOf, exitDestinationOf, regionOf, REGION, POSE, queryWorld } from './world.mjs';
+import { cells, certainValue, territoryOf, subjects, exitsOf, exitDestinationOf, regionOf, REGION, POSE, queryWorld, roomSpeech, renderWorldSpeech } from './world.mjs';
 import { admitGameWorld, defineGame, instantiateGame } from "./game.mjs";
 import { gamePlaceIsCurrent } from "./game-world.mjs";
 import { contentsOf, declareFunctional, earshotOf, isAffirmed, move, perceive, placeOf, tell, transferItem, value, values, witnessesOf } from "./world.mjs";
@@ -109,7 +109,7 @@ const staleReading = (engine, reading) => Object.freeze({
 const ACTOR_IDENTIFIER = /^[a-z][a-z0-9]*(?:[-.:][a-z0-9]+)*$/u;
 
 const SELF_LOOK_TOKENS = Object.freeze(["me", "self"]);
-const CORE_COMMANDS = Object.freeze(["alias", "unalias", "history", "where", "worlds", "commands", "close", "drop", "emote", "examine", "exits", "get", "give", "go", "help", "if-place", "inventory", "look", "move", "open", "put", "say", "score", "skills", "stats", "take"]);
+const CORE_COMMANDS = Object.freeze(["alias", "unalias", "history", "where", "worlds", "commands", "close", "drop", "emote", "examine", "exits", "get", "give", "go", "help", "if-place", "inventory", "listen", "look", "move", "open", "put", "say", "score", "skills", "stats", "take"]);
 const DIRECTION_ALIASES = Object.freeze({ n: "north", s: "south", e: "east", w: "west", ne: "northeast", nw: "northwest", se: "southeast", sw: "southwest", u: "up", d: "down" });
 // A guarded turn is only a synchronous native, local MUD action. Capability
 // extension names and control-plane/federated verbs must never inherit local
@@ -136,6 +136,7 @@ const CORE_HELP = Object.freeze({
   help: "help [command] — show available commands or help for one command",
   "if-place": "if-place <exact-room-id> -- <native-command> — admit one original MUD action only if you are still in that room; does not fence external messages or Sessions",
   inventory: "inventory — list what you carry (short form: i)",
+  listen: "listen [1..20] — hear recent addressed speech in your current room",
   look: "look [thing] — examine the room, something visible, or yourself (look me / look self)",
   move: "move <exit> — travel through a visible exit",
   open: "open <container> — open an owned container",
@@ -154,6 +155,8 @@ const CONTROL_PLANE_HELP = Object.freeze({
   chat: "chat <message> — speak on the shared channel, crossing rooms (requires voice)",
   finger: "finger <name> — show a connected player's profile",
   login: "login <name> <password> — authenticate an existing account and gain voice",
+  "retry-speech": "retry-speech <activity-IRI> — retry delivery of your original addressed speech",
+  sayto: "sayto <world-group-IRI> <words> — speak to a Group offered by your room (registered account required)",
   message: "message <someone@instance> <words or {verb,input}> — address another actor (registered account required)",
   invoke: "invoke <world-method> <JSON input> — request the offered actor operation (registered account required)",
   messages: "messages [cursor] — read your retained actor inbox (registered account required)",
@@ -167,7 +170,7 @@ const CONTROL_PLANE_HELP = Object.freeze({
 function controlPlaneVerbsFor(world, actor) {
   const voiced = hasVoice(world, actor);
   return Object.keys(CONTROL_PLANE_HELP)
-    .filter((verb) => (verb === "register" || verb === "login" ? !voiced : verb === "message" || verb === "messages" || verb === "invoke" ? certainValue(world,actor,"role")===ROLE_REGISTERED : true))
+    .filter((verb) => (verb === "register" || verb === "login" ? !voiced : ["sayto", "retry-speech", "message", "messages", "invoke"].includes(verb) ? certainValue(world,actor,"role")===ROLE_REGISTERED : true))
     .sort(compareText);
 }
 
@@ -732,6 +735,16 @@ function execute(engine, intent, runtime, reading) {
     events.push(message(actor, actorSkills(view(), actor).length === 0
       ? "You have not practiced any skills yet."
       : `Skills: ${skillsSummaryLine(view(), actor)}`));
+  } else if (verb === "listen") {
+    const limit = argument === "" ? 3 : Number(argument);
+    if (!Number.isSafeInteger(limit) || limit < 1 || limit > 20) {
+      events.push(message(actor, "Use listen [1..20]."));
+    } else {
+      const heard = roomSpeech(view(), room, { limit });
+      if (!heard.length) events.push(message(actor, "You hear no addressed speech in this room."));
+      for (const speech of heard)
+        events.push(message(actor, renderWorldSpeech(speech), "speech"));
+    }
   } else if (verb === "look" || verb === "l" || verb === "examine" || verb === "x") {
     events.push(message(actor, argument.length === 0
       ? renderRoom(view(), actor)

@@ -2,20 +2,8 @@ name: MOOSE World tests
 
 on:
   pull_request:
-    paths:
-      - "src/**"
-      - "examples/native-world.mjs"
-      - "test/**"
-      - "package.json"
-      - ".github/workflows/world-tests.yml"
   push:
     branches: [main]
-    paths:
-      - "src/**"
-      - "examples/native-world.mjs"
-      - "test/**"
-      - "package.json"
-      - ".github/workflows/world-tests.yml"
   workflow_dispatch:
 
 permissions:
@@ -24,10 +12,7 @@ permissions:
 jobs:
   world:
     runs-on: ubuntu-latest
-    timeout-minutes: 6
-    env:
-      npm_config_registry: https://registry.561.group/
-      COREPACK_NPM_REGISTRY: https://registry.561.group/
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -35,16 +20,20 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: "24"
-      - name: Install the published World providers
+      - name: Install the MOOSE distribution and its declared suppliers
         run: |
-          shared_store="${LAGOON_PNPM_STORE_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/pnpm/store}"
-          mkdir -p "$shared_store"
-          store_mode=$(stat -c '%a' "$shared_store")
-          umask "$(printf '%03o' "$((0777 & ~0$store_mode))")"
-          corepack pnpm@11.28.5 --dir test/providers install --frozen-lockfile \ --store-dir="$shared_store" --config.enable-global-virtual-store=true --config.package-import-method=hardlink --config.registry=https://registry.561.group/
-            --config.registry=https://registry.561.group/ \
-            --config.@red-cup-engineering:registry=https://registry.561.group/
-      - name: Test checked-out MOOSE source
+          consumer="$RUNNER_TEMP/moose-consumer"
+          mkdir "$consumer"
+          archive=$(npm pack --ignore-scripts --silent --pack-destination "$consumer")
+          protocol=$(node -p 'require("./package.json").peerDependencies["@red-cup-engineering/activitypub-engineering-services-section"]')
+          cp .npmrc "$consumer/.npmrc"
+          cd "$consumer"
+          echo '{"private":true,"type":"module"}' > package.json
+          npm install --ignore-scripts --no-audit --no-fund --registry=https://registry.npmjs.org \
+            "./$archive" "@red-cup-engineering/activitypub-engineering-services-section@$protocol"
+      - name: Exercise the installed World, public social views and recovery
         run: |
-          ln -s test/providers/node_modules node_modules
+          cd "$RUNNER_TEMP/moose-consumer/node_modules/@red-cup-engineering/moose"
           npm test
+          npm run test:consumer
+          npm run demo:world
