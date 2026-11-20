@@ -84,6 +84,14 @@ branches join through native SignCraft history. `snapshotEngine` and
 `restoreEngine` retain actor state, the causal history and queued commands.
 FeltOS owns durable storage and commits the resulting engine state.
 
+In an addressed room, a registered player can use `sayto <world-group-IRI> <words>`
+to speak to another World. The receiving room admits the signed speaker and
+source territory under its current grants. Players there can use `listen` to
+hear the latest three utterances or `listen 10` to read a longer history.
+`retry-speech <activity-IRI>` delivers the same utterance again after a
+transport failure. Each admitted activity retains one occurrence through
+restart. [World speech and room grants](specifications/addressed-world-speech.md)
+
 `closeWorld` from `./predication` accepts original SignChain rules and delegates
 closure to SignCraft. Native settlement retains rule and premise witnesses,
 adds changed Cells in one revision, and preserves history identity when nothing
@@ -108,13 +116,13 @@ package-registry read permission.
 | [`signcraft`](https://github.com/red-cup-engineering/signcraft) | `@red-cup-engineering/signcraft` | Thing identity, witnessed relations, causal history, Cells and native inference. | Direct runtime owner of the complete World family. The `./world-cell` entry uses the SignCell instance exported by SignCraft's history module. |
 | [`gaming`](https://github.com/red-cup-engineering/gaming) | `@red-cup-engineering/gaming` | Concurrent proposal admission. | Runtime dependency used by the original MUD engine. |
 | [`activitypub-server`](https://github.com/red-cup-engineering/activitypub-server) | `@red-cup-engineering/activitypub-server` | The managed ActivityPub multi-site host. | Optional peer, for `.` and `serve-moose`. |
-| [`activitypub-engineering-services-section`](https://github.com/red-cup-engineering/activitypub-engineering-services-section) | `@red-cup-engineering/activitypub-services-section` | The ActivityPub services section: AS2, signed federation, journal custody, public posts. | Optional peer, for `./public-readers`, `./local-node` and `.`. |
+| [`activitypub-engineering-services-section`](https://github.com/red-cup-engineering/activitypub-engineering-services-section) | `@red-cup-engineering/activitypub-engineering-services-section` | The ActivityPub services section: AS2, signed federation, journal custody, public posts. | Optional peer, for `./fetch`, `./public-readers`, `./local-node` and `.`. |
 | [`computer-data-engineering-services-section`](https://github.com/red-cup-engineering/computer-data-engineering-services-section) | `@red-cup-engineering/computer-data-engineering-services-section` | The data services section. | Runtime dependency (`./four`). |
 
 Runtime dependencies include Living Web Server, CAIRN, SignCraft, Gaming and
 the original data, content-address, JSON, cryptographic and URI suppliers used
-by the MUD core. Optional peers are ActivityPub Server, ActivityPub Services,
-JavaScript File Services, `@fedify/fedify` and `@fedify/vocab`.
+by the MUD core. Optional peers are ActivityPub Server, ActivityPub Services and
+JavaScript File Services.
 [`package.json`](package.json) contains the exact selections.
 
 Where each is mounted in the Group's repository tree:
@@ -138,7 +146,7 @@ All Group packages are installed from the house registry. Point the
 npm install @red-cup-engineering/moose --registry=https://registry.561.group
 ```
 
-World CI installs its locked providers from this registry without credentials.
+World CI installs the packed MOOSE distribution and its declared suppliers in a clean consumer directory, then exercises the original World and public-site entry points.
 
 ### Known consumers
 
@@ -171,10 +179,10 @@ Consumer tests for MOOSE live in the consumer's repository, not here.
 | `./world-cell` | Default export: SignCraft's complete original Cell namespace | SignCraft's static `historyCells` export. |
 | `./geometry` | Polygon, prism, region and sight geometry | Nothing. |
 | `./world-gateway` | `createWorldGateway`, `admitWorldGatewayCall`, `worldGatewayExecution`, … | A native `prepare`/`send`/`recover`/`result` port. |
-| `./fetch` | `createMooseSite`, `createMooseApplication` | An already-built ActivityPub provider and readers. No Node listener. |
+| `./fetch` | `createMooseSite`, `createMooseApplication` | An installed ActivityPub provider and a public-read authority. |
 | `./source-application` | `createMooseApplication` | Living Web Server only. |
-| `./public-readers` | `createMoosePublicReaders`, `readPublicTimelineAtSource` | Optional peer ActivityPub Services. |
-| `.` | `createMooseSite`, `createMooseApplication`, `createMoosePublicReaders`, `createMooseEngine`, `serveMooseSites` | Optional peers ActivityPub Server and Services, and `@fedify/fedify` / `@fedify/vocab`. |
+| `./public-readers` | `createMoosePublicReaders` | Optional peer ActivityPub Services. |
+| `.` | `createMooseSite`, `createMooseApplication`, `createMoosePublicReaders`, `createMooseEngine`, `serveMooseSites` | Optional peers ActivityPub Server and ActivityPub Services. |
 | `./local-node` | `commissionLocalMooseSite` | Optional peer ActivityPub Services; original private-key and journal custody. |
 | `./cairn-pages` | `createMooseCairnPage` | A host-bound CAIRN `cairn.fars/v1` reader. |
 | `./cairn-file-claims` | CAIRN's finite file-claim functions, unwrapped | The host's finite selection and reader policies. |
@@ -251,22 +259,15 @@ kept so durable request identity is unchanged.
 
 ## Social sites
 
-`createMoosePublicReaders({origin, provider})` reads current Actor descriptions
-and effective public Notes and Articles from the site's signed provider. Edits
-and deletes show through; superseded Create/Update/Delete events do not.
+`createMoosePublicReaders({origin, provider})` exposes `readPublicProfile({identifier, maxItems})` and `readPublicTimeline({maxItems})`. A profile combines the anonymous actor document with its current posts. Both views follow the outbox declared by each actor. The ActivityPub provider identifies the public object routes it serves.
 
-`createMooseSite({origin, provider, readPublicTimeline, readPublicActor,
-readPublicActorTimeline, authorizePublicRead, basePath, pages, publicSite,
-tufteTheme, readPublicResources, kv, queue, release, custodyRoot})` returns the
-Living Web Fetch application plus exact, public, read-only route declarations
-for an existing host. It creates no listener, key store or social database.
+`createMooseSite({origin, provider, authorizePublicRead, basePath, pages, publicSite, tufteTheme, readPublicResources, kv, queue, release, custodyRoot})` constructs those readers and returns the Living Web Fetch application and exact public routes. Standalone commissioning obtains the journal, queue and release operation from its ActivityPub provider. A FeltOS host passes its running provider and its public-read authority.
 
 - `/` (or `basePath`) is a bounded current reading of the public timeline.
 - `/@identifier/` is the human homepage of an Actor, on every MOOSE origin, with
   a bounded reading of that Actor's own outbox. `/people/:identifier` is the
   standalone view. The signed machine face stays `/actors/:identifier`.
-- `hasMore: false` means the sampled page had no confirmed further post, not
-  that the archive is exhausted.
+- The ActivityPub reader follows the native outbox until it finds enough public posts or reaches five pages. `hasMore` counts additional visible posts confirmed in that sample.
 
 `createMooseEngine({sites})` currently delegates to ActivityPub Server's
 `createActivityPubMultiSiteServerEngine`. `serveMooseSites({sites, trustProxy,
@@ -287,9 +288,7 @@ current dependency graph, and installed host and downstream receiving. The
 preserved implementation and this documentation do not establish adoption or
 a live deployment.
 
-The ActivityPub actor dispatcher and Fedify key dispatcher must load the same
-physical `@fedify/vocab` module; two copies of the same version make Actor
-endpoints fail with HTTP 500, so MOOSE pins the Fedify peers exactly.
+ActivityPub Engineering owns Fedify and its vocabulary classes. MOOSE receives public actor documents and post records through that package. The installed consumer example exercises the actor and key dispatchers together.
 
 ### Section homes, themes and resource inventories
 
@@ -361,26 +360,23 @@ has not yet moved.
 
 ## Testing
 
+With the declared providers installed, run `npm test` for source behavior and
+`npm run test:consumer` for the public package examples. In the Bare Cedar Fog
+checkout, set `LAGOON` to the colony's `apps/lagoon` directory and use the
+checkout resolver for the development editions:
+
 ```sh
-npm install --registry=https://registry.561.group
+export npm_config_node_options="--experimental-import-meta-resolve --import=$LAGOON/src/resolve-checkouts.mjs"
 npm test
+npm run test:consumer
+npm run demo:world
 ```
 
-`npm run test:pack` independently checks npm's actual offline dry-run archive: it
-requires every exported entry and CLI file, original source terms, and exactly
-the declared packaged receiving tests. Development-only test sources must stay
-out of the published archive; the check itself is source-only.
-
-CI ([`fetch-dependency.yml`](.github/workflows/fetch-dependency.yml)) runs on
-every pull request and on `main`: the dependency-free source contract
-(Fetch boundary, section site, resource inventory and native route suites), the
-World gateway and World history suites with their exact suppliers, and the
-whole suite on a clean install of the declared provider graph.
-
-`npm run test:world` receives original Thing evidence, current action premises,
-native rule settlement, multi-user commands and durable pending-command recovery.
-The native-world CI job also runs the original engine behavior and occurrence
-admission regressions against the same declared semantic suppliers.
+The consumer examples exercise the public timeline, actor homepage and a
+commissioned node's publication, restart and deletion. For an installed-package
+check, run the examples shipped in the tarball from a clean consumer project
+with the declared providers. The named obligations identify the governing
+clause for each observation. [Acceptance specification](specification/node-acceptance.json)
 
 ## Specifications
 
@@ -396,6 +392,3 @@ Source tests do not establish a deployed Dimension, cross-Dimension federation
 between independent hosts, or parity with Fediverse incumbents; those are
 received separately, and MOOSE must meet and then beat those incumbents in
 exercised social, moderation, identity, migration and operating workflows.
-
-The package manifest describes MOOSE's published dependencies. The World test
-fixture's lockfile records the providers installed by CI.

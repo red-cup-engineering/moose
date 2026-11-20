@@ -1,8 +1,5 @@
-import { createFlatfileActivityPubRuntime } from "@red-cup-engineering/activitypub-engineering-services-section/flatfile-runtime";
-import { createActivityPubJournalCustody } from "@red-cup-engineering/activitypub-engineering-services-section/journal-custody";
 import { createLocalActivityPubProvider } from "@red-cup-engineering/activitypub-engineering-services-section/local-server";
 import { createMooseSite } from "./fetch.mjs";
-import { createMoosePublicReaders } from "./timeline.mjs";
 
 /**
  * Commission one real source-owned local MOOSE node. Keys, Fedify protocol KV,
@@ -24,34 +21,30 @@ export async function commissionLocalMooseSite({
     throw new TypeError("MOOSE onActivity must be an explicit receiver");
   }
   const configured = { ...environment, ACTIVITYPUB_ORIGIN: origin };
-  const runtime = createFlatfileActivityPubRuntime({ environment: configured, stateDirectory });
-  const custody = createActivityPubJournalCustody({ stateDirectory: runtime.stateDirectory });
-  let local;
+  const local = await createLocalActivityPubProvider({
+    environment: configured, stateDirectory, origin,
+    ...(actors === undefined ? {} : { actors }),
+    manuallyStartQueue: true,
+    // Fedify calls the customer only AFTER signed arrival verification.
+    // Follow/Undo use the original provider's signed social machinery.
+    onActivity: onActivity ?? (async arrival => {
+      // Fedify has already checked sender proofs and retained the arrival.
+      // Accept/Reject are social responses to our outbound Follow, not
+      // enterprise decisions, invitations to spend, or capability grants.
+      if (["Follow", "Undo", "Accept", "Reject"].includes(arrival.jsonLd?.type)) return;
+      throw new TypeError("MOOSE has no commissioned workflow for this inbound activity");
+    }),
+  });
   try {
-    local = await createLocalActivityPubProvider({
-      environment: configured, runtime, custody, origin,
-      ...(actors === undefined ? {} : { actors }),
-      manuallyStartQueue: true,
-      // Fedify calls the customer only AFTER signed arrival verification.
-      // Follow/Undo use the original provider's signed social machinery.
-      onActivity: onActivity ?? (async arrival => {
-        // Fedify has already checked sender proofs and retained the arrival.
-        // Accept/Reject are social responses to our outbound Follow, not
-        // enterprise decisions, invitations to spend, or capability grants.
-        if (["Follow", "Undo", "Accept", "Reject"].includes(arrival.jsonLd?.type)) return;
-        throw new TypeError("MOOSE has no commissioned workflow for this inbound activity");
-      }),
-    });
     if (local.provider.queueStartup !== "manual" ||
         !local.provider.actorTypes?.includes("Group")) {
       throw new TypeError("MOOSE requires a Group-capable Fedify provider with one manually owned queue");
     }
-    const { readPublicActor, readPublicTimeline, readPublicActorTimeline } = createMoosePublicReaders({ origin, provider: local.provider });
     const site = createMooseSite({
       origin, provider: local.provider,
-      kv: custody.kv, queue: runtime.queue, release: () => local.close(),
-      custodyRoot: runtime.stateDirectory,
-      readPublicTimeline, readPublicActor, readPublicActorTimeline, authorizePublicRead,
+      kv: local.kv, queue: local.queue, release: local.close,
+      custodyRoot: local.custodyRoot,
+      authorizePublicRead,
     });
     return Object.freeze({
       site,
@@ -62,7 +55,7 @@ export async function commissionLocalMooseSite({
       ...(local.actorBearerTokenPaths === undefined ? {} : { actorBearerTokenPaths: local.actorBearerTokenPaths }),
     });
   } catch (error) {
-    try { await local?.close(); } finally { runtime.close?.(); }
+    await local.close();
     throw error;
   }
 }
