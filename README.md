@@ -109,10 +109,9 @@ package-registry read permission.
 | [`gaming`](https://github.com/red-cup-engineering/gaming) | `@red-cup-engineering/gaming` | Concurrent proposal admission. | Runtime dependency used by the original MUD engine. |
 | [`activitypub-server`](https://github.com/red-cup-engineering/activitypub-server) | `@red-cup-engineering/activitypub-server` | The managed ActivityPub multi-site host. | Optional peer, for `.` and `serve-moose`. |
 | [`activitypub-engineering-services-section`](https://github.com/red-cup-engineering/activitypub-engineering-services-section) | `@red-cup-engineering/activitypub-services-section` | The ActivityPub services section: AS2, signed federation, journal custody, public posts. | Optional peer, for `./public-readers`, `./local-node` and `.`. |
-| [`computer-data-engineering-services-section`](https://github.com/red-cup-engineering/computer-data-engineering-services-section) | `@red-cup-engineering/computer-data-engineering-services-section` | The data services section. | Runtime dependency (`./four`). |
 
 Runtime dependencies include Living Web Server, CAIRN, SignCraft, Gaming and
-the original data, content-address, JSON, cryptographic and URI suppliers used
+the content-address, JSON, cryptographic and URI packages used
 by the MUD core. Optional peers are ActivityPub Server, ActivityPub Services,
 JavaScript File Services, `@fedify/fedify` and `@fedify/vocab`.
 [`package.json`](package.json) contains the exact selections.

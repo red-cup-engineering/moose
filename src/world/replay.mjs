@@ -45,7 +45,7 @@ export async function replay(log, { subjectsOf, snapOf, runTick, totalTicks, onT
   await replayEventStream(log.filter((record) => Number.isInteger(record.tick) && record.tick >= 1 && record.tick <= totalTicks), {
     totalSteps: totalTicks,
     stepOf: (record) => record.tick,
-    valueOf: (record) => ({ actorId: record.actorId, kind: record.kind, args: record.args }),
+    valueOf: (record) => ({ actorId: record.actorId, kind: record.kind, args: structuredClone(record.args) }),
     apply: async (tick, intents) => {
       const result = (await runTick(tick, intents)) ?? {};
       await snapshot.resettle(result.dirty ?? [], tick);

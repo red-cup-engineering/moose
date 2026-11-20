@@ -28,6 +28,7 @@ import { hello, snapshot as snapshotMsg, delta as deltaMsg, MSG } from "./wire.m
 import { createIntentLog } from "./intent-log.mjs";
 import { createResumeTokens, createRingBuffer } from "./resume.mjs";
 import { replay, stateHash, verifyRoomHistory } from "./replay.mjs";
+import { canonicalizeJson } from "@red-cup-engineering/json-engine/canonical-json";
 import { randomBytes } from "node:crypto";
 
 const HOST = "@host"; // the actor a host intent is bound to; no connection can be bound to it
@@ -367,6 +368,7 @@ export function createRoom({
     return tickOnce();
   }
 
+  let settlingProjection;
   async function tickOnce() {
     if (running) { // previous tick still in flight: coalesce, do not overlap (tick-driver.mjs's
       if (admitOnArrival) again = true; // own overrun-guard discipline, reimplemented here for the
@@ -376,23 +378,25 @@ export function createRoom({
     try {
       const staged = server.queue.drain();
       const next = tick + 1;
-      const gameIntents = [];
-      for (const it of staged) {
-        // THE PROVENANCE-BOUND CANONICAL RECORD: tick assigned here (never client-supplied), actorId
-        // bound at connect/resume time (never client-supplied) — this line is where §2's record shape
-        // actually gets written.
-        log.append({ tick: next, seq: it.seq, actorId: it.actorId, kind: it.kind, args: it.args });
-        gameIntents.push({ actorId: it.actorId, kind: it.kind, args: it.args });
-      }
+      // The game receives its own arguments. Retain the original wire values for
+      // replay, and publish them only after the game completes the round.
+      const records = staged.map(({ seq, actorId, kind, args }) => ({
+        tick: next, seq, actorId, kind, args: canonicalizeJson(args ?? {}).value,
+      }));
+      const gameIntents = staged.map(({ actorId, kind, args }) => ({ actorId, kind, args }));
       const result = (await gameRunTick(next, gameIntents)) ?? {};
-      tick = next;
       const dirty = result.dirty ?? [];
 
       // per-subscriber deltas, always (see perSubscriber's comment above) — this is also where each
       // subscriber's delta is captured into its ring buffer BEFORE being sent, which is the one thing
       // tick-driver.mjs's own per-subscriber path (create-server.mjs's start()/step()) cannot offer,
       // since it never hands the computed delta back to a caller.
-      await server.snapshot.resettle(dirty, tick);
+      settlingProjection = server.snapshot.resettle(dirty, next).then(() => {
+        for (const record of records) log.append(record);
+        tick = next;
+      });
+      try { await settlingProjection; }
+      finally { settlingProjection = undefined; }
       server.hub.each((client, subscriber) => {
         if (!subscriber) return;
         const binding = clientBinding.get(client);
@@ -464,7 +468,11 @@ export function createRoom({
   // functions can run the equivalent of this WITHOUT the live room at all (see replay.mjs's
   // `verifyRoomHistory`, which this simply calls with this room's own live state as the reference).
   async function verify() {
+    // Refresh can await each entity individually. A snapshot taken halfway through
+    // would mix two rounds even if the log itself were captured consistently.
+    if (settlingProjection) await settlingProjection;
     const liveHash = stateHash(server.snapshot.full(tick));
+    const logHash = log.hash(tick);
     const fresh = worldFactory(); // an INDEPENDENT domain instance — never the live one (see header)
     const result = await verifyRoomHistory({
       seed,
@@ -475,7 +483,7 @@ export function createRoom({
       runTick: fresh.runTick,
       liveStateHash: liveHash,
     });
-    return { ...result, logHash: log.hash() };
+    return { ...result, logHash };
   }
 
   // === lifecycle ==================================================================================
