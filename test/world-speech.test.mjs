@@ -141,7 +141,11 @@ test("a city edition withdraws only its own exact speech witnesses and can offer
   const phrase = occurrence("written-once", "We will be here tomorrow.");
   const heard = receiveWorldSpeech(original, phrase, {room}).world;
   assert.deepEqual(worldSpeechSource(heard, "alice", remoteGroup), {dimension, world: worldId, room, group});
-  const restored = validateWorld(structuredClone(checkpointHistory(evolveGameWorld(heard, open, closed))));
+  const closedWorld = evolveGameWorld(heard, open, closed);
+  const withdrawal = cells(closedWorld, room, WORLD_SPEECH_WITHDRAWAL).find(at => at.object.predicate === WORLD_SPEECH_TO);
+  const foreignWithdrawal = tell(heard, grant(room, WORLD_SPEECH_WITHDRAWAL, withdrawal.object), {source: "elsewhere:content-evolution"});
+  assert.equal(worldSpeechSource(foreignWithdrawal, "alice", remoteGroup).room, room);
+  const restored = validateWorld(structuredClone(checkpointHistory(closedWorld)));
   assert.equal(worldSpeechRoom(restored, group), null);
   const hiddenWithdrawals = defineWorldReadingPolicy({
     id: "visible room facts", version: "1", read: ({source}) => ({

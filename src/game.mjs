@@ -23,8 +23,8 @@ function identifier(value, label) {
 
 function territoryReference(value, label) {
   if (typeof value === "string" && value.startsWith("ni:")) return sourceReference(value, label);
-  if (typeof value === "string" && /^https?:/u.test(value)) {
-    if (!/^https?:\/\//u.test(value) || /[\s\u0000-\u001f\u007f]/u.test(value)) fail(`${label} requires an absolute URL`);
+  if (typeof value === "string" && /^https?:/iu.test(value)) {
+    if (!/^https?:\/\//iu.test(value) || /[\s\u0000-\u001f\u007f]/u.test(value)) fail(`${label} requires an absolute URL`);
     return assertHttpUrl(value, label);
   }
   return identifier(value, label);
@@ -151,7 +151,7 @@ export function defineGame(source) {
   const roomEntries = entries(source.rooms, "game rooms");
   if (roomEntries.length === 0) fail("game must define at least one room");
   const roomIds = new Set(roomEntries.map(([roomId]) => identifier(roomId, "room id")));
-  const dimension = territoryReference(source.dimension ?? `dimension:${id}`, "game Dimension");
+  const dimension = territoryReference(source.dimension === undefined ? `dimension:${id}` : source.dimension, "game Dimension");
   if (roomIds.has(dimension)) fail("Dimension id collides with a room");
   const defaultWorld = `world:${id}`;
   const worlds={};
