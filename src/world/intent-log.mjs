@@ -1,14 +1,6 @@
-/**
- * intent-log.mjs — the canonical Intent Log Record `{ tick, seq, actorId, kind, args }`
- * (qwzspace-vnext-spec.md §2/§6) and the pure hash over it. This record is already a valid
- * `@red-cup-engineering/gaming/running` intent envelope (a plain object carrying a non-empty string
- * `kind`); canonicalJSON/roomHash route through cartridge's own canonicalJson/hashPosition
- * (red-cup.cartridge.canonical-hash/1) rather than a second hand-rolled JSON/sha256 pairing.
- */
-
 import { createAppendOnlyLog } from "@red-cup-engineering/computer-content-graph-engineering-services-section/event-stream";
-import { canonicalJson } from "@red-cup-engineering/json-engine/canonical-json";
-import { hashPosition } from "@red-cup-engineering/gaming/running/rules";
+import { canonicalJson, canonicalizeJson } from "@red-cup-engineering/json-engine/canonical-json";
+import { hashPosition } from "@red-cup-engineering/game-engine/running/rules";
 
 /**
  * Re-shape a record-like object into the fixed five-key form, coercing types so a record built
@@ -43,20 +35,19 @@ export function roomHash(log, seed = "") {
   return hashPosition({ seed, log: log.map(canonicalRecord) });
 }
 
-// createIntentLog — the append-only store a Room owns. append() is meant to be called from exactly
-// ONE place (the room's tick boundary, after actorId has been server-bound) — this module does not
-// enforce that itself (it has no notion of "the tick boundary"), it only refuses to let a record be
-// mutated after appending (canonicalRecord always returns a fresh object).
+// The room owns the log. Copies returned to a player can be freely edited.
 export function createIntentLog(seed = "") {
-  const records = createAppendOnlyLog({ canonicalize: canonicalRecord });
+  const records = createAppendOnlyLog({
+    canonicalize: record => canonicalizeJson(canonicalRecord(record)).value,
+  });
+  const through = tick => records.all().filter(record => record.tick <= tick);
   return {
-    append: records.append,
-    all: records.all,
-    since: (tick) => records.all().filter((r) => r.tick > tick),
-    upto: (tick) => records.all().filter((r) => r.tick <= tick),
+    append: record => structuredClone(records.append(record)),
+    all: () => structuredClone(records.all()),
+    since: tick => structuredClone(records.all().filter(record => record.tick > tick)),
+    upto: tick => structuredClone(through(tick)),
     length: records.length,
-    hash: (uptoTick = Infinity) =>
-      roomHash(uptoTick === Infinity ? records.all() : records.all().filter((r) => r.tick <= uptoTick), seed),
+    hash: (uptoTick = Infinity) => roomHash(through(uptoTick), seed),
     seed,
   };
 }

@@ -1,6 +1,7 @@
 import {admitIntentOrigin} from './intent-origin.mjs';
 import { admitGameWorld, defineGame } from "./game.mjs";
 import { cells } from "./world.mjs";
+import { gameFromOrderedSnapshot, worldFromOrderedSnapshot } from "./ordered-world-snapshot.mjs";
 import { materializeHistory, restoreHistory, validateHistory } from "./world-history.mjs";
 
 const ACTOR_IDENTIFIER = /^[a-z][a-z0-9]*(?:[-.:][a-z0-9]+)*$/u;
@@ -19,6 +20,7 @@ export function snapshotWorld(world) {
 
 export function restoreWorld(source) {
   const snapshot = record(source, "world snapshot");
+  if (snapshot.kind === "feltos.world-snapshot.v1") return worldFromOrderedSnapshot(snapshot);
   if (snapshot.kind !== "signcraft.history") fail("invalid world snapshot envelope");
   return restoreHistory(snapshot);
 }
@@ -73,6 +75,10 @@ function restoreEngineStateOf(snapshot, world) {
 export function restoreEngine(source) {
   const snapshot = record(source, "engine snapshot");
   if (snapshot.kind !== "feltos.engine-snapshot.v1") fail("invalid engine snapshot envelope");
+  if (snapshot.world?.kind === "feltos.world-snapshot.v1") {
+    const game = gameFromOrderedSnapshot(record(snapshot.game, "snapshot game"));
+    return restoreEngineStateOf({ ...snapshot, game }, worldFromOrderedSnapshot(snapshot.world, game));
+  }
   return restoreEngineStateOf(snapshot, restoreWorld(snapshot.world));
 }
 

@@ -44,24 +44,14 @@ Areas, witnessed exits and portable Objects. It uses the same MUD engine exposed
 to hosts, including competing commands, movement, possession, speech and a
 snapshot with pending work:
 
-```sh
-npm run demo:world
-npm test
-```
-
-The World tests check observation identity, isolation between Worlds, command
-conflicts and snapshot recovery. They also build and execute the World entry
-as browser ESM. To reproduce the standalone CI install in a clean checkout:
+From the MOOSE checkout, set `LAGOON` to the colony's `apps/lagoon` directory and run:
 
 ```sh
-pnpm --dir test/providers install --frozen-lockfile
-ln -s test/providers/node_modules node_modules
-npm test
+node --experimental-import-meta-resolve --import="$LAGOON/src/resolve-checkouts.mjs" examples/native-world.mjs
+node --experimental-import-meta-resolve --import="$LAGOON/src/resolve-checkouts.mjs" --test test/world-replay.test.mjs
 ```
 
-The fixture's lockfile tracks the published providers used by these tests.
-Update its dependency ranges from the matching MOOSE manifest entries when
-the tested World modules change providers.
+The room replay check runs ticks using the room’s own reducer, checks both historical hashes and attempts to change a recorded command through each public log reader.
 
 See [examples/native-world.mjs](examples/native-world.mjs) for the complete
 source composition. A host that already has an admitted World selects it with:

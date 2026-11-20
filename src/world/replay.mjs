@@ -8,7 +8,7 @@
 import { createSnapshotManager } from "./snapshot-manager.mjs";
 import { roomHash as roomHashOf } from "./intent-log.mjs";
 import { canonicalJson } from "@red-cup-engineering/json-engine/canonical-json";
-import { hashPosition } from "@red-cup-engineering/gaming/running/rules";
+import { hashPosition } from "@red-cup-engineering/game-engine/running/rules";
 import { replayEventStream } from "@red-cup-engineering/computer-content-graph-engineering-services-section/event-stream";
 
 /**
