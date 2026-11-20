@@ -1,5 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { closeWorld } from '@red-cup-engineering/moose/predication';
+import { createWorld, cells, tell } from '@red-cup-engineering/moose/world';
+import { restoreHistory } from '@red-cup-engineering/moose/world-history';
+import { decodeCanonical, encodeCanonical, semanticId } from '@red-cup-engineering/semiotic-content-address-system';
 import { createIntentLog } from '@red-cup-engineering/moose/world/intent-log';
 import { verifyRoomHistory } from '@red-cup-engineering/moose/world/replay';
 
@@ -26,4 +30,29 @@ test('room history owns accepted intents and reproduces its earlier Gaming hashe
   assert.equal(result.replayedLogHash, logHash);
   assert.equal(result.replayedStateHash, liveStateHash);
   assert.equal(result.ok, true);
+});
+
+test('a World restores the original witness for a byte-valued rule received through canonical CBOR', () => {
+  const payload = { bytes: Uint8Array.of(0, 128, 255) };
+  const premise = { subject: 'seal', predicate: 'observed', object: payload };
+  const conclusion = { subject: 'seal', predicate: 'recognized', object: payload };
+  const wire = encodeCanonical({
+    kind: 'signchain.rule', name: 'recognize-seal',
+    antecedent: [{ cell: premise, atLeast: 'potential' }],
+    consequent: { cell: conclusion, reading: 'potential' },
+  });
+  const received = decodeCanonical(wire);
+  const ruleId = semanticId(received);
+  const world = tell(createWorld(), premise, { source: 'original observation' });
+  const result = closeWorld(world, [received]);
+  payload.bytes.fill(9);
+  received.consequent.cell.object.bytes.fill(8);
+
+  const restored = restoreHistory(structuredClone(result.world));
+  assert.deepEqual(restored.revisions.map(revision => revision.id), result.world.revisions.map(revision => revision.id));
+  const [claim] = cells(restored, 'seal', 'recognized');
+  assert.equal(result.added.length, 1);
+  assert.deepEqual([...claim.object.bytes], [0, 128, 255]);
+  assert.ok(claim.for.some(witness => witness.ruleId === ruleId));
+  assert.equal(closeWorld(restored, [decodeCanonical(wire)]).world, restored);
 });

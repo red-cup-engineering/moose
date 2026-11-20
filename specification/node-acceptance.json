@@ -3,6 +3,12 @@
   "basis": "MOOSE consumes the Modeled Actor Protocol public actor and addressed World speech profiles in its public views and native rooms.",
   "cases": [
     {
+      "id": "MOOSE-WORLD-RULE-WITNESS", "role": "source", "kind": "invariant",
+      "claim": "A transported native rule retains its original witness and byte-valued conclusion through World restoration and reclosure.",
+      "specRef": "specifications/world-history-migration.md#native-mud-integration",
+      "file": "test/world-replay.test.mjs", "test": "a World restores the original witness for a byte-valued rule received through canonical CBOR"
+    },
+    {
       "id": "MOOSE-SPEECH-OCCURRENCE", "role": "source", "kind": "invariant",
       "claim": "A room retains each admitted activity occurrence through checkpoint and restart and exposes it only through its observer's reading.",
       "specRef": "specifications/addressed-world-speech.md#occurrence-and-recovery",

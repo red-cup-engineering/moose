@@ -1,6 +1,6 @@
 {
   "name": "@red-cup-engineering/moose",
-  "version": "0.2.0-dev.1",
+  "version": "0.2.0-dev.2",
   "private": false,
   "type": "module",
   "description": "MOOSE—MUD, Object Oriented, Socially Extended: source-backed multi-user Worlds, native SignCraft history and inference, and Living Web composition.",
@@ -117,11 +117,11 @@
     "@red-cup-engineering/living-web-server": "^0.1.4",
     "@red-cup-engineering/metrologic": "^0.22.1",
     "@red-cup-engineering/qwzspace": "^0.16.0",
-    "@red-cup-engineering/signcell": "0.18.1-dev.0 || ^0.18.1",
-    "@red-cup-engineering/signcraft": "^0.11.0",
+    "@red-cup-engineering/signcell": "^0.18.2",
+    "@red-cup-engineering/signcraft": "^0.11.1",
     "@red-cup-engineering/tufte": "^0.22.0",
     "@red-cup-engineering/uri-engineering-services-section": "^0.1.7",
-    "@red-cup-engineering/semiotic-content-address-system": "0.1.8-dev.0 || ^0.1.8",
+    "@red-cup-engineering/semiotic-content-address-system": "^0.1.9",
     "@red-cup-engineering/typed-content": "^0.1.0",
     "@red-cup-engineering/game-engine": "0.1.0-dev.0",
     "@red-cup-engineering/parse-javascript-argv-service": "0.3.1-dev.0 || ^0.3.1"
