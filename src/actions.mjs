@@ -1,3 +1,4 @@
+import { isRecord } from "@red-cup-engineering/signcell/values";
 import { canonical } from '@red-cup-engineering/json-engine';
 import { sidesOfReading } from '@red-cup-engineering/metrologic/four';
 import Cell from './world-cell.mjs';
@@ -9,7 +10,7 @@ import { gamePlaceIsCurrent } from './game-world.mjs';
 
 const { address } = Cell;
 
-const record = (x) => x !== null && typeof x === 'object' && !Array.isArray(x);
+
 const identifier = /^[a-z][a-z0-9]*(?:[-.:][a-z0-9]+)*$/u;
 const certain = (cell) => { const [forIt,againstIt]=sidesOfReading(cell.evidence);return forIt&&!againstIt; };
 const freeze = (x) => Object.freeze(x);
@@ -22,23 +23,23 @@ const areaReference = value => {
 
 /** A bounded, data-authored prerequisite. Missing or contested evidence never supplies a grant. */
 export function defineRequirements(source={}) {
- if(!record(source)||Object.keys(source).some(k=>!['skills','claims','areas'].includes(k)))throw new TypeError('action requirements are skills, claims and areas');
+ if(!isRecord(source)||Object.keys(source).some(k=>!['skills','claims','areas'].includes(k)))throw new TypeError('action requirements are skills, claims and areas');
  const skills=source.skills??{};
- if(!record(skills)||Object.entries(skills).some(([k,v])=>!identifier.test(k)||!Number.isFinite(v)||v<0||v>100))throw new TypeError('required skill levels must be within 0..100');
+ if(!isRecord(skills)||Object.entries(skills).some(([k,v])=>!identifier.test(k)||!Number.isFinite(v)||v<0||v>100))throw new TypeError('required skill levels must be within 0..100');
  const claims=source.claims??[];
- if(!Array.isArray(claims)||claims.some(c=>!record(c)||Object.keys(c).some(k=>!['on','predicate','object'].includes(k))||!['actor','place','world'].includes(c.on??'actor')||typeof c.predicate!=='string'||!c.predicate||c.object===undefined))throw new TypeError('action claims require on, predicate and object');
+ if(!Array.isArray(claims)||claims.some(c=>!isRecord(c)||Object.keys(c).some(k=>!['on','predicate','object'].includes(k))||!['actor','place','world'].includes(c.on??'actor')||typeof c.predicate!=='string'||!c.predicate||c.object===undefined))throw new TypeError('action claims require on, predicate and object');
  const areas=source.areas??[];
  if(!Array.isArray(areas)||areas.some(x=>!areaReference(x)))throw new TypeError('action areas must be local identifiers or original Thing references');
  return freeze({skills:freeze({...skills}),claims:freeze(claims.map(c=>freeze({on:c.on??'actor',predicate:c.predicate,object:JSON.parse(canonical(c.object))}))),areas:freeze([...new Set(areas)])});
 }
 
 export function defineAction(source) {
- if(!record(source)||Object.keys(source).some(k=>!['verb','capability','remote','description','requires'].includes(k))||typeof source.verb!=='string'||!/^[a-z][a-z0-9-]*$/u.test(source.verb)||typeof source.description!=='string'||!source.description)throw new TypeError('world action requires verb and description');
+ if(!isRecord(source)||Object.keys(source).some(k=>!['verb','capability','remote','description','requires'].includes(k))||typeof source.verb!=='string'||!/^[a-z][a-z0-9-]*$/u.test(source.verb)||typeof source.description!=='string'||!source.description)throw new TypeError('world action requires verb and description');
  if((source.capability!==undefined)===(source.remote!==undefined))throw new TypeError('world action needs exactly one local capability or remote actor operation');
  let body;
  if(source.remote!==undefined){
   const r=source.remote;
-  if(!record(r)||Object.keys(r).some(k=>!['actor','operation','verb'].includes(k))||typeof r.actor!=='string'||!r.actor.trim()||/\s/u.test(r.actor)||typeof r.verb!=='string'||!/^[a-z][a-z0-9-]*$/u.test(r.verb))throw new TypeError('remote action needs actor, operation address and verb');
+  if(!isRecord(r)||Object.keys(r).some(k=>!['actor','operation','verb'].includes(k))||typeof r.actor!=='string'||!r.actor.trim()||/\s/u.test(r.actor)||typeof r.verb!=='string'||!/^[a-z][a-z0-9-]*$/u.test(r.verb))throw new TypeError('remote action needs actor, operation address and verb');
   parseNiUri({uri:r.operation});
   body={remote:freeze({actor:r.actor,operation:r.operation,verb:r.verb})};
  }else{

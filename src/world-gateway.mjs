@@ -1,3 +1,4 @@
+import { isRecord } from "@red-cup-engineering/signcell/values";
 /** The world's authenticated entrance and its explicitly designated execution body.
  * Native actor requests carry the statement; this module grants no standing and
  * never reads a caller-selected root. See specifications/world-host/coordination-ingress.md. */
@@ -8,13 +9,13 @@ import { canonicalJson, requireJsonValue } from '@red-cup-engineering/json-engin
 export const WORLD_GATEWAY_ADMISSION = 'metroplat.subject-binding';
 export const WORLD_GATEWAY_LIMITS = Object.freeze({ inputBytes: 8192, resultBytes: 24576, inflight: 8, lifetimeMs: 60000, waitMs: 10000 });
 const NI=/^ni:\/\/\/sha-256;[A-Za-z0-9_-]{43}$/u;
-const object=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
+
 const text=(value,name,max=4096)=>{if(typeof value!=='string'||!value.trim()||Buffer.byteLength(value)>max)throw new TypeError(`${name} must be bounded nonempty text`);return value;};
-const exact=(value,keys,name)=>{if(!object(value)||Object.keys(value).some(key=>!keys.includes(key))||keys.some(key=>!Object.hasOwn(value,key)))throw new TypeError(`${name} requires exactly ${keys.join(', ')}`);};
+const exact=(value,keys,name)=>{if(!isRecord(value)||Object.keys(value).some(key=>!keys.includes(key))||keys.some(key=>!Object.hasOwn(value,key)))throw new TypeError(`${name} requires exactly ${keys.join(', ')}`);};
 const actor=(value,name)=>{text(value,name,2048);const url=new URL(value);if(url.protocol!=='https:'||url.username||url.password||url.search||url.hash||url.href!==value)throw new TypeError(`${name} must be one canonical HTTPS actor`);return value;};
 const ni=(value,name)=>{if(!NI.test(value))throw new TypeError(`${name} must be a canonical content address`);return value;};
 const instant=(value,name)=>{text(value,name,40);if(!Number.isFinite(Date.parse(value)))throw new TypeError(`${name} must be an instant`);return value;};
-const frozen=value=>{if(object(value)||Array.isArray(value)){Object.values(value).forEach(frozen);Object.freeze(value);}return value;};
+const frozen=value=>{if(isRecord(value)||Array.isArray(value)){Object.values(value).forEach(frozen);Object.freeze(value);}return value;};
 const clone=value=>JSON.parse(canonicalJson(value));
 
 /** The revision binds the exact installed operations, not a second list of verbs. */

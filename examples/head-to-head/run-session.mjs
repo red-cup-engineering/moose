@@ -1,3 +1,4 @@
+import { isEqual } from "@red-cup-engineering/signcell/values";
 // run-session — a 20-client synthetic room session (bots) over real websockets on localhost,
 // measuring tick stability, message counts, resume correctness under forced disconnects, and the
 // renderer proof: the live session rendered live, then re-rendered from its own replay history
@@ -13,7 +14,7 @@
 import http from "node:http";
 import { createRoom } from "../../src/world/room.mjs";
 import { replay } from "@red-cup-engineering/computer-content-graph-engineering-services-section/operations-graph";
-import { sceneEquals } from "@red-cup-engineering/qwzspace/scene";
+
 import { project } from "../../src/world/project.mjs";
 import { createInterpolationBuffer } from "@red-cup-engineering/moose/world/client";
 import { connectRoom } from "@red-cup-engineering/moose/world/client-node";
@@ -224,7 +225,7 @@ async function main() {
     const liveScene = project(liveBuffer.sample(t), t);
     const replayScene = project(replayBuffer.sample(t), t);
     framesCompared++;
-    if (sceneEquals(liveScene, replayScene)) framesIdentical++;
+    if (isEqual(liveScene, replayScene)) framesIdentical++;
     else if (!firstMismatch) firstMismatch = { t, liveScene, replayScene };
   }
 
