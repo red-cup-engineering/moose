@@ -2,7 +2,8 @@ import { compareText } from "@red-cup-engineering/semiotic-content-address-syste
 import { retainedCarrier } from "@red-cup-engineering/semiotic-content-address-system";
 import { sidesOfReading } from "@red-cup-engineering/metrologic/four";
 import { canonical, requireJsonValue } from "@red-cup-engineering/json-engine";
-import { cells, certainValue, createWorld, declareFunctional, settledWorld, tell, territoryOf, validateWorld } from "./world.mjs";
+import { cells, certainValue, createWorld, currentSpeechStanding, declareFunctional, isWorldSpeechStanding, settledWorld, tell, territoryOf, validateWorld, WORLD_SPEECH_WITHDRAWAL } from "./world.mjs";
+import { assertHttpUrl } from "@red-cup-engineering/uri-engineering-services-section/http-url";
 import { restoreHistory } from "./world-history.mjs";
 import { gamePlaceIsCurrent, sourceReference } from "./game-world.mjs";
 
@@ -18,6 +19,15 @@ function fail(message) {
 function identifier(value, label) {
   if (typeof value !== "string" || !IDENTIFIER.test(value)) fail(`${label} must be a stable lowercase identifier`);
   return value;
+}
+
+function territoryReference(value, label) {
+  if (typeof value === "string" && value.startsWith("ni:")) return sourceReference(value, label);
+  if (typeof value === "string" && /^https?:/u.test(value)) {
+    if (!/^https?:\/\//u.test(value) || /[\s\u0000-\u001f\u007f]/u.test(value)) fail(`${label} requires an absolute URL`);
+    return assertHttpUrl(value, label);
+  }
+  return identifier(value, label);
 }
 
 function text(value, label) {
@@ -132,6 +142,8 @@ export function defineGame(source) {
   }
   const functionalPredicates = new Set();
   for (const predicate of source.functionalPredicates ?? []) {
+    if (isWorldSpeechStanding({predicate}) || predicate === WORLD_SPEECH_WITHDRAWAL)
+      fail("World speech standing retains independent witnesses and cannot be functional");
     functionalPredicates.add(identifier(predicate, "functional predicate"));
   }
   if (source.worldSource === "history") return defineHistoryGame(source, id, capabilities, functionalPredicates);
@@ -139,29 +151,34 @@ export function defineGame(source) {
   const roomEntries = entries(source.rooms, "game rooms");
   if (roomEntries.length === 0) fail("game must define at least one room");
   const roomIds = new Set(roomEntries.map(([roomId]) => identifier(roomId, "room id")));
-  const dimension=`dimension:${id}`,defaultWorld=`world:${id}`;
+  const dimension = territoryReference(source.dimension ?? `dimension:${id}`, "game Dimension");
+  if (roomIds.has(dimension)) fail("Dimension id collides with a room");
+  const defaultWorld = `world:${id}`;
   const worlds={};
   const authored=source.worlds!==undefined;
   for(const [worldId,world] of entries(source.worlds??{[defaultWorld]:{name:source.name,description:source.name}},'game worlds')){
-    identifier(worldId,'world id');
+    territoryReference(worldId, 'world id');
     if(roomIds.has(worldId)||worldId===dimension)fail('world id collides with game content');
     if(!Array.isArray(world.actions??[]))fail('world actions must be a sequence');
     const actions=(world.actions??[]).map(defineAction);
     if(actions.some(a=>!a.remote&&!capabilities.includes(a.capability)))fail('world action names a capability not installed by the game');
     for(const action of actions)functionalPredicates.add(actionPredicate(action));
-    worlds[worldId]=Object.freeze({name:text(world.name,'world name'),description:text(world.description,'world description'),actions:Object.freeze(actions),policy:source.kind==='feltos.game.v1'&&world.policy==='runtime'?'runtime':authored?'authored':'runtime'});
+    const policy = world.policy ?? (authored ? 'authored' : 'runtime');
+    if (!['runtime', 'authored'].includes(policy) || (policy === 'runtime' && actions.length))
+      fail('a World selects runtime policy or authored actions');
+    worlds[worldId] = Object.freeze({name:text(world.name,'world name'),description:text(world.description,'world description'),actions:Object.freeze(actions),policy});
   }
   if(!Object.keys(worlds).length)fail('game must define a world');
   const areas={};
   for(const [areaId,area] of entries(source.areas??{},'game areas')){
     identifier(areaId,'area id');
     if(roomIds.has(areaId)||areaId in worlds||areaId===dimension)fail('area id collides with game content');
-    areas[areaId]=Object.freeze({name:text(area.name,'area name'),description:text(area.description,'area description'),within:identifier(area.within,'area parent')});
+    areas[areaId]=Object.freeze({name:text(area.name,'area name'),description:text(area.description,'area description'),within:territoryReference(area.within,'area parent')});
   }
   for(const areaId of Object.keys(areas)){
     const seen=new Set([areaId]);let parent=areas[areaId].within;
-    while(parent in areas){if(seen.has(parent))fail('area containment cycle');seen.add(parent);parent=areas[parent].within;}
-    if(!(parent in worlds))fail('area must descend from a world');
+    while(Object.hasOwn(areas,parent)){if(seen.has(parent))fail('area containment cycle');seen.add(parent);parent=areas[parent].within;}
+    if(!Object.hasOwn(worlds,parent))fail('area must descend from a world');
   }
   functionalPredicates.add('part-of');functionalPredicates.add('action-policy');
   // A character's alias book supersedes rather than accumulates (see character-aliases.mjs).
@@ -177,7 +194,7 @@ export function defineGame(source) {
     }
     if (room.region !== undefined) functionalPredicates.add("region");
     const within=room.within??(authored?null:defaultWorld);
-    if(within===null||!(within in worlds||within in areas))fail(`room ${roomId} requires a known world or area`);
+    if(within===null||!(Object.hasOwn(worlds,within)||Object.hasOwn(areas,within)))fail(`room ${roomId} requires a known world or area`);
     const exitRequirements={};
     for(const [direction,requirements] of entries(room.exitRequirements??{},'exit requirements')){
       if(!(direction in exits))fail('exit requirements name an absent exit');
@@ -331,7 +348,23 @@ export function evolveGameWorld(world, previous, next) {
   const withdrawals = preceding.filter(claim => functional.has(claim.predicate)
     && editable(claim.predicate) && !nextAt.has(atKey(claim)) && unchangedAuthored(claim))
     .map(claim => ({ ...claim, object: claim.predicate.startsWith("exit-requires:") ? defineRequirements() : null }));
+  // An edition controls only the witnesses it issued for a speech grant. A
+  // withdrawal names that witness, so later and independent grants survive.
+  const beforeSpeech = new Map(preceding.filter(isWorldSpeechStanding).map(at => [claimKey(at), at]));
+  const afterSpeech = new Map(authored.filter(isWorldSpeechStanding).map(at => [claimKey(at), at]));
+  const sameStanding = (left, right) => right && left.evidence === right.evidence;
+  for (const [key, before] of beforeSpeech) {
+    if (sameStanding(before, afterSpeech.get(key))) continue;
+    const [current] = currentSpeechStanding(world, {subject: before.subject, predicate: before.predicate, object: before.object});
+    if (!current) continue;
+    for (const witness of new Set([...current.for, ...current.against])) {
+      if (!authoredSources.has(witness.source)) continue;
+      withdrawals.push({subject: before.subject, predicate: WORLD_SPEECH_WITHDRAWAL,
+        object: {predicate: before.predicate, object: before.object, witness}});
+    }
+  }
   const additions = authored.filter((claim) => {
+    if (isWorldSpeechStanding(claim)) return !sameStanding(claim, beforeSpeech.get(claimKey(claim)));
     if (prior.has(claimKey(claim))) return false;
     const current = cells(world, claim.subject, claim.predicate);
     if (!functional.has(claim.predicate)) return !current.some((at) => claimKey(at) === claimKey(claim));

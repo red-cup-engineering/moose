@@ -9,6 +9,12 @@
       "file": "test/world-replay.test.mjs", "test": "a World restores the original witness for a byte-valued rule received through canonical CBOR"
     },
     {
+      "id": "MOOSE-SPEECH-EDITION", "role": "source", "kind": "invariant",
+      "claim": "A city places its rooms in the selected Dimension and World and can withdraw and renew its own speech standing across a checkpoint while preserving other witnesses.",
+      "specRef": "specifications/addressed-world-speech.md#authored-city-editions",
+      "file": "test/world-speech.test.mjs", "test": "a city edition withdraws only its own exact speech witnesses and can offer the room again"
+    },
+    {
       "id": "MOOSE-SPEECH-OCCURRENCE", "role": "source", "kind": "invariant",
       "claim": "A room retains each admitted activity occurrence through checkpoint and restart and exposes it only through its observer's reading.",
       "specRef": "specifications/addressed-world-speech.md#occurrence-and-recovery",

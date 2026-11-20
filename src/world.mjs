@@ -411,16 +411,40 @@ function roomTerritory(reading, room) {
   return territory;
 }
 
+export const WORLD_SPEECH_WITHDRAWAL = "world-speech-withdrawal";
+export const isWorldSpeechStanding = ({predicate}) =>
+  [WORLD_SPEECH_GROUP, WORLD_SPEECH_FROM, WORLD_SPEECH_TO].includes(predicate);
+
+/** A withdrawal names one original witness and must come from the same game's
+ * edition. Consult the carrier even when an observer sees only selected cells. */
+export function currentSpeechStanding(reading, pattern) {
+  const carrier = isWorldReading(reading) ? reading.carrier : reading;
+  return queryWorld(reading, pattern).flatMap(at => {
+    const retained = witness => {
+      if (typeof witness?.source !== "string") return true;
+      const issuer = /^(.+:content)(?:-evolution)?$/u.exec(witness.source);
+      if (!issuer) return true;
+      const withdrawals = queryWorld(carrier, {subject: at.subject, predicate: WORLD_SPEECH_WITHDRAWAL,
+        object: {predicate: at.predicate, object: at.object, witness}});
+      return !withdrawals.some(record => record.for.some(w => w?.source === issuer[1] + "-evolution"));
+    };
+    const support = at.for.filter(retained), opposition = at.against.filter(retained);
+    if (support.length === at.for.length && opposition.length === at.against.length) return [at];
+    return support.length || opposition.length
+      ? [cell(at.subject, at.predicate, at.object, {for: support, against: opposition})] : [];
+  });
+}
+
 /** Resolve the addressed Group from a current unopposed relation in this World. */
 export function worldSpeechRoom(reading, groupIri) {
   if (isWorldReading(reading) && !worldReadingOccurrenceFrameIsCurrent(reading))
     throw new TypeError("World speech requires the current evidence horizon");
   if (typeof groupIri !== "string" || !groupIri.length) throw new TypeError("World speech requires a Group IRI");
-  const claims = queryWorld(reading, { predicate: WORLD_SPEECH_GROUP, object: groupIri });
+  const claims = currentSpeechStanding(reading, { predicate: WORLD_SPEECH_GROUP, object: groupIri });
   if (!claims.length) return null;
   const rooms = claims.filter(at => at.for.length);
   if (rooms.length !== 1 || rooms[0].against.length ||
-      certainValue(reading, rooms[0].subject, WORLD_SPEECH_GROUP) !== groupIri)
+      certainObject(currentSpeechStanding(reading, {subject: rooms[0].subject, predicate: WORLD_SPEECH_GROUP})) !== groupIri)
     throw new TypeError("The addressed Group must belong to exactly one current speech room");
   const room = rooms[0].subject;
   roomTerritory(reading, room);
@@ -428,7 +452,7 @@ export function worldSpeechRoom(reading, groupIri) {
 }
 
 function requireSpeechGrant(reading, room, predicate, object) {
-  const [grant] = queryWorld(reading, { subject: room, predicate, object });
+  const [grant] = currentSpeechStanding(reading, { subject: room, predicate, object });
   if (!grant?.for.length || grant.against.length)
     throw new TypeError("World speech lacks an unopposed " + predicate + " grant for this room");
 }
@@ -445,7 +469,7 @@ export function admitWorldSpeech(reading, { actor, dimension, world, recipient }
 export function worldSpeechSource(reading, player, recipient) {
   const room = placeOf(reading, player);
   const { dimension, world } = roomTerritory(reading, room);
-  const group = certainValue(reading, room, WORLD_SPEECH_GROUP);
+  const group = certainObject(currentSpeechStanding(reading, {subject: room, predicate: WORLD_SPEECH_GROUP}));
   if (typeof group !== "string" || worldSpeechRoom(reading, group) !== room)
     throw new TypeError("The speaker's room requires its current Group");
   requireSpeechGrant(reading, room, WORLD_SPEECH_TO, recipient);

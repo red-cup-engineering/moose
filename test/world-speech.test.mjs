@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { defineGame, evolveGameWorld, instantiateGame } from "@red-cup-engineering/moose/game";
 import { createNativeWorldExample } from "../examples/native-world.mjs";
 import { admit, join, submit } from "@red-cup-engineering/moose/engine";
 import { decodeSnapshot, encodeSnapshot } from "@red-cup-engineering/moose/engine-snapshot";
@@ -8,7 +9,7 @@ import { defineWorldReadingPolicy, readWorld } from "@red-cup-engineering/moose/
 import {
   admitWorldSpeech, cells, placeOf, receiveWorldSpeech, roomSpeech, tell, validateWorld,
   worldSpeechRoom, worldSpeechSource, worldSpeechText,
-  WORLD_SPEECH_FROM, WORLD_SPEECH_GROUP, WORLD_SPEECH_TO,
+  WORLD_SPEECH_FROM, WORLD_SPEECH_GROUP, WORLD_SPEECH_TO, WORLD_SPEECH_WITHDRAWAL,
 } from "@red-cup-engineering/moose/world";
 
 const sender = Object.freeze({
@@ -116,4 +117,51 @@ test("World speech requires the current room Group and unopposed authority in bo
   assert.throws(() => receiveWorldSpeech(world, speech, { room, reading: hidden }), /no local speech room/);
   assert.equal(worldSpeechText("é".repeat(2048)).length, 2048);
   assert.throws(() => worldSpeechText("é".repeat(2049)), /4096/);
+});
+
+test("a city edition withdraws only its own exact speech witnesses and can offer the room again", () => {
+  const room = "square";
+  const dimension = "https://city.example/dimensions/City";
+  const worldId = "ni:///sha-256;" + "A".repeat(43);
+  const granted = [grant(room, WORLD_SPEECH_GROUP, group), grant(room, WORLD_SPEECH_TO, remoteGroup),
+    grant(room, WORLD_SPEECH_FROM, sender)];
+  const definition = assertions => defineGame({
+    id: "city", name: "City", start: room, dimension,
+    worlds: { [worldId]: {name: "City", description: "The city", policy: "runtime"} },
+    areas: { district: {name: "District", description: "A district", within: worldId} },
+    rooms: { [room]: {name: "Square", description: "The square", within: "district"} },
+    assertions,
+  });
+  const open = definition(granted), closed = definition([]);
+  assert.deepEqual(defineGame(open), open);
+  assert.throws(() => defineGame({...open, dimension: "ni:invalid"}));
+  assert.throws(() => defineGame({...open, dimension: room}), /collides/);
+  assert.throws(() => defineGame({...open, functionalPredicates: [WORLD_SPEECH_FROM]}), /cannot be functional/);
+  const original = tell(instantiateGame(open), grant("alice", "located-in", room), {source: "arrival"});
+  const phrase = occurrence("written-once", "We will be here tomorrow.");
+  const heard = receiveWorldSpeech(original, phrase, {room}).world;
+  assert.deepEqual(worldSpeechSource(heard, "alice", remoteGroup), {dimension, world: worldId, room, group});
+  const restored = validateWorld(structuredClone(checkpointHistory(evolveGameWorld(heard, open, closed))));
+  assert.equal(worldSpeechRoom(restored, group), null);
+  const hiddenWithdrawals = defineWorldReadingPolicy({
+    id: "visible room facts", version: "1", read: ({source}) => ({
+      cells: source.subjects().flatMap(id => source.rawCells(id)).filter(at => at.predicate !== WORLD_SPEECH_WITHDRAWAL),
+    }),
+  });
+  assert.equal(worldSpeechRoom(readWorld(restored, {policy: hiddenWithdrawals}), group), null);
+  assert.throws(() => worldSpeechSource(restored, "alice", remoteGroup), /Group/);
+  assert.deepEqual(roomSpeech(restored, room), [phrase]);
+  const reopened = evolveGameWorld(restored, closed, open);
+  assert.equal(admitWorldSpeech(reopened, phrase), room);
+  assert.deepEqual(worldSpeechSource(reopened, "alice", remoteGroup), {dimension, world: worldId, room, group});
+  assert.deepEqual(roomSpeech(reopened, room), [phrase]);
+
+  // Other authors can support the same tuple or oppose it. Rotating one
+  // edition may neither withdraw their support nor lift their opposition.
+  const independent = tell(heard, [granted[0], granted[1]], {source: "local council"});
+  const remaining = evolveGameWorld(independent, open, closed);
+  assert.equal(worldSpeechSource(remaining, "alice", remoteGroup).room, room);
+  assert.throws(() => admitWorldSpeech(remaining, phrase), /world-speech-from/);
+  const opposed = tell(remaining, grant(room, WORLD_SPEECH_FROM, sender, "active"), {source: "local council"});
+  assert.throws(() => admitWorldSpeech(evolveGameWorld(opposed, closed, open), phrase), /world-speech-from/);
 });
