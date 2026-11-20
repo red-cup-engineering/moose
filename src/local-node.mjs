@@ -1,5 +1,5 @@
 import { createFlatfileActivityPubRuntime } from "@red-cup-engineering/activitypub-engineering-services-section/flatfile-runtime";
-import { createActivityPubLogStorage } from "@red-cup-engineering/activitypub-engineering-services-section/journal-custody";
+import { createActivityPubJournalCustody } from "@red-cup-engineering/activitypub-engineering-services-section/journal-custody";
 import { createLocalActivityPubProvider } from "@red-cup-engineering/activitypub-engineering-services-section/local-server";
 import { createMooseSite } from "./fetch.mjs";
 import { createMoosePublicReaders } from "./timeline.mjs";
@@ -25,7 +25,7 @@ export async function commissionLocalMooseSite({
   }
   const configured = { ...environment, ACTIVITYPUB_ORIGIN: origin };
   const runtime = createFlatfileActivityPubRuntime({ environment: configured, stateDirectory });
-  const custody = createActivityPubLogStorage({ stateDirectory: runtime.stateDirectory });
+  const custody = createActivityPubJournalCustody({ stateDirectory: runtime.stateDirectory });
   let local;
   try {
     local = await createLocalActivityPubProvider({
