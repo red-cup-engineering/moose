@@ -1,3 +1,4 @@
+import { compareText } from "@red-cup-engineering/semiotic-content-address-system";
 import {admitIntentOrigin,intentIsCurrent} from './intent-origin.mjs';
 import { requireJsonValue, copyJson, freezeJson } from "@red-cup-engineering/json-engine";
 import { readWorld, rebindWorldReading, isWorldReading, worldReadingOccurrenceFrameIsCurrent } from "./world-reading.mjs";
@@ -106,7 +107,7 @@ const staleReading = (engine, reading) => Object.freeze({
 });
 
 const ACTOR_IDENTIFIER = /^[a-z][a-z0-9]*(?:[-.:][a-z0-9]+)*$/u;
-const compareText = (left, right) => left < right ? -1 : left > right ? 1 : 0;
+
 const SELF_LOOK_TOKENS = Object.freeze(["me", "self"]);
 const CORE_COMMANDS = Object.freeze(["alias", "unalias", "history", "where", "worlds", "commands", "close", "drop", "emote", "examine", "exits", "get", "give", "go", "help", "if-place", "inventory", "look", "move", "open", "put", "say", "score", "skills", "stats", "take"]);
 const DIRECTION_ALIASES = Object.freeze({ n: "north", s: "south", e: "east", w: "west", ne: "northeast", nw: "northwest", se: "southeast", sw: "southwest", u: "up", d: "down" });

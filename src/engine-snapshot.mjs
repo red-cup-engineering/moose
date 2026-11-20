@@ -1,3 +1,4 @@
+import { compareText } from "@red-cup-engineering/semiotic-content-address-system";
 import {admitIntentOrigin} from './intent-origin.mjs';
 import { admitGameWorld, defineGame } from "./game.mjs";
 import { cells } from "./world.mjs";
@@ -5,7 +6,7 @@ import { gameFromOrderedSnapshot, worldFromOrderedSnapshot } from "./ordered-wor
 import { materializeHistory, restoreHistory, validateHistory } from "./world-history.mjs";
 
 const ACTOR_IDENTIFIER = /^[a-z][a-z0-9]*(?:[-.:][a-z0-9]+)*$/u;
-const compareText = (left, right) => left < right ? -1 : left > right ? 1 : 0;
+
 
 function fail(message) { throw new TypeError(message); }
 function record(value, label) {

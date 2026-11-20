@@ -1,3 +1,4 @@
+import { compareText } from "@red-cup-engineering/semiotic-content-address-system";
 // fiber — one actor's fiber of a FeltOS world, projected to a SceneDescription every tier draws.
 //
 // A fiber is what a perception frame carries: the subjects the actor perceives, each with its
@@ -31,7 +32,7 @@ export const KIND_DRAWABLES = Object.freeze({
 
 const isPoint = (point) => Array.isArray(point) && point.length === 3 && point.every(Number.isFinite);
 const isPose = (pose) => pose !== null && typeof pose === "object" && isPoint(pose.position) && Number.isFinite(pose.heading);
-const compareText = (left, right) => left < right ? -1 : left > right ? 1 : 0;
+
 
 /** The entire perceived section, normalized by SignCell's own identity and join.
  *  Older compact frames carry a value without witness marks: retain that value

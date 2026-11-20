@@ -1,3 +1,4 @@
+import { compareText } from "@red-cup-engineering/semiotic-content-address-system";
 import SignCell from "./world-cell.mjs";
 import { coincides, coincidenceKey, retainedCarrier } from "@red-cup-engineering/semiotic-content-address-system";
 const { cell, cellSet, certainObject, knowledgeReading } = SignCell;
@@ -20,7 +21,7 @@ export const POSE = "pose";
 // Every world's schema: predicates that supersede rather than accumulate. A session's role is here,
 // not declared when the first session connects, so no live world widens over cells it already holds.
 const DEFAULT_FUNCTIONAL = [LOCATED_IN, "description", "kind", "name", "role"];
-const compareText = (a, b) => a < b ? -1 : a > b ? 1 : 0;
+
 
 export const createWorld = ({ functionalPredicates = [] } = {}) => createHistory([...DEFAULT_FUNCTIONAL, ...functionalPredicates]);
 export const validateWorld = validateHistory;

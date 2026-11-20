@@ -1,6 +1,7 @@
+import { compareText } from "@red-cup-engineering/semiotic-content-address-system";
 const IDENTIFIER = /^[a-z][a-z0-9]*(?:[-.:][a-z0-9]+)*$/u;
 const COMMAND = /^[a-z][a-z0-9-]*$/u;
-const compareText = (left, right) => left < right ? -1 : left > right ? 1 : 0;
+
 
 function fail(message) {
   throw new TypeError(message);
