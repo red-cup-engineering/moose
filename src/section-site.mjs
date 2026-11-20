@@ -4,7 +4,7 @@
  * TUFTE receives its navigation and MOOSE projects links to real section
  * destinations. One site of many, no independent identity registry.
  */
-export function admitMoosePublicSite(site, origin) {
+export function validateMoosePublicSite(site, origin) {
   if (site === undefined) return null;
   if (!site || typeof site !== "object" || Array.isArray(site) ||
       site.baseIri !== origin + "/" ||

@@ -1,7 +1,7 @@
 import {copyJson,freezeJson,requireJsonValue} from '@red-cup-engineering/json-engine';
 
 /** Opaque immutable transport-origin data. Domain owners alone interpret/admit it. */
-export function admitIntentOrigin(source) {
+export function validateIntentOrigin(source) {
   const seen=new Set();
   const visit=value=>{
     if(value===null || typeof value!=='object')return;

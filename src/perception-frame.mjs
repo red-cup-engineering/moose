@@ -10,7 +10,7 @@ import { contentsOf, evidenceName, exitsOf as currentExitsOf, perceivedOf, settl
 
 import { availableActions } from './engine.mjs';
 import { territoryOf } from './world.mjs';
-import { admitFrame } from "./perception-frame-types.mjs";
+import { validateFrame } from "./perception-frame-types.mjs";
 
 /** @typedef {{ tick: number, channel: string, text: string }} PerceptionEvent */
 
@@ -99,14 +99,14 @@ export function buildPerceptionFrame(options) {
   const last = framed.get(view);
   if (last?.frameType === frameType && last.mark === mark) return last.frame;
   const frame = { kind, tick, actor, place: view.place, occupants: view.occupants, subjects: view.subjects, clock, recentEvents: [...recentEvents],...(situation===undefined?{}:{situation}) };
-  const admitted = admitFrame(frameType, frame);
-  if (!admitted.ok) throw new Error(`feltos/perception-frame: perception frame shape refused: ${JSON.stringify(admitted.refusal)}`);
+  const validated = validateFrame(frameType, frame);
+  if (!validated.ok) throw new Error(`feltos/perception-frame: perception frame shape refused: ${JSON.stringify(validated.refusal)}`);
   // admit() validates frame against frameType without transforming it; frameType's own DataType<>
   // generic can't carry the caller's specific schema through this function's non-generic
   // `frameType: DataType` parameter, so admitted.value's inferred type is wider than reality —
   // the cast reasserts what is actually true at runtime.
-  framed.set(view, { frameType, mark, frame: admitted.value });
-  return admitted.value;
+  framed.set(view, { frameType, mark, frame: validated.value });
+  return validated.value;
 }
 
 /** The qwzspace snapshot-manager entry shape: `{ id, ...buildPerceptionFrame(options) }` so `id`

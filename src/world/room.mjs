@@ -70,7 +70,7 @@ export function createRoom({
   // admitOnArrival — a round runs as soon as an intent, a presence change, or a completed control
   // arrives, instead of waiting for the interval: an actor's action lands when it is made. The
   // game's own clock then enters the log as a host intent (`admitHost`), never as the cadence.
-  admitOnArrival = false,
+  admitOnArrival: validateOnArrival = false,
   // onRound — told each round's tick once its deltas are sent: where a host persists what changed.
   onRound = null,
 } = {}) {
@@ -349,7 +349,7 @@ export function createRoom({
   // arrived — with admitOnArrival, run a round on the next turn of the event loop (one round for
   // everything that arrived in this turn), or right after the round in flight.
   function arrived() {
-    if (!admitOnArrival) return;
+    if (!validateOnArrival) return;
     if (running) { again = true; return; }
     if (scheduled) return;
     scheduled = true;
@@ -361,7 +361,7 @@ export function createRoom({
 
   // admitHost — an intent the host itself originates (the game's clock, say), logged and replayed
   // like any other under the reserved actor "@host", in the next round.
-  function admitHost(kind, args = {}) {
+  function validateHost(kind, args = {}) {
     if (typeof kind !== "string" || kind.length === 0) throw new TypeError("room: a host intent needs a kind");
     server.queue.push({ actorId: HOST, seq: 0, kind, args });
     return tickOnce();
@@ -369,7 +369,7 @@ export function createRoom({
 
   async function tickOnce() {
     if (running) { // previous tick still in flight: coalesce, do not overlap (tick-driver.mjs's
-      if (admitOnArrival) again = true; // own overrun-guard discipline, reimplemented here for the
+      if (validateOnArrival) again = true; // own overrun-guard discipline, reimplemented here for the
       return; // reason in the header); an arrival-driven room owes the coalesced one a round
     }
     running = true;
@@ -516,7 +516,7 @@ export function createRoom({
     stop,
     destroy,
     stepOnce: tickOnce, // hand-driven single tick — the deterministic sibling, for tests (no timers)
-    admitHost,
+    admitHost: validateHost,
     tickNow: () => tick,
     queue: server.queue,
     snapshot: server.snapshot,

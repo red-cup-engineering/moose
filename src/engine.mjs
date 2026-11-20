@@ -1,16 +1,16 @@
-import {admitIntentOrigin,intentIsCurrent} from './intent-origin.mjs';
+import {validateIntentOrigin,intentIsCurrent} from './intent-origin.mjs';
 import { requireJsonValue, copyJson, freezeJson } from "@red-cup-engineering/json-engine";
 import { readWorld, rebindWorldReading, isWorldReading, worldReadingOccurrenceFrameIsCurrent } from "./world-reading.mjs";
 import { isInhabitant } from "./inhabitants.mjs";
 import { captureHistoryReads, historyHeads, historySize, historySection, mergeHistories } from "./world-history.mjs";
 import Cell from "./world-cell.mjs";
-import { admitProposals } from "@red-cup-engineering/gaming/running/proposals";
+import { validateProposals } from "@red-cup-engineering/gaming/running/proposals";
 import { worldMethods, requirementFailures } from './actions.mjs';
 import { cells, certainValue, territoryOf, subjects, exitsOf, exitDestinationOf, regionOf, REGION, POSE, queryWorld } from './world.mjs';
-import { admitGameWorld, defineGame, instantiateGame } from "./game.mjs";
+import { validateGameWorld, defineGame, instantiateGame } from "./game.mjs";
 import { gamePlaceIsCurrent } from "./game-world.mjs";
 import { contentsOf, declareFunctional, earshotOf, isAffirmed, move, perceive, placeOf, tell, transferItem, value, values, witnessesOf } from "./world.mjs";
-import { ownedContainerRefusal, takeRefusal } from "./predication.mjs";
+import { ownedContainerRejection, takeRejection } from "./predication.mjs";
 import { EMPTY_RUNTIME } from "./capabilities.mjs";
 import { ROLE_REGISTERED, hasVoice } from "./identity-roles.mjs";
 import { describeActorSelf, skillsSummaryLine, standingSummaryLine } from "./profile.mjs";
@@ -59,29 +59,29 @@ function withReadingFrames(engine,reading,run) {
 
 // An operation only rechecks intents whose handlers ran. Initially stale work is
 // retained as deferred; nested beats contribute to the outer rollback boundary.
-let activeIntentAdmission;
+let activeIntentValidation;
 const staleOrigin=(engine,intents)=>Object.freeze({engine,receipt:Object.freeze({
   kind:'feltos.stale-origin-receipt.v1',status:'stale-origin',tick:engine.tick,
   intents:Object.freeze([...engine.queue]),deferred:Object.freeze(intents.map(intent=>Object.freeze({intent,reason:'origin-not-current'}))),
   admission:null,events:Object.freeze([]),worldSequence:historySize(engine.world),
 })});
-function withIntentAdmission(engine,validate,budget,run) {
+function withIntentValidation(engine,validate,budget,run) {
   if(validate!==undefined && typeof validate!=='function')fail('intent validator must be a function');
-  const scope={parent:activeIntentAdmission,executed:new Map(),budget,used:new Map()};activeIntentAdmission=scope;
+  const scope={parent:activeIntentValidation,executed:new Map(),budget,used:new Map()};activeIntentValidation=scope;
   const invalid=()=>[...scope.executed].filter(([intent,validators])=>[...validators].some(validator=>!intentIsCurrent(intent,validator))).map(([intent])=>intent);
   try {
     let result;
     try{result=run();}catch(error){const stale=invalid();if(stale.length)return staleOrigin(engine,stale);throw error;}
     const stale=invalid();return stale.length?staleOrigin(engine,stale):result;
-  }finally{activeIntentAdmission=scope.parent;}
+  }finally{activeIntentValidation=scope.parent;}
 }
 function intentBudgetAvailable(intent) {
-  for(let scope=activeIntentAdmission;scope;scope=scope.parent)
+  for(let scope=activeIntentValidation;scope;scope=scope.parent)
     if(scope.budget!==undefined && (scope.used.get(intent.actor)??0)>=scope.budget)return false;
   return true;
 }
 function enrollIntent(intent,validate) {
-  for(let scope=activeIntentAdmission;scope;scope=scope.parent){
+  for(let scope=activeIntentValidation;scope;scope=scope.parent){
     if(!scope.executed.has(intent))scope.executed.set(intent,new Set());
     scope.executed.get(intent).add(validate);
     scope.used.set(intent.actor,(scope.used.get(intent.actor)??0)+1);
@@ -89,7 +89,7 @@ function enrollIntent(intent,validate) {
 }
 
 // Source freshness is supplied by the source owner; a content hash is not admission.
-function requireReadingAdmission(reading, isReadingCurrent) {
+function requireReadingValidation(reading, isReadingCurrent) {
   if (reading === undefined) {
     if (isReadingCurrent !== undefined) fail("reading validation requires a reading");
     return;
@@ -227,7 +227,7 @@ export function createEngine(game, { world } = {}) {
     game = defineGame(game);
     if (world === undefined) fail("a history-backed game requires its admitted original World");
   }
-  const carrier = world === undefined ? instantiateGame(game) : admitGameWorld(game, world);
+  const carrier = world === undefined ? instantiateGame(game) : validateGameWorld(game, world);
   return freezeEngine({
     kind: "feltos.engine.v1",
     game,
@@ -261,17 +261,17 @@ export function submit(engine, intent) {
   if (intent === null || typeof intent !== "object" || Array.isArray(intent)) fail("intent must be a record");
   if (!engine.actors.includes(intent.actor)) fail(`actor has not joined: ${String(intent.actor)}`);
   if (typeof intent.command !== "string" || intent.command.trim().length === 0) fail("intent command must be non-empty text");
-  const admitted = Object.freeze({
+  const validated = Object.freeze({
     kind: "feltos.command.v1",
     ordinal: engine.nextIntent,
     actor: intent.actor,
     command: intent.command.trim(),
-    ...(Object.hasOwn(intent,"origin") ? {origin:admitIntentOrigin(intent.origin)} : {}),
+    ...(Object.hasOwn(intent,"origin") ? {origin:validateIntentOrigin(intent.origin)} : {}),
   });
   return freezeEngine({
     ...engine,
     nextIntent: engine.nextIntent + 1,
-    queue: [...engine.queue, admitted],
+    queue: [...engine.queue, validated],
   });
 }
 
@@ -418,7 +418,7 @@ function validateCapabilityResult(result, fallbackWorld, capabilityId, recipient
   const suppliedPackages=result.packages;
   const packages=suppliedPackages === undefined ? [] : suppliedPackages;
   if (!Array.isArray(packages)) fail(`capability ${capabilityId} returned invalid packages`);
-  const admittedPackages=packages.map(source=>{
+  const validatedPackages=packages.map(source=>{
     // Admission and delivery must inspect the exact immutable snapshot retained below.
     const entry=freezeJson(copyJson(source));
     requireJsonValue(entry,`capability ${capabilityId} package`);
@@ -429,21 +429,21 @@ function validateCapabilityResult(result, fallbackWorld, capabilityId, recipient
     return entry;
   });
   return { world, events, handled: result.handled !== false,
-    ...(admittedPackages.length ? {packages:Object.freeze(admittedPackages)} : {}) };
+    ...(validatedPackages.length ? {packages:Object.freeze(validatedPackages)} : {}) };
 
 }
 
 /** Admit a pure direct reading through the same capability output contract.
  * The caller owns source/origin freshness and returns these outputs directly. */
 export function validateReadOnlyCapabilityResult(result,world,capabilityId,actor) {
-  const admitted=validateCapabilityResult(result,world,capabilityId,[actor]);
-  if(admitted.world!==world)fail('direct capability reading cannot carry world effects');
-  const events=admitted.events.map(source=>{
+  const validated=validateCapabilityResult(result,world,capabilityId,[actor]);
+  if(validated.world!==world)fail('direct capability reading cannot carry world effects');
+  const events=validated.events.map(source=>{
     const event=freezeJson(copyJson(source));requireJsonValue(event,'direct reading event');
     if(event.kind!=='feltos.message.v1'||event.to!==actor||typeof event.text!=='string')fail('direct capability reading has an unexpected recipient or event');
     return event;
   });
-  return Object.freeze({...admitted,events:Object.freeze(events)});
+  return Object.freeze({...validated,events:Object.freeze(events)});
 }
 
 function capabilityContext(engine, intent, verb, argument, runtime, reading) {
@@ -564,7 +564,7 @@ function execute(engine, intent, runtime, reading) {
     const match = /^([^\s]{1,4096}) -- ([\s\S]+)$/u.exec(argument);
     const expectedPlace = match?.[1] ?? null;
     const inner = match?.[2]?.trim() ?? "";
-    const refusal = (status, line) => ({
+    const rejection = (status, line) => ({
       world,
       events: [message(actor, line)],
       packages: [Object.freeze({to: actor, name: "FeltOS.IntentPrecondition",
@@ -577,10 +577,10 @@ function execute(engine, intent, runtime, reading) {
     // control-plane message cannot silently acquire an atomicity guarantee.
     const localVerb = inner.split(/\s/u, 1)[0].toLowerCase();
     if (expectedPlace === null || !inner || !GUARDED_LOCAL_VERBS.has(localVerb))
-      return refusal("invalid-guarded-command",
+      return rejection("invalid-guarded-command",
         "Use if-place <exact-room-id> -- <local native MUD command>; remote, nested and extension operations are not guarded.");
     if (room !== expectedPlace)
-      return refusal("stale-place",
+      return rejection("stale-place",
         "Your guarded action was not performed because you are no longer in the observed room. Look again.");
     // Extension methods are intentionally dispatched ahead of native core
     // handlers by this engine. An authored capability named 'emote' (etc.)
@@ -590,7 +590,7 @@ function execute(engine, intent, runtime, reading) {
     // overriding method rather than changing its regular semantics.
     if (worldMethods(engine, actor, runtime, {reading: view(), verb: localVerb})
       .some(method => method.verb === localVerb && method.failures.length === 0))
-      return refusal("shadowed-native-command",
+      return rejection("shadowed-native-command",
         "The selected world supplies an overriding method for this verb; this local core-command guard cannot admit it.");
     return execute(engine, {...intent, command: inner}, runtime, reading);
   }
@@ -745,7 +745,7 @@ function execute(engine, intent, runtime, reading) {
           : (() => {
             const desc=String(value(view(),choice.subject,"description")
               ?? displayName(view(),choice.subject));
-            if(ownedContainerRefusal(view(),actor,choice.subject,{requireOpen:true})!==null)
+            if(ownedContainerRejection(view(),actor,choice.subject,{requireOpen:true})!==null)
               return desc;
             const contents=contentsOf(view(),choice.subject);
             return desc+"\nInside: "+(contents.length
@@ -770,8 +770,8 @@ function execute(engine, intent, runtime, reading) {
       else {
         // Validate once: the original source gate can consult costly skills
         // and contested claims; checking twice is redundant work per move.
-        const refusal = walkingFailure(view(), actor, exit.destination, exit.direction,room,engine.game);
-        if (refusal !== null) events.push(message(actor, refusal));
+        const rejection = walkingFailure(view(), actor, exit.destination, exit.direction,room,engine.game);
+        if (rejection !== null) events.push(message(actor, rejection));
         else {
           world = move(world, actor, exit.destination, { source: "feltos.command.go", reading: view() });
           events.push(message(actor, renderRoom(view(), actor)));
@@ -788,7 +788,7 @@ function execute(engine, intent, runtime, reading) {
       if(bag.alternatives.length)
         events.push(message(actor,ambiguousNoun("get",containerName,bag.alternatives)));
       else {
-        const denied=ownedContainerRefusal(view(),actor,bag.subject,{requireOpen:true});
+        const denied=ownedContainerRejection(view(),actor,bag.subject,{requireOpen:true});
         if(denied!==null)events.push(message(actor,denied));
         else {
           const item=chooseNamed(view(),thingName,contentsOf(view(),bag.subject));
@@ -810,10 +810,10 @@ function execute(engine, intent, runtime, reading) {
       events.push(message(actor, ambiguousNoun(verb, argument, choice.alternatives)));
     } else {
       const subject = choice.subject;
-      const refusal = takeRefusal(view(), actor, subject);
-      if (refusal === "not-takeable") {
+      const rejection = takeRejection(view(), actor, subject);
+      if (rejection === "not-takeable") {
         events.push(message(actor, `You cannot take ${argument || "that"}.`));
-      } else if (refusal === "shop-ware") {
+      } else if (rejection === "shop-ware") {
         events.push(message(actor, "That item belongs to the shop. Use buy to purchase it."));
       } else {
         world = certainValue(view(),subject,"kind")==="container"
@@ -863,8 +863,8 @@ function execute(engine, intent, runtime, reading) {
     const bag=resolveVisible(view(),actor,argument);
     if(bag.alternatives.length)events.push(message(actor,ambiguousNoun(verb,argument,bag.alternatives)));
     else {
-      const refused=ownedContainerRefusal(view(),actor,bag.subject);
-      if(refused!==null)events.push(message(actor,refused));
+      const rejected=ownedContainerRejection(view(),actor,bag.subject);
+      if(rejected!==null)events.push(message(actor,rejected));
       else {
         const desired=verb==="open";
         if(certainValue(view(),bag.subject,"open")===desired)
@@ -889,8 +889,8 @@ function execute(engine, intent, runtime, reading) {
       else if(item.alternatives.length)
         events.push(message(actor,ambiguousNoun("put",thingName,item.alternatives)));
       else {
-        const refused=ownedContainerRefusal(view(),actor,bag.subject,{requireOpen:true});
-        if(refused!==null)events.push(message(actor,refused));
+        const rejected=ownedContainerRejection(view(),actor,bag.subject,{requireOpen:true});
+        if(rejected!==null)events.push(message(actor,rejected));
         else if(item.subject===null||!["thing","object"].includes(certainValue(view(),item.subject,"kind"))
           ||placeOf(view(),item.subject)!==actor
           ||(cells(view(),item.subject,"owner").length>0
@@ -947,7 +947,7 @@ function requireRuntime(engine, runtime, verb) {
  * conflict-free configuration before any effects are committed, and the round is recorded under
  * the moment it happened in.
  */
-function admitRound(engine, current, pending, runtime, reading, isReadingCurrent, isIntentCurrent, maxCommandsPerActor) {
+function validateRound(engine, current, pending, runtime, reading, isReadingCurrent, isIntentCurrent, maxCommandsPerActor) {
   const events = [], packages = [];
   const proposals = [], deferred = [];
   const actorBranches = new Map();
@@ -976,12 +976,12 @@ function admitRound(engine, current, pending, runtime, reading, isReadingCurrent
     actorBranches.set(intent.actor, { id, world: result.world, position });
   }
   if (!isCurrent(reading, isReadingCurrent)) return { stale: true };
-  const admission = admitProposals(proposals);
-  const admitted = new Set(admission.admitted);
-  const accepted = proposals.filter((proposal) => admitted.has(proposal.id));
+  const validation = validateProposals(proposals);
+  const validated = new Set(validation.admitted);
+  const accepted = proposals.filter((proposal) => validated.has(proposal.id));
   let world = mergeHistories(engine.world, ...accepted.map((proposal) => proposal.result.world));
   for (const proposal of proposals) {
-    if (admitted.has(proposal.id)) {
+    if (validated.has(proposal.id)) {
       events.push(...proposal.result.events); packages.push(...(proposal.result.packages ?? []));
     }
     else events.push(message(proposal.intent.actor, "Your action conflicts with another action at this moment. Nothing from it was spent or moved; try again."));
@@ -990,11 +990,11 @@ function admitRound(engine, current, pending, runtime, reading, isReadingCurrent
     world = tell(world, proposals.map((proposal) => ({
       subject: `tick:${current.tick}`,
       predicate: "action-admission",
-      object: { id: proposal.id, actor: proposal.intent.actor, command: proposal.intent.command, source: proposal.intent.internalCapability ?? "player", parents: historyHeads(engine.world), effects: proposal.effects, admitted: admitted.has(proposal.id), after: proposal.after },
-      evidence: admitted.has(proposal.id) ? "potential" : "stable",
-    })).concat(admission.contested.map((conflict) => ({ subject: `tick:${current.tick}`, predicate: "action-conflict", object: conflict, evidence: "stable" }))), { source: "feltos.admission" });
+      object: { id: proposal.id, actor: proposal.intent.actor, command: proposal.intent.command, source: proposal.intent.internalCapability ?? "player", parents: historyHeads(engine.world), effects: proposal.effects, admitted: validated.has(proposal.id), after: proposal.after },
+      evidence: validated.has(proposal.id) ? "potential" : "stable",
+    })).concat(validation.contested.map((conflict) => ({ subject: `tick:${current.tick}`, predicate: "action-conflict", object: conflict, evidence: "stable" }))), { source: "feltos.admission" });
   }
-  return { world, events, admission, deferred, ...(packages.length ? {packages} : {}) };
+  return { world, events, admission: validation, deferred, ...(packages.length ? {packages} : {}) };
 }
 
 /**
@@ -1002,21 +1002,21 @@ function admitRound(engine, current, pending, runtime, reading, isReadingCurrent
  * the current moment. Simulated time does not advance and inhabitants do not act; that is the
  * world's heartbeat, `step`.
  */
-function admitOperation(engine, { runtime = EMPTY_RUNTIME, reading, isReadingCurrent, isIntentCurrent, maxCommandsPerActor } = {}) {
+function validateOperation(engine, { runtime = EMPTY_RUNTIME, reading, isReadingCurrent, isIntentCurrent, maxCommandsPerActor } = {}) {
   requireRuntime(engine, runtime, "admit");
-  requireReadingAdmission(reading,isReadingCurrent);
+  requireReadingValidation(reading,isReadingCurrent);
   if (!isCurrent(reading,isReadingCurrent)) return staleReading(engine,reading);
   const current = { ...engine, queue: [] };
-  const round = admitRound(engine, current, [...engine.queue], runtime, reading, isReadingCurrent, isIntentCurrent, maxCommandsPerActor);
+  const round = validateRound(engine, current, [...engine.queue], runtime, reading, isReadingCurrent, isIntentCurrent, maxCommandsPerActor);
   if (round.stale) return staleReading(engine,reading);
-  const { world, events, admission, packages=[], deferred=[] } = round;
+  const { world, events, admission: validation, packages=[], deferred=[] } = round;
   return Object.freeze({
     engine: freezeEngine({ ...current, world, queue:deferred.map(entry=>entry.intent) }),
     receipt: Object.freeze({
       kind: "feltos.admission-receipt.v1",
       tick: current.tick,
       intents: Object.freeze([...engine.queue]),
-      admission,
+      admission: validation,
       ...(deferred.length ? {deferred:Object.freeze(deferred)} : {}),
       events: Object.freeze(events),
       ...(packages.length ? {packages:Object.freeze(packages)} : {}),
@@ -1028,7 +1028,7 @@ function admitOperation(engine, { runtime = EMPTY_RUNTIME, reading, isReadingCur
 /** The world's heartbeat: simulated time advances, inhabitants propose, and capabilities run. */
 function stepOperation(engine, { runtime = EMPTY_RUNTIME, cause, reading, isReadingCurrent, isIntentCurrent, maxCommandsPerActor } = {}) {
   requireRuntime(engine, runtime, "step");
-  requireReadingAdmission(reading,isReadingCurrent);
+  requireReadingValidation(reading,isReadingCurrent);
   if (!isCurrent(reading,isReadingCurrent)) return staleReading(engine,reading);
   if (cause !== undefined && (typeof cause !== "string" || cause.length === 0 || cause.length > 512)) fail("tick cause must be non-empty bounded text");
   const clockSubject = engine.game.dimension ?? "feltos:clock";
@@ -1061,9 +1061,9 @@ function stepOperation(engine, { runtime = EMPTY_RUNTIME, cause, reading, isRead
     }
   }
   if (!isCurrent(reading,isReadingCurrent)) return staleReading(engine,reading);
-  const round = admitRound(engine, current, pending, runtime, reading, isReadingCurrent, isIntentCurrent, maxCommandsPerActor);
+  const round = validateRound(engine, current, pending, runtime, reading, isReadingCurrent, isIntentCurrent, maxCommandsPerActor);
   if (round.stale) return staleReading(engine,reading);
-  const { world, events, admission, packages=[], deferred=[] } = round;
+  const { world, events, admission: validation, packages=[], deferred=[] } = round;
   current.world = world;
   current.queue = deferred.map(entry=>entry.intent);
   for (const capability of runtime.capabilities) {
@@ -1099,7 +1099,7 @@ function stepOperation(engine, { runtime = EMPTY_RUNTIME, cause, reading, isRead
       tick: current.tick,
       ...(cause === undefined ? {} : { cause, replayed: false }),
       intents: Object.freeze([...engine.queue]),
-      admission,
+      admission: validation,
       ...(deferred.length ? {deferred:Object.freeze(deferred)} : {}),
       events: Object.freeze(events),
       ...(packages.length ? {packages:Object.freeze(packages)} : {}),
@@ -1118,7 +1118,7 @@ function stepOperation(engine, { runtime = EMPTY_RUNTIME, cause, reading, isRead
  */
 function elapseOperation(engine, hours, { runtime = EMPTY_RUNTIME, maxReplayTicks = 1, reading, isReadingCurrent, isIntentCurrent, maxCommandsPerActor } = {}) {
   requireRuntime(engine, runtime, "elapse");
-  requireReadingAdmission(reading,isReadingCurrent);
+  requireReadingValidation(reading,isReadingCurrent);
   if (!isCurrent(reading,isReadingCurrent)) return staleReading(engine,reading);
   if (!Number.isSafeInteger(hours) || hours < 0) fail("elapsed hours must be a non-negative integer");
   if (!Number.isSafeInteger(maxReplayTicks) || maxReplayTicks < 0) fail("maxReplayTicks must be a non-negative integer");
@@ -1138,7 +1138,7 @@ function elapseOperation(engine, hours, { runtime = EMPTY_RUNTIME, maxReplayTick
   }
   const events = [], packages = [], deferredByIntent = new Map();
   const intents = [...engine.queue];
-  let admission = null;
+  let validation = null;
   for (let beat = 0; beat < replayed; beat++) {
     const result = step(current, { runtime, reading, isReadingCurrent, isIntentCurrent:intent=>deferredByIntent.get(intent)?.reason!=='origin-not-current' && intentIsCurrent(intent,isIntentCurrent), maxCommandsPerActor });
     if (result.receipt.status === "stale-reading") return staleReading(engine,reading);
@@ -1146,7 +1146,7 @@ function elapseOperation(engine, hours, { runtime = EMPTY_RUNTIME, maxReplayTick
     current = result.engine;
     events.push(...result.receipt.events);
     packages.push(...(result.receipt.packages ?? []));
-    admission = result.receipt.admission;
+    validation = result.receipt.admission;
     for(const entry of result.receipt.deferred??[])deferredByIntent.set(entry.intent,entry);
   }
   if (!isCurrent(reading,isReadingCurrent)) return staleReading(engine,reading);
@@ -1159,7 +1159,7 @@ function elapseOperation(engine, hours, { runtime = EMPTY_RUNTIME, maxReplayTick
       replayed,
       forgiven: closed,
       intents: Object.freeze(intents),
-      admission,
+      admission: validation,
       ...([...deferredByIntent.values()].some(entry=>current.queue.includes(entry.intent)) ? {deferred:Object.freeze([...deferredByIntent.values()].filter(entry=>current.queue.includes(entry.intent)))} : {}),
       events: Object.freeze(events),
       ...(packages.length ? {packages:Object.freeze(packages)} : {}),
@@ -1173,15 +1173,15 @@ function requireIntentBudget(options) {
 }
 export function admit(engine, options = {}) {
   requireIntentBudget(options);
-  return withIntentAdmission(engine,options.isIntentCurrent,options.maxCommandsPerActor,()=>withReadingFrames(engine,options.reading,()=>admitOperation(engine,options)));
+  return withIntentValidation(engine,options.isIntentCurrent,options.maxCommandsPerActor,()=>withReadingFrames(engine,options.reading,()=>validateOperation(engine,options)));
 }
 
 export function step(engine, options = {}) {
   requireIntentBudget(options);
-  return withIntentAdmission(engine,options.isIntentCurrent,options.maxCommandsPerActor,()=>withReadingFrames(engine,options.reading,()=>stepOperation(engine,options)));
+  return withIntentValidation(engine,options.isIntentCurrent,options.maxCommandsPerActor,()=>withReadingFrames(engine,options.reading,()=>stepOperation(engine,options)));
 }
 
 export function elapse(engine, hours, options = {}) {
   requireIntentBudget(options);
-  return withIntentAdmission(engine,options.isIntentCurrent,options.maxCommandsPerActor,()=>withReadingFrames(engine,options.reading,()=>elapseOperation(engine,hours,options)));
+  return withIntentValidation(engine,options.isIntentCurrent,options.maxCommandsPerActor,()=>withReadingFrames(engine,options.reading,()=>elapseOperation(engine,hours,options)));
 }

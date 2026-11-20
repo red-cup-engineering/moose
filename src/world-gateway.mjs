@@ -5,7 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { semanticId } from '@red-cup-engineering/semiotic-content-address-system';
 import { canonicalJson, requireJsonValue } from '@red-cup-engineering/json-engine';
 
-export const WORLD_GATEWAY_ADMISSION = 'metroplat.subject-binding';
+export const WORLD_GATEWAY_VALIDATION = 'metroplat.subject-binding';
 export const WORLD_GATEWAY_LIMITS = Object.freeze({ inputBytes: 8192, resultBytes: 24576, inflight: 8, lifetimeMs: 60000, waitMs: 10000 });
 const NI=/^ni:\/\/\/sha-256;[A-Za-z0-9_-]{43}$/u;
 const object=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
@@ -42,7 +42,7 @@ const callMaterial=({verb,operation,input})=>{
 const sessionHand=session=>session.startsWith('harness:')?`session:${session.slice(8)}`:session.startsWith('token:')?`mcp-${session}`:`mcp-session:${session}`;
 
 /** Call only behind the authenticated entrance. Identity never comes from tool arguments. */
-export function admitWorldGatewayCall(binding,call,context,{now=()=>new Date().toISOString(),nonce=randomUUID}={}){
+export function validateWorldGatewayCall(binding,call,context,{now=()=>new Date().toISOString(),nonce=randomUUID}={}){
  const selected=worldGatewayBinding(binding),material=callMaterial(call);
  const subject=text(context?.principal?.subject,'authenticated gateway principal',2048);
  if(subject==='anonymous')throw new TypeError('gateway work requires an authenticated principal');
@@ -178,15 +178,15 @@ export function createWorldGateway({binding,port,identifier,now=()=>new Date().t
   },
   async invoke(call,context){
    if(active>=WORLD_GATEWAY_LIMITS.inflight)throw Object.assign(new Error('gateway is at its in-flight bound; no request submitted'),{code:'GATEWAY_BUSY'});
-   const admitted=admitWorldGatewayCall(binding(),call,context,{now,nonce});
-   const request={identifier,address:admitted.statement.recipient,text:canonicalJson(admitted.call),subjectBinding:admitted.statement,requestKey:admitted.statement.id,reuse:true};
+   const validated=validateWorldGatewayCall(binding(),call,context,{now,nonce});
+   const request={identifier,address:validated.statement.recipient,text:canonicalJson(validated.call),subjectBinding:validated.statement,requestKey:validated.statement.id,reuse:true};
    const retention=port.prepare(request);
-   if(retention?.then!==undefined||retention?.recipient!==admitted.statement.recipient)throw new TypeError('gateway request preparation must preserve its exact audience synchronously');
+   if(retention?.then!==undefined||retention?.recipient!==validated.statement.recipient)throw new TypeError('gateway request preparation must preserve its exact audience synchronously');
    ni(retention.requestNi,'native request identity');
-   let handle=frozen({kind:'feltos.world.gateway-observation',statement:admitted.statement,submission:retention}),accepting=true,finished=false,nativeMayRetain=false;
+   let handle=frozen({kind:'feltos.world.gateway-observation',statement:validated.statement,submission:retention}),accepting=true,finished=false,nativeMayRetain=false;
    const retain=submission=>{
-    if(submission?.recipient!==admitted.statement.recipient)throw new TypeError('native request audience differs from its admission');
-    handle=frozen({kind:'feltos.world.gateway-observation',statement:admitted.statement,submission});observation(handle,context);
+    if(submission?.recipient!==validated.statement.recipient)throw new TypeError('native request audience differs from its admission');
+    handle=frozen({kind:'feltos.world.gateway-observation',statement:validated.statement,submission});observation(handle,context);
    };
    const uncertain=()=>frozen({state:'indeterminate',handle,reason:'native custody may be in progress; do not repeat this act'});
    active++;

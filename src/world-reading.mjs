@@ -11,7 +11,7 @@ import {
   readCapturedHistoryOccurrences, isHistoryOccurrenceFrameFor, rebindHistoryOccurrenceFrame, historyOccurrenceFrameIsCurrent,
 } from './world-history.mjs';
 
-const { admitCell } = Cell;
+const { admitCell: validateCell } = Cell;
 
 const policies = new WeakMap(), readings = new WeakMap(), capturedBindings = new WeakSet(), bindingVersions = new WeakMap();
 const frozen = values => Object.freeze([...values]);
@@ -54,7 +54,7 @@ export function defineWorldReadingPolicy({id, version, read} = {}) {
     });
     const result = read(Object.freeze({source, edition, ...(occurrenceFrame ? {occurrenceVersion:occurrenceFrame.id} : {})}));
     if (!result || !Array.isArray(result.cells)) throw new TypeError('reading policy must return raw cells');
-    const raw = result.cells.map(cell => admitCell(cell));
+    const raw = result.cells.map(cell => validateCell(cell));
     const grouped = new Map();
     for (const cell of raw) {
       const key = historySubjectKey(cell.subject);
@@ -88,7 +88,7 @@ export function readWorld(history, {policy = identity, edition = null, occurrenc
 }
 
 function bindWorldReading(history, binding) {
-  const {policy, edition:retainedEdition, occurrenceFrame} = binding;
+  const {policy, edition:keptEdition, occurrenceFrame} = binding;
   if (occurrenceFrame && !isHistoryOccurrenceFrameFor(occurrenceFrame, history))
     throw new TypeError('occurrence frame requires its exact admitted carrier');
   if (occurrenceFrame) capturedBindings.add(binding);
@@ -98,13 +98,13 @@ function bindWorldReading(history, binding) {
   // Recalling a derived helper does not create a new source identity or admission.
   let versions = bindingVersions.get(binding);
   if (!versions) {
-    versions = Object.freeze({sourceVersion:semanticId(retainedEdition),
-      readingVersion:semanticId({policy:{id:policy.id, version:policy.version}, edition:retainedEdition,
+    versions = Object.freeze({sourceVersion:semanticId(keptEdition),
+      readingVersion:semanticId({policy:{id:policy.id, version:policy.version}, edition:keptEdition,
         ...(occurrenceFrame ? {occurrenceFrame:occurrenceFrame.id} : {})})});
     bindingVersions.set(binding,versions);
   }
   const {sourceVersion,readingVersion}=versions;
-  const read = () => derive(history, occurrenceFrame ? binding : retainedEdition);
+  const read = () => derive(history, occurrenceFrame ? binding : keptEdition);
   const section = (subject, predicate) => {
     if (policy === identity) return historySection(history, subject, predicate);
     const found = read().entries.find(entry => coincides(entry.subject, subject));

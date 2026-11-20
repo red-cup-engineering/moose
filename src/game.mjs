@@ -89,7 +89,7 @@ function defineHistoryGame(source, id, capabilities, functionalPredicates) {
 
 /** Admit the initial source binding without copying, seeding or widening its
  * history. Current opposition remains a refusal, never an entrance grant. */
-export function admitGameWorld(game, world, { recovering = false } = {}) {
+export function validateGameWorld(game, world, { recovering = false } = {}) {
   validateWorld(world);
   if (restoreHistory(world) !== world)
     fail("game World must be admitted by its original history owner; restore decoded history before selecting it");
@@ -292,7 +292,7 @@ export function evolveGameWorld(world, previous, next) {
       fail("cannot replace an original World source through game evolution");
     // A policy/read-edition update does not replay authored content over lived
     // history. A newly selected entrance must be currently admissible.
-    if (previous.start !== next.start) admitGameWorld(next, world);
+    if (previous.start !== next.start) validateGameWorld(next, world);
     else {
       validateWorld(world);
       for (const predicate of next.functionalPredicates)

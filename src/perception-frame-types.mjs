@@ -190,23 +190,23 @@ export function createPerceptionFrameType(kindId, clockType) {
 }
 
 const envelopes = new WeakMap();
-const admittedSubjects = new WeakSet();
+const validatedSubjects = new WeakSet();
 
 /**
  * Admit a perception frame against its declared type. A frame type declared by
  * `createPerceptionFrameType` is admitted by parts: its envelope, then each subject, where a frozen
  * subject value already admitted is not admitted again. Any other type is admitted whole.
  */
-export function admitFrame(frameType, frame) {
+export function validateFrame(frameType, frame) {
   const envelope = envelopes.get(frameType);
   if (envelope === undefined) return admit(frameType, frame);
   const shell = admit(envelope, frame);
   if (!shell.ok) return shell;
   for (const subject of frame.subjects) {
-    if (admittedSubjects.has(subject)) continue;
-    const admitted = admit(PerceptionSubjectType, subject);
-    if (!admitted.ok) return admitted;
-    if (Object.isFrozen(subject)) admittedSubjects.add(subject);
+    if (validatedSubjects.has(subject)) continue;
+    const validated = admit(PerceptionSubjectType, subject);
+    if (!validated.ok) return validated;
+    if (Object.isFrozen(subject)) validatedSubjects.add(subject);
   }
   return Object.freeze({ ok: true, value: frame });
 }

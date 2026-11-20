@@ -173,8 +173,8 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const result = await runNativeWorldExample({ snapshotFile });
   const output = {
     ...result.summary,
-    transcript: result.transcript.map(({ label, actor, command, receipt }) => ({
-      label, actor, command, events: receipt.events.map(({ to, channel, text }) => ({ to, channel, text })),
+    transcript: result.transcript.map(({ label, actor, command, receipt: record }) => ({
+      label, actor, command, events: record.events.map(({ to, channel, text }) => ({ to, channel, text })),
     })),
   };
   if (json) console.log(JSON.stringify(output, null, 2));
