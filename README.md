@@ -136,18 +136,15 @@ Where each is mounted in the Group's repository tree:
 
 ### Installing from registry.561.group
 
-All Group packages are installed from the house registry. Point the
-`@red-cup-engineering` scope at it, in a project `.npmrc` or on the command line:
+The project’s npm configuration sends Group scopes to `registry.561.group` and public dependencies to their upstream registry. Use those scope declarations in the consuming project. [MOOSE npm configuration](.npmrc)
 
-```ini
-@red-cup-engineering:registry=https://registry.561.group
-```
+Install the World and its ActivityPub provider together to run this edition’s signed room speech.
 
 ```sh
-npm install @red-cup-engineering/moose --registry=https://registry.561.group
+npm install @red-cup-engineering/moose@0.2.0-dev.4 @red-cup-engineering/activitypub-engineering-services-section@0.12.0-dev.2
 ```
 
-World CI installs the packed MOOSE distribution and its declared suppliers in a clean consumer directory, then exercises the original World and public-site entry points.
+The managed server entry point also uses `@red-cup-engineering/activitypub-server@0.2.6-dev.0`. World CI runs the enrolled player, federation, public-site and recovery tests against an independently installed package. The playable two-character example is available with `npm run demo:world` in the distribution.
 
 ### Known consumers
 
