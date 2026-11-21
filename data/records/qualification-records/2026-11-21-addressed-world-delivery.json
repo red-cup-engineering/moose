@@ -6,7 +6,13 @@
     "id": "M-DIST-2",
     "source": "https://github.com/red-cup-engineering/moose/blob/39983ddccbcc72f42d068909b1b737554cdf774e/specifications/dimension-world-coordination.md#requirements-and-observable-contracts",
     "world": "https://github.com/red-cup-engineering/moose/blob/39983ddccbcc72f42d068909b1b737554cdf774e/specifications/addressed-world-speech.md",
-    "wire": "https://github.com/red-cup-engineering/activitypub-engineering-services-section/blob/6cc263756e26eb7db5b6acd3c40bcdb7689a4876/content/text/documents/articles/specifications/addressed-world-note.md"
+    "wire": "https://github.com/red-cup-engineering/activitypub-engineering-services-section/blob/6cc263756e26eb7db5b6acd3c40bcdb7689a4876/content/text/documents/articles/specifications/addressed-world-note.md",
+    "migrationStatus": {
+      "baseline": "https://github.com/red-cup-engineering/moose/blob/39983ddccbcc72f42d068909b1b737554cdf774e/specifications/dimension-world-coordination.md#coupled-world-migration-and-remaining-host-work",
+      "asOf": "2026-11-21",
+      "qualified": "The earlier migration paragraph records a signed callback exercise and outstanding final installation. The four issued archives and the two authenticated installed cities in this record qualify the addressed World speech interaction of M-DIST-2.",
+      "open": "Independent organizational deployments selecting multiple Worlds, an available unselected application, and an actual organizational job with failure isolation and recovery still require their own observations."
+    }
   },
   "source": [
     {
@@ -38,12 +44,12 @@
     },
     {
       "name": "@red-cup-engineering/metroplat",
-      "version": "0.10.13-dev.1",
-      "commit": "753ff827fd96e02e1c5e1a39e6378a75963c6fe5",
-      "review": "https://github.com/red-cup-engineering/metroplat/pull/257",
-      "archive": "https://registry.561.group/@red-cup-engineering/metroplat/-/metroplat-0.10.13-dev.1.tgz",
+      "version": "0.10.13-dev.2",
+      "commit": "90e05acd44dc0e8d5447993cab358ae344bfdeae",
+      "review": "https://github.com/red-cup-engineering/metroplat/pull/260",
+      "archive": "https://registry.561.group/@red-cup-engineering/metroplat/-/metroplat-0.10.13-dev.2.tgz",
       "publisher": "emsenn",
-      "integrity": "sha512-9qQ1K7loMhnRgjL2Q/+8rtTeymGLmqyc1HP4kALj/IH3sTjmqdXk0jGEX3pXv2ho/sLFAu0E6brGuHHozkoaEQ=="
+      "integrity": "sha512-/8FfqKwKUYpIdCslvejIkovzT7J9B4LzfRdcDpiyXGtyolWO/D3FVU15bW+EQMaS8MvSIxM3NU3arxVMBtE/CA=="
     }
   ],
   "native": {
@@ -82,11 +88,11 @@
   },
   "consumer": {
     "owner": "red-cup-engineering/metroplat",
-    "commit": "753ff827fd96e02e1c5e1a39e6378a75963c6fe5",
-    "enrollment": "https://github.com/red-cup-engineering/metroplat/blob/753ff827fd96e02e1c5e1a39e6378a75963c6fe5/package.json",
-    "test": "https://github.com/red-cup-engineering/metroplat/blob/753ff827fd96e02e1c5e1a39e6378a75963c6fe5/test/enterprise-city-speech.test.mjs",
+    "commit": "90e05acd44dc0e8d5447993cab358ae344bfdeae",
+    "enrollment": "https://github.com/red-cup-engineering/metroplat/blob/90e05acd44dc0e8d5447993cab358ae344bfdeae/package.json",
+    "test": "https://github.com/red-cup-engineering/metroplat/blob/90e05acd44dc0e8d5447993cab358ae344bfdeae/test/enterprise-city-speech.test.mjs",
     "command": "node --test test/enterprise-city-speech.test.mjs",
-    "fixture": "https://github.com/red-cup-engineering/metroplat/blob/753ff827fd96e02e1c5e1a39e6378a75963c6fe5/test/fixtures/enterprise-city-host.mjs",
+    "fixture": "https://github.com/red-cup-engineering/metroplat/blob/90e05acd44dc0e8d5447993cab358ae344bfdeae/test/fixtures/enterprise-city-host.mjs",
     "identity": "Independent temporary river.example and harbor.example enterprises with distinct scopes, password realms, and OAuth authorization-code/PKCE sessions. Each child starts serveFeltOS with its selected MetroPlat library.",
     "wire": "The registered river character addresses the harbor room Group with sayto over the native MCP world-command. A signed Create carries its source Actor and Dimension. Its Note carries the original text and source World.",
     "interruption": "The sender retains a pending publication while the destination is unreachable. After restarting, retry-speech reuses its original activity ID. Both processes are killed after signed HTTP handoff with the receiving World checkpoint withheld. The exact uncommitted activity remains in the recipient’s queue.",
@@ -94,13 +100,13 @@
     "standing": "Another room cannot hear the phrase. Completed retries present one occurrence. Withdrawing the incoming grant preserves earlier history and yields a signed Group Reject quoting the new denied activity. Removing the room commission retires its Group endpoint and preserves accepted room history.",
     "originalArchiveSuite": {
       "files": 72,
-      "passed": 1177,
+      "passed": 1178,
       "failed": 0
     },
     "platform": {
       "owner": "red-cup-engineering/multi-agent-computer-platforms-engineering-services-section",
-      "commit": "f6fda706bb7a129d09afe9260517484efbba66fe",
-      "review": "https://github.com/red-cup-engineering/multi-agent-computer-platforms-engineering-services-section/pull/9",
+      "commit": "43e626d3feb131bb7b521c32f6931c632d1154f8",
+      "review": "https://github.com/red-cup-engineering/multi-agent-computer-platforms-engineering-services-section/pull/10",
       "comparedInstalledFiles": {
         "feltos": 305,
         "metroplat": 335
@@ -108,18 +114,21 @@
       "runtime": "Node v24.22.3",
       "runs": [
         {
-          "passed": 1,
+          "passed": 2,
           "failed": 0,
           "skipped": 0,
-          "durationMs": 86976.269485
-        },
-        {
-          "passed": 1,
-          "failed": 0,
-          "skipped": 0,
-          "durationMs": 70409.626908
+          "durationMs": 136281.137901
         }
       ]
+    },
+    "receiptCorrelation": "The exercised inbox observer matches the completed signed request to its intended recipient inbox, original actor, activity ID, source content and response. An unrelated completed retry leaves the pending observation unsatisfied.",
+    "earlierReceiving": {
+      "version": "0.10.13-dev.1",
+      "commit": "753ff827fd96e02e1c5e1a39e6378a75963c6fe5",
+      "platformReview": "https://github.com/red-cup-engineering/multi-agent-computer-platforms-engineering-services-section/pull/9",
+      "independentCityRunsPassed": 2,
+      "aggregateObservation": "The subsequent published aggregate run passed 1,176 of 1,177 cases. Its test observer woke on another signed activity while waiting for the denied activity. MetroPlat #260 corrects this transition and includes an explicit interleaving case."
     }
-  }
+  },
+  "scope": "This interoperability case exercises two separately configured instances of the issued MetroPlat World library running through FeltOS and the original signed ActivityPub provider. Its actors, room grants and credential realms are independently authored for these two temporary cities."
 }
