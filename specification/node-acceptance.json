@@ -46,7 +46,7 @@
     },
     {
       "id": "MOOSE-LOCAL-OUTBOX", "role": "consumer", "kind": "example",
-      "claim": "An actor can publish and edit a Note, recover it through the protocol and human page after restart, and delete it. Anonymous writes are refused.",
+      "claim": "Through the managed MOOSE host, an actor can publish and edit a Note, recover it through the protocol and human page after restart, and delete it. Anonymous writes are refused.",
       "specRef": "specifications/native-public-outbox-wire.md#receiving",
       "file": "examples/local-outbox-history.test.mjs", "test": "a commissioned MOOSE node reads an edited note on page two after restart and retracts it on delete"
     }

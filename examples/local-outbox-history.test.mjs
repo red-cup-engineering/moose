@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { activity, note, PUBLIC } from "@red-cup-engineering/activitypub-engineering-services-section/as2";
+import { createMooseEngine } from "@red-cup-engineering/moose";
 import { commissionLocalMooseSite } from "@red-cup-engineering/moose/local-node";
 
 test("a commissioned MOOSE node reads an edited note on page two after restart and retracts it on delete", async t => {
@@ -13,23 +14,26 @@ test("a commissioned MOOSE node reads an edited note on page two after restart a
   const noteId = actor + "/notes/campfire";
   const actors = [{ identifier: "river", actorType: "Person", actorName: "River", summary: "World resident",
     keyPath: join(stateDirectory, "river.keys") }];
-  const start = environment => commissionLocalMooseSite({ origin, stateDirectory, actors, environment, authorizePublicRead: () => true });
+  const start = async environment => {
+    const local = await commissionLocalMooseSite({ origin, stateDirectory, actors, environment, authorizePublicRead: () => true });
+    return { ...local, engine: createMooseEngine({ sites: [local.site] }) };
+  };
   let node;
   t.after(async () => {
     try { await node?.site.release(); } finally { await rm(stateDirectory, { recursive: true, force: true }); }
   });
   node = await start({});
   const token = (await readFile(node.actorBearerTokenPaths[0].bearerTokenPath, "utf8")).trim();
-  const publish = (type, object, authorized = true) => node.site.provider.fetch(new Request(actor + "/outbox", {
+  const publish = (type, object, authorized = true) => node.engine.fetch(new Request(actor + "/outbox", {
     method: "POST", headers: { "content-type": "application/activity+json", ...(authorized ? { authorization: "Bearer " + token } : {}) },
     body: JSON.stringify(activity(type, { id: origin + "/activities/" + type.toLowerCase(), actor, to: [PUBLIC], object })),
   }));
-  const readActivity = (type, authorized = false) => node.site.provider.fetch(new Request(origin + "/activities/" + type, {
+  const readActivity = (type, authorized = false) => node.engine.fetch(new Request(origin + "/activities/" + type, {
     headers: { accept: "application/activity+json", ...(authorized ? { authorization: "Bearer " + token } : {}) },
   }));
-  const readNote = () => node.site.provider.fetch(new Request(noteId, { headers: { accept: "application/activity+json" } }));
+  const readNote = () => node.engine.fetch(new Request(noteId, { headers: { accept: "application/activity+json" } }));
   const readHome = async () => {
-    const response = await node.site.website.fetch(new Request(origin + "/@river/", { headers: { accept: "text/html" } }));
+    const response = await node.engine.fetch(new Request(origin + "/@river/", { headers: { accept: "text/html" } }));
     assert.equal(response.status, 200);
     return response.text();
   };
