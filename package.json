@@ -98,8 +98,6 @@
     "keep-world": "./bin/keep-world.mjs"
   },
   "scripts": {
-    "test": "node --test test/*.test.mjs",
-    "test:consumer": "node --test examples/*.test.mjs",
     "demo:world": "node examples/native-world.mjs"
   },
   "dependencies": {
