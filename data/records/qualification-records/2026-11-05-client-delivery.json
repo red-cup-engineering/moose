@@ -1,0 +1,180 @@
+{
+  "date": "2026-11-05",
+  "owner": "red-cup-engineering/qwzspace",
+  "base": "0f36b1f665999e75fe1e8d49eeffe899f2b132db",
+  "source": {
+    "path": "src/client.mjs",
+    "sha256": "fcfbd85a075086cb9ac316eaa3898df039b79ad759b674c27673f461fbda15e2"
+  },
+  "review": "Author-reviewed under the source owner request; no independent review or semantic Proof asserted.",
+  "native": {
+    "runtime": "Node v24.22.1",
+    "focused": {
+      "passed": 8,
+      "failed": 0
+    },
+    "newRegressionBefore": {
+      "passed": 0,
+      "failed": 5
+    },
+    "aggregateBefore": {
+      "passed": 221,
+      "failed": 23
+    },
+    "aggregateAfter": {
+      "passed": 228,
+      "failed": 23
+    },
+    "unchangedFailures": [
+      "native WebGPU retires changing meshes without invalidating queued draws",
+      "native device loss receives the same visible island through the surviving shared rung",
+      "ordered WebGL instances preserve pixels and batch a dense scene",
+      "prove-failed-load-browser",
+      "prove-webgl-browser",
+      "prove-webgpu-browser",
+      "real game client rebinds native pointer input, focus and status across shared-view replacement",
+      "tests/prove-admin.mjs",
+      "tests/prove-browser-renderer-example.mjs",
+      "tests/prove-fiber-tiers.mjs",
+      "tests/prove-geometry-browser.mjs",
+      "tests/prove-geometry-scene.mjs",
+      "tests/prove-hyperbolic-scene.mjs",
+      "tests/prove-inscription-world.mjs",
+      "tests/prove-proof-motion-scene.mjs",
+      "tests/prove-replay-window.mjs",
+      "tests/prove-scene-viewport-recovery-browser.mjs",
+      "tests/prove-scene.mjs",
+      "tests/prove-tufte-scene-renderer.mjs",
+      "tests/prove-tufte.mjs",
+      "tests/prove-wire-packing.mjs",
+      "the offline example receives hyperbolic paths through actual Canvas and WebGL",
+      "the rendering core receives one native Metrologic through the required Sign dependency order"
+    ]
+  },
+  "consumer": {
+    "owner": "red-cup-engineering/farstone.561.group",
+    "commit": "d21e172325017f18efcf02398b523da1f178a7e8",
+    "sourcePath": "src/web/farstone-motion.mjs",
+    "sourceGitBlob": "4eaf6e62aa0a3ed2d2b6945ed2357b741054d2cd",
+    "sourceSha256": "b82a7c0c2a922dfd5baddfd51e837f02cf07b028524f5407825defe9baa8f309",
+    "nativePassed": 1,
+    "browserBundlePassed": 1,
+    "bundleSha256": "b24d8d03b5a1001462c45bdf30a61955d1eeee9c74be9b635f85ad9e5844890b",
+    "bundleTool": "esbuild 0.25.10",
+    "selectedDependencies": {
+      "feltos": "0.21.8-dev.6",
+      "computer-data-engineering-services-section": "0.2.0"
+    },
+    "scope": "Actual unchanged Farstone movement exports composed with candidate connectRoom/overlay; synthetic local WebSocket transport. Not the whole Farstone application, native browser, GPU, server or original published dependency closure."
+  },
+  "fabrication": {
+    "route": [
+      "deriveSpecificationFromRequirementReview",
+      "planEngineeringDesign",
+      "receiveEngineeringDesign",
+      "readEngineeringCodeWork",
+      "projectEngineeringDesignCode"
+    ],
+    "suppliers": {
+      "design": "red-cup-engineering/engineering-content-engineering-services-section@4ba3eb5d9e759af4f9162945fe6fe18e1e6b263d",
+      "code": "red-cup-engineering/javascript-node-code-fabrication-engineering-services-section@6eadf8ea6d98ba1a590f1e17e5287d21d52ef721"
+    },
+    "passed": 4,
+    "failed": 0,
+    "requirement": {
+      "kind": "requirement",
+      "id": "qwzspace-client-local-delivery",
+      "met-when": [
+        {
+          "cell": "qwzspace-client-local-delivery:not-open",
+          "target": "held",
+          "says": "The shared sendIntent helper returns false without sending for CONNECTING, CLOSING and CLOSED WebSocket states."
+        },
+        {
+          "cell": "qwzspace-client-local-delivery:open-write",
+          "target": "held",
+          "says": "An OPEN socket requires a callable send method; its synchronous failure propagates rather than claiming a successful write."
+        }
+      ]
+    },
+    "cases": [
+      {
+        "operationId": "send-command",
+        "requirementCellId": "qwzspace-client-local-delivery:not-open",
+        "name": "socket-state-0",
+        "input": [
+          {
+            "readyState": 0
+          },
+          1,
+          "command",
+          {
+            "command": "walk 0 1.5"
+          }
+        ],
+        "expectedOutput": false,
+        "throws": null
+      },
+      {
+        "operationId": "send-command",
+        "requirementCellId": "qwzspace-client-local-delivery:not-open",
+        "name": "socket-state-2",
+        "input": [
+          {
+            "readyState": 2
+          },
+          1,
+          "command",
+          {
+            "command": "walk 0 1.5"
+          }
+        ],
+        "expectedOutput": false,
+        "throws": null
+      },
+      {
+        "operationId": "send-command",
+        "requirementCellId": "qwzspace-client-local-delivery:not-open",
+        "name": "socket-state-3",
+        "input": [
+          {
+            "readyState": 3
+          },
+          1,
+          "command",
+          {
+            "command": "walk 0 1.5"
+          }
+        ],
+        "expectedOutput": false,
+        "throws": null
+      },
+      {
+        "operationId": "send-command",
+        "requirementCellId": "qwzspace-client-local-delivery:open-write",
+        "name": "open-requires-callable-send",
+        "input": [
+          {
+            "readyState": 1
+          },
+          1,
+          "command",
+          {
+            "command": "walk 0 1.5"
+          }
+        ],
+        "expectedOutput": null,
+        "throws": "TypeError"
+      }
+    ],
+    "sourceDesignSha256": "20a354f193dc64d2c9421d1f7cb17d238bbe4ab669aba4e83044002dad441786",
+    "generatedContractsSha256": "8961ec80b0cc09dcfe6d22adb38d82ae5de66e7b775ffb75aeb4aba629ae2391",
+    "generatedTestsSha256": "72f67be9427e8f550c7b7950147faf99bdcfd31127cea7481c7b362a088ab6f1",
+    "limits": "Positional JSON cases receive non-OPEN return values and missing OPEN send method. Callback injection is outside this selected fabrication interface and is exercised by native tests."
+  },
+  "limits": [
+    "Existing unavailable Sign/Metrologic/TUFTE dependencies and Playwright browser prevent an all-green aggregate baseline.",
+    "No package publication, declared Farstone dependency update, live deployment, world-state mutation or original-world migration.",
+    "Source qualification does not imply server receipt or execution of a locally accepted command."
+  ]
+}

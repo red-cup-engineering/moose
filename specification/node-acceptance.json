@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "basis": "MOOSE consumes the Modeled Actor Protocol public actor and addressed World speech profiles in its public views and native rooms.",
+  "cases": [
+    {
+      "id": "MOOSE-PLAYABLE-RECOVERY", "role": "consumer", "kind": "example",
+      "claim": "Two players contend for the same Thing, transfer it, and recover one pending command through the installed playable World.",
+      "specRef": "specifications/dimension-world-coordination.md",
+      "file": "examples/native-world.test.mjs", "test": "two players recover exactly one pending game command from the playable World"
+    },
+    {
+      "id": "MOOSE-WORLD-RULE-WITNESS", "role": "source", "kind": "invariant",
+      "claim": "A transported native rule retains its original witness and byte-valued conclusion through World restoration and reclosure.",
+      "specRef": "specifications/world-history-migration.md#native-mud-integration",
+      "file": "test/world-replay.test.mjs", "test": "a World restores the original witness for a byte-valued rule received through canonical CBOR"
+    },
+    {
+      "id": "MOOSE-SPEECH-EDITION", "role": "source", "kind": "invariant",
+      "claim": "A city places its rooms in the selected Dimension and World and can withdraw and renew its own speech standing across a checkpoint while preserving other witnesses.",
+      "specRef": "specifications/addressed-world-speech.md#authored-city-editions",
+      "file": "test/world-speech.test.mjs", "test": "a city edition withdraws only its own exact speech witnesses and can offer the room again"
+    },
+    {
+      "id": "MOOSE-SPEECH-OCCURRENCE", "role": "source", "kind": "invariant",
+      "claim": "A room retains each admitted activity occurrence through checkpoint and restart and exposes it only through its observer's reading.",
+      "specRef": "specifications/addressed-world-speech.md#occurrence-and-recovery",
+      "file": "test/world-speech.test.mjs", "test": "addressed World speech retains distinct witnessed occurrences across checkpoint and restart"
+    },
+    {
+      "id": "MOOSE-SPEECH-STANDING", "role": "source", "kind": "refusal",
+      "claim": "Inbound and outbound room speech require the current room Group and exact unopposed directional grants.",
+      "specRef": "specifications/addressed-world-speech.md#room-standing",
+      "file": "test/world-speech.test.mjs", "test": "World speech requires the current room Group and unopposed authority in both directions"
+    },
+    {
+      "id": "MOOSE-ACTOR-SCOPE", "role": "source", "kind": "refusal",
+      "claim": "A retired actor contributes no posts and an invalid continuation from an active actor fails the public reading.",
+      "specRef": "specifications/native-public-outbox-wire.md#design",
+      "file": "test/public-timeline.test.mjs", "test": "a retired actor is skipped and a foreign page refuses the timeline"
+    },
+    {
+      "id": "MOOSE-PUBLIC-PAGES", "role": "consumer", "kind": "example",
+      "claim": "Both public views display a current post on a later page while respecting a newer deletion.",
+      "specRef": "specifications/native-public-outbox-wire.md#public-profile-and-timeline",
+      "file": "examples/public-profile.test.mjs", "test": "the actor homepage displays a public post from the next outbox page"
+    },
+    {
+      "id": "MOOSE-LOCAL-OUTBOX", "role": "consumer", "kind": "example",
+      "claim": "Through the managed MOOSE host, an actor can publish and edit a Note, recover it through the protocol and human page after restart, and delete it. Anonymous writes are refused.",
+      "specRef": "specifications/native-public-outbox-wire.md#receiving",
+      "file": "examples/local-outbox-history.test.mjs", "test": "a commissioned MOOSE node reads an edited note on page two after restart and retracts it on delete"
+    }
+  ]
+}

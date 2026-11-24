@@ -1,0 +1,14 @@
+name: MOOSE World tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  world:
+    uses: red-cup-engineering/jsnode-package-engineering-services-section/.github/workflows/receive-installed-package.yml@8234690542d03ba30ce3d7cbd0c407ac7c2b1975
