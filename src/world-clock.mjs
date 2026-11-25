@@ -1,4 +1,4 @@
-import { sha256 } from "@red-cup-engineering/cryptographic-computer-data-engineering-services-section/hash";
+import { sha256 } from "@red-cup-engineering/semiotic-content-address-system";
 import { integer, PHASE_LENGTH, SEASON_LENGTH, phaseAt, tideAt, normalizeSeasonProfile, seasonReadingAt } from "./game-content/calendar.mjs";
 import { defineCapability } from "./capabilities.mjs";
 import { cells, declareFunctional, tell, value } from "./world.mjs";
@@ -18,7 +18,7 @@ export function clockSeed(world) {
 }
 
 function unitHash(seed, time) {
-  const bytes = sha256(`${seed}\u0000${time}`);
+  const bytes = Buffer.from(sha256(`${seed}\u0000${time}`));
   return bytes.readUInt32BE(0) / 0x1_0000_0000;
 }
 

@@ -1,8 +1,8 @@
+import { sha256Hex } from "@red-cup-engineering/semiotic-content-address-system";
 import { isRecord } from "@red-cup-engineering/signcell/values";
 import { canonical } from '@red-cup-engineering/json-engine';
 import { sidesOfReading } from '@red-cup-engineering/metrologic/four';
 import Cell from './world-cell.mjs';
-import {sha256Bytes} from '@red-cup-engineering/cryptographic-computer-data-engineering-services-section/portable-sha256';
 import {registeredAccountForActor} from './identity-roles.mjs';
 import { parseNiUri } from '@red-cup-engineering/uri-engineering-services-section/ni-uri';
 import { cells, settleSubject, placeOf, certainValue, territoryOf } from './world.mjs';
@@ -49,7 +49,7 @@ export function defineAction(source) {
  return freeze({verb:source.verb,...body,description:source.description,requires:defineRequirements(source.requires)});
 }
 
-export const actionPredicate=action=>`offers-action:${action.verb}:${action.capability??'remote:'+sha256Bytes(utf8.encode(canonical(action.remote)))}`;
+export const actionPredicate=action=>`offers-action:${action.verb}:${action.capability??'remote:'+sha256Hex(utf8.encode(canonical(action.remote)))}`;
 
 /** The very same read runs at discovery and immediately before each effect. */
 export function requirementFailures(world,actor,requirements={}, {place}={}) {
